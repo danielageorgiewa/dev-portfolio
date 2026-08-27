@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>NORTHLIGHT — Homepage</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Manrope:wght@400;500;600;700&display=swap">
+  <style>
+    input { font-family: Manrope, sans-serif; } input:focus { outline: none; }
+    body { margin: 0; font-family: Manrope, 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    a { color: #10171E; } a:hover { color: #1B3A5C; }
+    * { box-sizing: border-box; }
+    .s { font-family: Newsreader, 'Iowan Old Style', Georgia, serif; font-weight: 400; }
+    .i { font-family: Newsreader, 'Iowan Old Style', Georgia, serif; font-style: italic; font-weight: 400; }
+    .eyebrow { font-size: 11.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #5A6874; }
+    .chip { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: 999px; background: #E7EEF5; font-size: 13px; font-weight: 500; }
+    @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker { display: flex; width: max-content; animation: tick 34s linear infinite; }
+  </style>
+<style>body{display:flex;justify-content:center;background:#fff}</style>
+<script src="./image-slot.js"></script>
+</head>
+<body>
+<div style="width: 1440px; background: #FFFFFF; color: #10171E;">
+
+  <!-- announcement -->
+  <div style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 48px; background: #1B3A5C; color: #FFFFFF; font-size: 13.5px; font-weight: 500;">
+    <span>Every size we make, from 300 × 300 to 3500 mm — in stock or built to order</span>
+    <span style="text-decoration: underline; text-underline-offset: 3px;">Find your size →</span>
+  </div>
+
+  <!-- header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; gap: 36px; padding: 0 44px; height: 82px; background: #FFFFFF; border-bottom: 1px solid rgba(16,23,30,0.08);">
+    <div class="s" style="font-size: 30px; letter-spacing: 0.10em; text-transform: uppercase; flex-shrink: 0;">NORTHLIGHT</div>
+
+    
+      <div style="display: flex; gap: 26px; font-size: 14.5px; font-weight: 500;">
+        <span>Skylights</span><span>Roof lanterns</span><span>Custom size</span><span>Balustrades</span><span>Accessories</span>
+      </div>
+    
+
+    
+
+    <div style="display: flex; gap: 14px; align-items: center; flex-shrink: 0;">
+      
+        <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 999px; cursor: pointer;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#10171E" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+        </span>
+      
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#10171E" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+      </span>
+      <span style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#10171E" stroke-width="1.7"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z"/></svg>
+      </span>
+      <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#10171E" stroke-width="1.7"><path d="M4 7h16l-1.4 12.2a2 2 0 0 1-2 1.8H7.4a2 2 0 0 1-2-1.8Z"/><path d="M8.5 7V5.5a3.5 3.5 0 0 1 7 0V7"/></svg>
+        <span style="position: absolute; top: 1px; right: 0; display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 999px; background: #1B3A5C; color: #FFFFFF; font-size: 11px; font-weight: 700;">2</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- full-screen video hero -->
+  <div style="position: relative; height: 820px; overflow: hidden;">
+    <div style="position:absolute;inset:0;background:#2B3A45"><image-slot id="home-hero" shape="rect" src="https://images.pexels.com/photos/1487154/pexels-photo-1487154.jpeg?auto=compress&cs=tinysrgb&w=1800" placeholder="Drop the hero photo — a room lit from above"></image-slot></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(rgba(8,13,18,0.34) 0%, rgba(8,13,18,0.14) 26%, rgba(8,13,18,0.58) 55%, rgba(8,13,18,0.86) 78%, rgba(8,13,18,0.94) 100%);pointer-events:none"></div>
+
+    <!-- video affordances -->
+    <div style="position: absolute; top: 28px; right: 44px; display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 14px; border-radius: 999px; background: rgba(8,13,18,0.42); color: #FFFFFF; font-size: 12px; font-weight: 600; letter-spacing: 0.1em;">
+      <svg width="10" height="12" viewBox="0 0 10 12" fill="#FFFFFF"><rect x="0" y="0" width="3" height="12" rx="1"/><rect x="6" y="0" width="3" height="12" rx="1"/></svg>
+      PAUSE
+    </div>
+
+    <div style="position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 22px; height: 820px; padding: 0 44px 72px; max-width: 940px;">
+      <div class="eyebrow" style="color: rgba(255,255,255,0.88);">UK made · Any size to 3500 mm · 4–8 weeks</div>
+      <div class="s" style="font-size: 86px; line-height: 1.03; letter-spacing: -0.015em; color: #FFFFFF; text-wrap: balance;">The room you already have, with the sky let <span class="i">into</span> it</div>
+      <div style="font-size: 18px; line-height: 1.6; color: rgba(255,255,255,0.92); max-width: 540px;">Flat roof, pitched roof, walk-on and lanterns. Cut, glazed and checked in our own factory, then delivered on a date you book.</div>
+      <div style="display: flex; gap: 12px; padding-top: 8px;">
+        <div style="display: flex; align-items: center; justify-content: center; height: 58px; padding: 0 34px; border-radius: 8px; background: #FFFFFF; color: #10171E; font-size: 15.5px; font-weight: 600;">Shop skylights</div>
+        <div style="display: flex; align-items: center; gap: 12px; height: 58px; padding: 0 30px; border-radius: 8px; background: rgba(255,255,255,0.14); border: 1.5px solid rgba(255,255,255,0.5); color: #FFFFFF; font-size: 15.5px; font-weight: 600;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M4 8V4h4"/><path d="M20 8V4h-4"/><path d="M4 16v4h4"/><path d="M20 16v4h-4"/></svg>
+          Size it yourself
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- sliding claims bar -->
+  <div style="overflow: hidden; height: 66px; background: #10171E; color: #FFFFFF;">
+    <div class="ticker" style="height: 66px; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 46px; padding-right: 46px; font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;">
+        <span>Made in our own factory</span><span style="opacity: 0.4;">✦</span>
+        <span>Triple glazed as standard</span><span style="opacity: 0.4;">✦</span>
+        <span>Any size to 3500 mm</span><span style="opacity: 0.4;">✦</span>
+        <span>Delivered on a booked date</span><span style="opacity: 0.4;">✦</span>
+        <span>10-year glass warranty</span><span style="opacity: 0.4;">✦</span>
+        <span>Drawings checked before cutting</span><span style="opacity: 0.4;">✦</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 46px; padding-right: 46px; font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap;">
+        <span>Made in our own factory</span><span style="opacity: 0.4;">✦</span>
+        <span>Triple glazed as standard</span><span style="opacity: 0.4;">✦</span>
+        <span>Any size to 3500 mm</span><span style="opacity: 0.4;">✦</span>
+        <span>Delivered on a booked date</span><span style="opacity: 0.4;">✦</span>
+        <span>10-year glass warranty</span><span style="opacity: 0.4;">✦</span>
+        <span>Drawings checked before cutting</span><span style="opacity: 0.4;">✦</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- category rail -->
+  <div style="display: flex; flex-direction: column; gap: 28px; padding: 88px 0 0;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; padding: 0 44px;">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="eyebrow">Every category</div>
+        <div class="s" style="font-size: 50px; line-height: 1.08; letter-spacing: -0.014em;">Start with the roof you <span class="i">have</span></div>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600; color: #1B3A5C; text-decoration: underline; text-underline-offset: 4px; margin-right: 8px;">All 9 categories</span>
+        <span style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 999px; border: 1px solid rgba(16,23,30,0.16);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA6B0" stroke-width="1.8"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>
+        </span>
+        <span style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 999px; background: #1B3A5C;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 18px; padding: 0 44px; overflow: hidden;">
+      
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-1" shape="rect" src="https://images.pexels.com/photos/30471358/pexels-photo-30471358.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Flat roof skylights</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-2" shape="rect" src="https://images.pexels.com/photos/11001250/pexels-photo-11001250.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Pitched roof skylights</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-3" shape="rect" src="https://images.pexels.com/photos/30473221/pexels-photo-30473221.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Opening pitched roof windows</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-4" shape="rect" src="https://images.pexels.com/photos/33175541/pexels-photo-33175541.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Framed roof skylights</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-5" shape="rect" src="https://images.pexels.com/photos/9287916/pexels-photo-9287916.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Walk-on roof windows</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-6" shape="rect" src="https://images.pexels.com/photos/13990698/pexels-photo-13990698.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Roof lanterns</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-7" shape="rect" src="https://images.pexels.com/photos/33447797/pexels-photo-33447797.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Electric opening skylights</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-8" shape="rect" src="https://images.pexels.com/photos/1487154/pexels-photo-1487154.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Custom size skylights</div>
+          <div style="font-size: 13.5px; color: #5A6874;">Any size to 3500 mm</div>
+        </div>
+      
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 268px; flex-shrink: 0;">
+          <div style="height: 232px; border-radius: 6px; background: #F1F4F6; overflow: hidden;">
+            <image-slot id="home-9" shape="rect" src="https://images.pexels.com/photos/31398713/pexels-photo-31398713.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Category photo"></image-slot>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; line-height: 1.3;">Framed modular rooflights</div>
+          <div style="font-size: 13.5px; color: #5A6874;">14 sizes · from £486</div>
+        </div>
+      
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 44px 0;">
+      <span class="chip" style="color: #1B3A5C;">Installation accessories</span>
+      <span class="chip" style="color: #1B3A5C;">OSB insulated upstand</span>
+      <span class="chip" style="color: #1B3A5C;">Electric skylight blinds</span>
+      <span class="chip" style="color: #1B3A5C;">Custom balustrades</span>
+      <span class="chip" style="color: #1B3A5C;">Smoke vents</span>
+      <span class="chip" style="color: #1B3A5C;">Juliet balcony</span>
+    </div>
+  </div>
+
+  <!-- product band 1 -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; padding: 104px 44px 88px;">
+    <div style="height: 440px; background: #F1F4F6; border-radius: 6px; overflow: hidden;">
+      <div style="width:100%;height:440px"><image-slot id="home-10" shape="rect" src="https://images.pexels.com/photos/30471358/pexels-photo-30471358.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Product photo"></image-slot></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 480px;">
+      <div class="eyebrow">Flat roof · Bestseller</div>
+      <div class="s" style="font-size: 44px; line-height: 1.08; letter-spacing: -0.012em;">Aurora Fixed</div>
+      <div style="font-size: 16.5px; line-height: 1.7; color: #5A6874;">A 20 mm sightline and nothing that moves. The quietest way to put daylight into a flat roof — 14 stock sizes, or built to your opening.</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px;">
+        <span class="chip" style="color: #1B3A5C;">Triple glazed</span><span class="chip" style="color: #1B3A5C;">0.9 W/m²K</span><span class="chip" style="color: #1B3A5C;">20 mm sightline</span>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 14px; padding-top: 10px;">
+        <span style="font-size: 20px; font-weight: 700;">from £486</span>
+        <span style="font-size: 14.5px; font-weight: 600; color: #1B3A5C; text-decoration: underline; text-underline-offset: 4px;">See all sizes →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- product band 2 -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; padding: 0 44px 104px;">
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 480px; padding-left: 40px;">
+      <div class="eyebrow">Structural glass</div>
+      <div class="s" style="font-size: 44px; line-height: 1.08; letter-spacing: -0.012em;">Vista Walk-on</div>
+      <div style="font-size: 16.5px; line-height: 1.7; color: #5A6874;">Laminated structural glass you can stand on, with an anti-slip finish. For terraces, light wells and landings.</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px;">
+        <span class="chip" style="color: #1B3A5C;">Anti-slip</span><span class="chip" style="color: #1B3A5C;">3.5 kN/m² load</span><span class="chip" style="color: #1B3A5C;">Flush finish</span>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 14px; padding-top: 10px;">
+        <span style="font-size: 20px; font-weight: 700;">from £486</span>
+        <span style="font-size: 14.5px; font-weight: 600; color: #1B3A5C; text-decoration: underline; text-underline-offset: 4px;">See all sizes →</span>
+      </div>
+    </div>
+    <div style="height: 440px; background: #F1F4F6; border-radius: 6px; overflow: hidden;">
+      <div style="width:100%;height:440px"><image-slot id="home-11" shape="rect" src="https://images.pexels.com/photos/11001250/pexels-photo-11001250.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Product photo"></image-slot></div>
+    </div>
+  </div>
+
+  <!-- configurator band -->
+  <div style="padding: 0 44px 104px;">
+    <div style="display: grid; grid-template-columns: 1fr 520px; gap: 56px; padding: 56px; border-radius: 12px; background: #1B3A5C; color: #FFFFFF;">
+      <div style="display: flex; flex-direction: column; gap: 22px;">
+        <div class="eyebrow" style="color: rgba(255,255,255,0.72);">Made to order · Configurator</div>
+        <div class="s" style="font-size: 50px; line-height: 1.06; letter-spacing: -0.014em;">Give us two numbers and we'll give you a <span class="i">price</span></div>
+        <div style="font-size: 16.5px; line-height: 1.65; color: rgba(255,255,255,0.82); max-width: 460px;">Any size from 400 × 400 to 2500 × 3500 mm, at the same lead time and the same warranty as a stock unit.</div>
+
+        <div style="display: flex; gap: 12px; align-items: flex-end; padding-top: 8px;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.66);">Width</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 168px; height: 58px; padding: 0 20px; border-radius: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);">
+              <span style="font-size: 19px; font-weight: 600;">1200</span><span style="font-size: 13.5px; color: rgba(255,255,255,0.66);">mm</span>
+            </div>
+          </div>
+          <span style="font-size: 20px; padding-bottom: 18px; color: rgba(255,255,255,0.5);">×</span>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.66);">Length</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 168px; height: 58px; padding: 0 20px; border-radius: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);">
+              <span style="font-size: 19px; font-weight: 600;">2400</span><span style="font-size: 13.5px; color: rgba(255,255,255,0.66);">mm</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.66);">Glass</span>
+          <div style="display: flex; gap: 8px;">
+            <span style="display: flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 999px; background: #FFFFFF; color: #1B3A5C; font-size: 13.5px; font-weight: 600;">Clear</span>
+            <span style="display: flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.34); font-size: 13.5px; font-weight: 500;">Solar tint</span>
+            <span style="display: flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.34); font-size: 13.5px; font-weight: 500;">Obscure</span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 20px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.2);">
+          <div style="display: flex; flex-direction: column; gap: 2px; padding-top: 14px;">
+            <span style="font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.66);">Your price</span>
+            <span style="font-size: 34px; font-weight: 700; letter-spacing: -0.02em;">£486</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; height: 56px; padding: 0 32px; margin-top: 14px; border-radius: 8px; background: #FFFFFF; color: #1B3A5C; font-size: 15.5px; font-weight: 600;">Add to basket</div>
+        </div>
+      </div>
+
+      <div style="border-radius: 10px; background: rgba(255,255,255,0.07); overflow: hidden;">
+        <svg width="100%" height="440" viewBox="0 0 520 440" preserveAspectRatio="xMidYMid meet">
+          <rect x="96" y="118" width="330" height="200" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+          <rect x="110" y="132" width="302" height="172" fill="#FFFFFF" fill-opacity="0.10"/>
+          <line x1="96" y1="88" x2="426" y2="88" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.3"/>
+          <line x1="96" y1="80" x2="96" y2="96" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.3"/>
+          <line x1="426" y1="80" x2="426" y2="96" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.3"/>
+          <text x="238" y="74" fill="#FFFFFF" fill-opacity="0.8" font-family="Manrope, sans-serif" font-size="13" font-weight="600">1200 mm</text>
+          <line x1="456" y1="118" x2="456" y2="318" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.3"/>
+          <line x1="448" y1="118" x2="464" y2="118" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.3"/>
+          <line x1="448" y1="318" x2="464" y2="318" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="1.3"/>
+          <text x="360" y="224" fill="#FFFFFF" fill-opacity="0.8" font-family="Manrope, sans-serif" font-size="13" font-weight="600">2400 mm</text>
+          <text x="96" y="356" fill="#FFFFFF" fill-opacity="0.55" font-family="Manrope, sans-serif" font-size="12">Structural opening · drawing sent with your order</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- google reviews -->
+  <div style="padding: 120px 0; background: #F4F7F8;">
+    <div style="padding: 0 44px;">
+
+      <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;">
+        <div style="font-size: 14px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #1B3A5C; margin-bottom: 12px;">From our customers</div>
+        <div class="s" style="font-size: 56px; font-weight: 500; line-height: 1.1; letter-spacing: -0.005em; text-align: center; color: #111111;">What people are <span class="i">saying</span></div>
+        <div style="display: flex; align-items: center; gap: 9px; margin-top: 18px;">
+          <span style="font-size: 15px; letter-spacing: 2px; color: #E8A800;">★★★★★</span>
+          <span style="font-size: 14.5px; color: #4A5560;">4.9 out of 5 from 412 reviews on Google</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: stretch;">
+        
+          <div style="display: flex; flex-direction: column; padding: 32px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E4E9ED;">
+            <div style="font-size: 16px; letter-spacing: 2px; color: #E8A800; margin-bottom: 16px;">★★★★★</div>
+            <div style="font-size: 18px; font-style: italic; line-height: 1.65; color: #4A5560; margin-bottom: 20px;">"Ordered a 1000 × 2000 for a flat roof extension. The drawing came back the same day with the kerb detail marked up, and the unit arrived on the date we booked. Fitters had it in before lunch."</div>
+            <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #111111;">Michael Ardley — Google, March 2026</div>
+          </div>
+        
+
+          <div style="display: flex; flex-direction: column; padding: 32px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E4E9ED;">
+            <div style="font-size: 16px; letter-spacing: 2px; color: #E8A800; margin-bottom: 16px;">★★★★★</div>
+            <div style="font-size: 18px; font-style: italic; line-height: 1.65; color: #4A5560; margin-bottom: 20px;">"I had the wrong structural opening on my first order and they caught it before anything was cut. Saved me a very expensive mistake. Would not have got that from a builders merchant."</div>
+            <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #111111;">Michael Ardley — Google, March 2026</div>
+          </div>
+        
+
+          <div style="display: flex; flex-direction: column; padding: 32px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E4E9ED;">
+            <div style="font-size: 16px; letter-spacing: 2px; color: #E8A800; margin-bottom: 16px;">★★★★★</div>
+            <div style="font-size: 18px; font-style: italic; line-height: 1.65; color: #4A5560; margin-bottom: 20px;">"Third one I have bought from them. The sightline really is as thin as the photos suggest, and the glass has not marked in two years on the first unit."</div>
+            <div style="font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #111111;">Michael Ardley — Google, March 2026</div>
+          </div>
+        
+      </div>
+
+      <div style="display: flex; justify-content: center; margin-top: 44px;">
+        <div style="display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 32px; border-radius: 8px; border: 1.5px solid rgba(17,17,17,0.22); background: #FFFFFF; font-size: 15.5px; font-weight: 600; color: #111111;">
+          Read our reviews on Google
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- editorial / CMS -->
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; padding: 0 44px 104px;">
+    <div style="grid-column: span 3; display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="eyebrow">Built and photographed</div>
+        <div class="s" style="font-size: 50px; line-height: 1.08; letter-spacing: -0.014em;">Other people's <span class="i">roofs</span></div>
+      </div>
+      <span style="font-size: 14.5px; font-weight: 600; color: #1B3A5C; text-decoration: underline; text-underline-offset: 4px;">All projects and guides →</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="height:300px;border-radius:6px;overflow:hidden"><image-slot id="home-13" shape="rect" src="https://images.pexels.com/photos/33175541/pexels-photo-33175541.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Project photo"></image-slot></div>
+      <div class="eyebrow">Kitchen extension</div>
+      <div class="s" style="font-size: 26px; line-height: 1.2;">Three fixed lights over a kitchen island</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="height:300px;border-radius:6px;overflow:hidden"><image-slot id="home-14" shape="rect" src="https://images.pexels.com/photos/9287916/pexels-photo-9287916.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Project photo"></image-slot></div>
+      <div class="eyebrow">Loft conversion</div>
+      <div class="s" style="font-size: 26px; line-height: 1.2;">Walk-on glass as the landing floor</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="height:300px;border-radius:6px;overflow:hidden"><image-slot id="home-15" shape="rect" src="https://images.pexels.com/photos/13990698/pexels-photo-13990698.jpeg?auto=compress&cs=tinysrgb&w=1200" placeholder="Project photo"></image-slot></div>
+      <div class="eyebrow">Guide</div>
+      <div class="s" style="font-size: 26px; line-height: 1.2;">Measuring a kerb: the four numbers we need</div>
+    </div>
+  </div>
+
+  <!-- reassurance -->
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px; padding: 0 44px 104px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="s" style="font-size: 30px; line-height: 1.15;">Measured <span class="i">twice</span></div>
+      <div style="font-size: 15.5px; line-height: 1.7; color: #5A6874;">We check your structural opening against the drawing before anything is cut. If the numbers don't work, we call you.</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="s" style="font-size: 30px; line-height: 1.15;">Delivered on a <span class="i">date</span></div>
+      <div style="font-size: 15.5px; line-height: 1.7; color: #5A6874;">Booked with you, not a window. Someone needs to be on site to accept it — a skylight is not a parcel.</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="s" style="font-size: 30px; line-height: 1.15;">Made by <span class="i">us</span></div>
+      <div style="font-size: 15.5px; line-height: 1.7; color: #5A6874;">Cut, glazed and checked in our own factory, so the person who answers the phone can tell you where yours is.</div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div style="background: #10171E; color: #98A6B2;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 48px; padding: 40px 44px; border-bottom: 1px solid rgba(255,255,255,0.12);">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <span class="s" style="font-size: 26px; color: #FFFFFF;">Once a month, nothing else</span>
+        <span style="font-size: 14px;">New sizes, price changes and the occasional finished roof.</span>
+      </div>
+      <div style="display: flex; gap: 10px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; width: 320px; height: 50px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.28); font-size: 14.5px; color: #7C8A96;">Email address</div>
+        <div style="display: flex; align-items: center; justify-content: center; height: 50px; padding: 0 26px; border-radius: 8px; background: #FFFFFF; color: #10171E; font-size: 14.5px; font-weight: 600;">Sign up</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; padding: 56px 44px 44px;">
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div class="s" style="font-size: 28px; letter-spacing: 0.10em; text-transform: uppercase; color: #FFFFFF;">NORTHLIGHT</div>
+        <div style="font-size: 14.5px; line-height: 1.7; max-width: 280px;">Skylights and rooflights for flat and pitched roofs, made to order and delivered across the UK.</div>
+        <div style="display: flex; gap: 14px; padding-top: 4px;">
+          <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#98A6B2"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.2c0-.9.3-1.5 1.5-1.5h1.7V4c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1V10H7.5v3h2.8v8z"/></svg>
+          </span>
+          <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#98A6B2" stroke-width="1.7"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17" cy="7" r="1.1" fill="#98A6B2"/></svg>
+          </span>
+          <span style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#98A6B2"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8zM10 15V9l5 3z"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14.5px;">
+        <span style="color: #FFFFFF; font-weight: 600;">Shop</span>
+        <span>Flat skylights</span><span>Pitched skylights</span><span>Roof lanterns</span><span>Walk-on</span><span>Custom size</span><span>Accessories</span><span>Clearance</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14.5px;">
+        <span style="color: #FFFFFF; font-weight: 600;">Help</span>
+        <span>FAQs</span><span>Shipping</span><span>Track your order</span><span>Return policy</span><span>Installation guide</span><span>Installers</span><span>Contact</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14.5px;">
+        <span style="color: #FFFFFF; font-weight: 600;">Company</span>
+        <span>About</span><span>Gallery</span><span>Reviews</span><span>Blog</span><span>Become a distributor</span>
+        <span style="color: #FFFFFF; font-weight: 600; padding-top: 14px;">Region</span>
+        <span>United Kingdom · £</span>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 40px; padding: 22px 44px 34px; border-top: 1px solid rgba(255,255,255,0.12); font-size: 12.5px;">
+      <span>© 2026 Northlight Ltd · Registered in England No 00000000 · VAT GB 000 0000 00 · <span style="text-decoration: underline; text-underline-offset: 3px;">Registered office</span></span>
+      <div style="display: flex; gap: 22px;"><span>Terms of use</span><span>Privacy</span><span>Cookies</span><span>Accessibility</span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
