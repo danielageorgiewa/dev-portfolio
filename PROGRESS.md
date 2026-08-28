@@ -285,44 +285,69 @@ Order is `CLAUDE.md` § Suggested order.
       (LinkedIn answers `curl` with 999; that is its anti-bot response, not a
       broken link. Do not "fix" it.)
 
-      **First, the one decision, because two of the three items below depend on
-      it: which host.** Recommended: **Vercel**, zero config for this repo.
+      **Host: Netlify. Decided by Daniela on 2026-08-28, and it is a licensing
+      decision, not a technical one.** Vercel was the recommendation until the
+      terms were actually read. Vercel's Hobby tier is "restricted to
+      non-commercial personal use only", and their fair-use guidelines define
+      commercial usage as any deployment "used for the purpose of financial
+      gain of *anyone* involved in *any part of the production* of the
+      project", listing **"advertising the sale of a product or service"** as
+      an example. `stat3` is "Open to freelance work" and the primary CTA
+      books a call. That is not a grey area, so Vercel would have been Pro at
+      **$20/month**. Netlify's free plan permits commercial sites — the bar
+      there is reselling the hosting itself. Netlify it is, at $0.
 
-      | | Next-aware host (Vercel / Netlify) | `output: 'export'` (S3, Pages, loose files) |
-      | --- | --- | --- |
-      | `/` → `/en` | works as built | **unsupported** — host rule, or a meta-refresh `index.html` |
-      | `next/image` portrait | works as built | **unsupported** — needs `images.unoptimized: true` |
-      | work needed | none | three edits plus a host redirect rule |
+      **Usage was never the question.** Measured: 956K of JS/CSS, 9.6MB of
+      `public/` (mostly the preview photos, which only load when someone
+      scrolls to the work section), 28K and 32K of prerendered HTML, and
+      exactly one `next/image` on the page — the portrait. Counting a full
+      visit generously at 10MB, a 100GB monthly allowance is ~10,000 visits.
+      Every free tier considered fits this site many times over. The $20 would
+      have been a licence fee.
 
-      `output: 'export'` is not set and never was. `PROGRESS.md` said "static
-      hosting" from the contact step onward and the mobile-hero step repeated
-      it, but `○ (Static)` in the build output means *prerendered*, not
-      *deployable as loose files* — that was an assumption carried forward
-      unchecked for several steps. `node_modules/next/dist/docs/01-app/
-      02-guides/static-exports.md` § Unsupported Features is the authority:
-      `redirects()` and the default image loader are both on that list. So the
-      build as it stands needs a Next-aware host or `next start`.
+      **Nothing in the build changes for Netlify.** Their adapter supports
+      Next 13.5+ (so 16.3), auto-detects App Router, and handles
+      `next.config` redirects and `next/image` (through the Netlify Image CDN)
+      natively — so the `/` → `/en` redirect and the portrait keep working and
+      `output: 'export'` stays off. `netlify.toml` is committed and pins only
+      the Node version and the build command; it deliberately does not set
+      `publish` or pin the adapter, for the reasons in its own comments.
 
-      **A. The domain.** `app/site.ts` now says
-      `https://danielageorgieva.work` — Daniela named it on 2026-08-28 and was
-      buying it that day. **It did not resolve when this was written**
-      (NXDOMAIN). It is the only value in the build that depends on something
-      outside the repo, and it feeds `metadataBase`, every canonical, both OG
-      cards' URLs, the sitemap and robots. Confirm it resolves before treating
-      any link-preview problem as a code problem.
+      **If the host is ever reconsidered**, the fork is `output: 'export'`,
+      which `node_modules/next/dist/docs/01-app/02-guides/static-exports.md`
+      § Unsupported Features rules out today: `redirects()` and the default
+      image loader are both on that list, so a loose-files host (Cloudflare
+      Pages, GitHub Pages) costs three changes — `output: 'export'`,
+      `images.unoptimized: true`, and moving `/` → `/en` to a host rule.
+      Note also that `PROGRESS.md` said "static hosting" from the contact step
+      onward and several steps repeated it: `○ (Static)` in the build output
+      means *prerendered*, not *deployable as loose files*. That was an
+      assumption carried forward unchecked.
 
-      **B. The host.** Point it at `origin` (`danielageorgiewa/dev-portfolio`),
-      build command `next build`, Node 22 (`.nvmrc`). Then attach the domain,
-      and check in this order: `/` redirects, `/bg` serves `<html lang="bg">`
-      in *view-source* (not just after hydration — that is the whole point of
-      the locale segment), the OG card renders in a link preview, and
-      `/sitemap.xml` carries the live origin.
+      **A. The domain.** `app/site.ts` says `https://danielageorgieva.work` —
+      Daniela named it on 2026-08-28 and was buying it that day. **It did not
+      resolve when this was written** (NXDOMAIN). It is the only value in the
+      build that depends on something outside the repo, and it feeds
+      `metadataBase`, every canonical, both OG cards' URLs, the sitemap and
+      robots. Confirm it resolves before treating any link-preview problem as
+      a code problem.
+
+      **B. The setup.** Connect Netlify to `origin`
+      (`danielageorgiewa/dev-portfolio`), branch `main`; the build command and
+      Node version come from `netlify.toml`. Attach the domain, then check in
+      this order: `/` redirects to `/en`; `/bg` serves `<html lang="bg">` in
+      *view-source*, not merely after hydration — that is the entire point of
+      the locale segment, and it is the one thing a bad adapter build would
+      silently lose; the OG card renders in a link preview; `/sitemap.xml`
+      carries the live origin. Netlify's free plan is 100GB bandwidth and 300
+      build minutes a month, both far above this site.
 
       **C. What is still missing and is not blocking.** No CI — nothing runs
-      `npm run lint` (which is `tsc --noEmit`) or `next build` on a push. No
-      `apple-icon`. No analytics, which nobody has asked for. And the OG card
-      is still this build's composition rather than Daniela's call — see the
-      deviation below.
+      `npm run lint` (which is `tsc --noEmit`) or `next build` on a push;
+      Netlify will fail the deploy on a type error, which is a slower feedback
+      loop than a check on the PR. No `apple-icon`. No analytics, which nobody
+      has asked for. And the OG card is still this build's composition rather
+      than Daniela's call — see the deviation below.
 
 **Every design step is done.** Both design files are matched at both breakpoints,
 every section and every interaction in `design/HANDOFF.md` is built, the two

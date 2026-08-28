@@ -1,0 +1,28 @@
+# Netlify deploy config.
+#
+# Netlify's Next.js adapter is zero-config and auto-detects an App Router
+# build, so this file is not strictly required. It is here to pin the two
+# things worth pinning and to make the deploy legible from the repo:
+#
+#   - the Node version, so a Netlify default change cannot silently move it
+#   - the build command, so it is stated rather than inferred
+#
+# Deliberately NOT set:
+#
+#   - `publish`. The adapter chooses it, and a wrong value here is the one
+#     way this file can break an otherwise working deploy.
+#   - `[[plugins]] @netlify/plugin-nextjs`. Netlify's own docs advise against
+#     pinning the adapter; they maintain and update it.
+#
+# Why Netlify and not Vercel: Vercel's Hobby tier bars commercial usage, and
+# their fair-use guidelines name "advertising the sale of a product or
+# service" as an example — which is what "Open to freelance work" and a
+# booking CTA are. That would have made this a $20/month Pro site. Netlify's
+# free plan permits commercial sites; the bar there is reselling the hosting.
+# See PROGRESS.md § Steps, the Deploy step.
+
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "22"
