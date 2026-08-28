@@ -1,0 +1,78 @@
+/* ============================================================================
+   Pinned booking bar — design/HANDOFF.md § 8,
+   design/Portfolio Atelier Mobile.dc.html line 211.
+   ----------------------------------------------------------------------------
+   Phone only. The desktop design has no such element, so the whole thing is
+   hidden at 900px and up rather than the usual base-is-desktop split: there is
+   no desktop spelling of it to be the base.
+
+   Resting state is the hidden one — opacity 0, 16px down, pointer-events off.
+   The page's scroll handler (app/use-hero-parallax.ts) writes the visible
+   state in past p > .85, transform included, which is why the translateX(-50%)
+   that centres the bar is part of the transform rather than an inset offset:
+   the handler rewrites the whole property and has to be able to keep it.
+   ------------------------------------------------------------------------- */
+
+.bookbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 58; /* under the header (60) and the language toggle (80) */
+  width: 100%;
+  max-width: var(--width-mobile);
+  /* 20px sides, not --gutter-mobile's 24 — the bar is inset like the language
+     toggle's track, not like a section. */
+  padding: 12px 20px 20px;
+  /* Fades up out of the page rather than sitting on a hard edge. The stop is
+     the same surface --color-glass-bar names, at zero alpha. */
+  background: linear-gradient(rgb(246 243 238 / 0), var(--color-glass-bar) 40%);
+  backdrop-filter: blur(10px);
+  /* .35s sits between --duration-micro-slow and --duration-preview; no token
+     fits it and it drives this one element, so it stays a literal. */
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+/* The audit in app/globals.css § Reduced motion removes this bar's slide, and
+   app/use-hero-parallax.ts writes translateY(0) under the preference. The
+   resting rule has to agree from the first paint or the bar animates its 16px
+   exactly once, on mount, as the handler's first write transitions away from
+   the 16px above — which is the travel the audit exists to remove. Measured
+   before this rule: the bar was mid-slide at ty 5.5px a frame after hydration.
+   The opacity half is untouched, so it still fades in. */
+@media (prefers-reduced-motion: reduce) {
+  .bookbar {
+    transform: translateX(-50%);
+  }
+}
+
+/* The primary dark pill, full width of the bar. No sheen: the phone design
+   gives it no gradient, the same as its tag and its stack card. */
+.bookbar__cta {
+  display: block;
+  padding: 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-ink-on-dark);
+  font-size: var(--text-note);
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* globals.css warms every anchor to --color-accent on hover. The pill is a
+   dark surface and the design gives it no hover at all, so it holds its
+   colour — on a phone this only ever fires on a sticky :hover after a tap. */
+.bookbar__cta:hover {
+  color: var(--color-ink-on-dark);
+}
+
+@media (min-width: 900px) {
+  .bookbar {
+    display: none;
+  }
+}

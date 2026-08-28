@@ -1,0 +1,118 @@
+/* ============================================================================
+   Language toggle — design/HANDOFF.md § 1, desktop lines 21-32,
+   mobile lines 19-40.
+   ----------------------------------------------------------------------------
+   Fixed pill, above everything (z-index 80 — the header is 60).
+
+   The two designs differ in how the pill is anchored. Desktop pins it to the
+   viewport's right edge. Mobile centres a 440px-wide track and pushes the pill
+   to its right, so the pill lines up with the phone column rather than the
+   window; that track is pointer-events:none so it cannot swallow taps either
+   side of the pill. The outer element carries both, hence a wrapper the
+   desktop design does not itself have.
+   ------------------------------------------------------------------------- */
+
+.langtoggle {
+  position: fixed;
+  top: 16px;
+  right: 24px;
+  z-index: 80;
+  display: flex;
+}
+
+.langtoggle__pill {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-glass-toggle);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-toggle);
+}
+
+/* The design's options are spans. These are buttons — a language switch is a
+   control, and the keyboard has to reach it — so the type inheritance and the
+   UA chrome a button brings have to be undone by hand. */
+.langtoggle__opt {
+  margin: 0;
+  border: 0;
+  appearance: none;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: normal;
+  padding: 7px 15px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-toggle);
+  cursor: pointer;
+  color: var(--color-muted);
+  background-color: transparent;
+  /* Sheen over the light pill — app/sheen.css. */
+  background-image: var(--sheen-light);
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  background-position: 140% 0;
+  /* The .24s on colour is the design's own figure — it sits between
+     --duration-micro and --duration-micro-slow, so neither token fits. */
+  transition:
+    var(--sheen-sweep),
+    color 0.24s ease;
+}
+
+.langtoggle__opt:hover {
+  background-position: -60% 0;
+  color: var(--color-ink);
+}
+
+/* The design has no focus style — its options are spans and cannot be focused.
+   Keyboard reach is the reason these are buttons, so they need a ring. It is
+   :focus-visible, so nothing about the resting design changes. */
+.langtoggle__opt:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Active: dark fill, and the sheen's mid-stop drops to .30 so it reads as a
+   highlight rather than a wash. No colour transition — the fill is what
+   changes, and it changes with the crossfade, not on hover. */
+.langtoggle__opt--active {
+  background-color: var(--color-ink);
+  color: var(--color-ink-on-dark);
+  background-image: var(--sheen-dark);
+  transition: var(--sheen-sweep);
+}
+
+.langtoggle__opt--active:hover {
+  color: var(--color-ink-on-dark);
+}
+
+@media (max-width: 899px) {
+  .langtoggle {
+    top: 12px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: var(--width-mobile);
+    /* 20px, not --gutter-mobile's 24 — the phone design insets the toggle
+       track more tightly than it insets its sections. */
+    padding-inline: 20px;
+    justify-content: flex-end;
+    pointer-events: none;
+  }
+
+  .langtoggle__pill {
+    padding: 3px;
+    background: var(--color-glass-toggle-mobile);
+    box-shadow: var(--shadow-toggle-mobile);
+    pointer-events: auto;
+  }
+
+  .langtoggle__opt {
+    padding: 7px 14px;
+    /* 11.5px. Between --text-kicker and --text-cue; no token, by design. */
+    font-size: 11.5px;
+  }
+}

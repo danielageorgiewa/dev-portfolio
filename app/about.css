@@ -1,0 +1,193 @@
+/* ============================================================================
+   About + education + languages — design/Portfolio Atelier.dc.html lines 72–105
+   and design/Portfolio Atelier Mobile.dc.html lines 70–105
+   ----------------------------------------------------------------------------
+   Two columns above 900px, one below. The mobile design splits this into two
+   <section>s (#about, #education) with 10px + 46px of padding between them;
+   here it is one section whose grid gap carries the same 56px, so the two
+   breakpoints share the markup the way CLAUDE.md § Hard rules requires.
+
+   The section box itself (background, gutters, 120px/40px block padding) is
+   .section--about in globals.css. This file is the contents.
+   ========================================================================= */
+
+.about__grid {
+  max-width: var(--width-content);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 80px;
+  align-items: start;
+}
+
+/* ── Reveal ─────────────────────────────────────────────────────────────────
+   Both columns are [data-rv] blocks. The hidden state, the lift and the
+   transition are app/reveal.css; the root defaults there (24px / .9s, 20px /
+   .8s on a phone) are this section's own values, so all that is left here is
+   the .12s stagger the design gives the second column on desktop.
+   ------------------------------------------------------------------------- */
+.about__col--aside {
+  --reveal-delay: 0.12s;
+  /* #education is a scroll target in the mobile design, where it is a section
+     of its own. Kept so the anchor resolves the same way here. */
+  scroll-margin-top: var(--scroll-offset);
+}
+
+/* ── Kickers ────────────────────────────────────────────────────────────── */
+.about__kicker {
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-faint);
+  margin-bottom: 24px;
+}
+
+/* ── About column ───────────────────────────────────────────────────────── */
+.about__lead {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-about-lead);
+  line-height: 1.34;
+  letter-spacing: var(--tracking-display);
+}
+
+.about__body {
+  margin: 28px 0 0;
+  max-width: 54ch;
+  font-size: var(--text-base);
+  line-height: 1.72;
+  font-weight: 300;
+  color: var(--color-body);
+}
+
+/* ── Education ──────────────────────────────────────────────────────────── */
+.about__list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.about__edu-title {
+  font-family: var(--font-display);
+  font-size: var(--text-education);
+  line-height: 1.2;
+}
+
+.about__edu-sub {
+  margin-top: 5px;
+  font-size: 14.5px;
+  font-weight: 300;
+  color: var(--color-muted);
+}
+
+/* ── Languages ──────────────────────────────────────────────────────────── */
+.about__langs {
+  margin-top: 38px;
+  padding-top: 26px;
+  border-top: 1px solid var(--color-border);
+}
+
+.about__langs .about__kicker {
+  margin-bottom: 20px;
+}
+
+.about__lang-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.about__lang {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.about__lang-name {
+  font-family: var(--font-display);
+  font-size: var(--text-language);
+}
+
+.about__lang-level {
+  font-size: var(--text-sub);
+  font-weight: 300;
+  color: var(--color-muted);
+  text-align: right;
+}
+
+/* ── Phone ──────────────────────────────────────────────────────────────────
+   design/Portfolio Atelier Mobile.dc.html lines 70–105. The type comes down a
+   step throughout and the reveal is shorter (.8s / 20px, no stagger — the two
+   blocks are separate sections there and each reveals on its own).
+   ------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .about__grid {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+
+  /* The phone design splits these into two sections that reveal on their own,
+     so there is no stagger between them. */
+  .about__col--aside {
+    --reveal-delay: 0s;
+    scroll-margin-top: var(--scroll-offset-mobile);
+  }
+
+  .about__kicker {
+    font-size: 11px;
+    margin-bottom: 18px;
+  }
+
+  .about__lead {
+    font-size: 30px;
+    line-height: 1.3;
+  }
+
+  .about__body {
+    margin-top: 22px;
+    max-width: none;
+    font-size: 16px;
+  }
+
+  .about__col--aside > .about__kicker {
+    margin-bottom: 20px;
+  }
+
+  .about__list {
+    gap: 18px;
+  }
+
+  .about__edu-title {
+    font-size: 23px;
+  }
+
+  .about__edu-sub {
+    font-size: var(--text-sub);
+  }
+
+  .about__langs {
+    margin-top: 32px;
+    padding-top: 22px;
+  }
+
+  .about__langs .about__kicker {
+    margin-bottom: 18px;
+  }
+
+  .about__lang-list {
+    gap: 12px;
+  }
+
+  .about__lang {
+    gap: 16px;
+  }
+
+  .about__lang-name {
+    font-size: 19px;
+  }
+
+  .about__lang-level {
+    font-size: 13px;
+  }
+}

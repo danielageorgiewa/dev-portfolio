@@ -1,0 +1,334 @@
+/* ============================================================================
+   Hero — design/Portfolio Atelier.dc.html lines 45–71
+   ----------------------------------------------------------------------------
+   Every value here is transcribed from the inline styles on those lines and
+   named through app/tokens.css. The section box itself (sticky, 100vh, the
+   80px 34px 96px padding) lives in globals.css as part of the shell — this
+   file is the hero's contents.
+
+   Base rules are the desktop design; the phone block at the foot overrides,
+   from design/Portfolio Atelier Mobile.dc.html lines 43–69. The sheen and the
+   hover states sit in their own (min-width: 900px) block between the two —
+   the phone design paints no gradient on either CTA and declares no
+   transition, so they must not merely be overridden below 900px, they must
+   not be generated there at all.
+   ========================================================================= */
+
+/* ── Background layers ──────────────────────────────────────────────────────
+   scale(.5) is the resting value, not a typo: the blush is authored at
+   min(88vw,1000px) and the parallax handler scales it up from there. Static,
+   it sits at half size.
+   ------------------------------------------------------------------------- */
+.hero__blush {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--width-blush);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(0.5);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 42% 38%,
+    var(--color-blush-hero),
+    rgb(168 135 124 / 0) 70%
+  );
+  filter: blur(24px);
+  will-change: transform;
+}
+
+.hero__dots {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image: radial-gradient(var(--color-dots) 1px, transparent 1px);
+  background-size: 5px 5px;
+}
+
+/* ── Content column ─────────────────────────────────────────────────────────
+   The phone design's [data-hero] is `position:relative;z-index:5;text-align:
+   center` and nothing else — no flex, no cap — so the four properties that
+   make this a centred column are the desktop's alone and live in the
+   min-width block with the sheen. Declaring them here and overriding to
+   `display:block` below 900px would leave flex-direction and align-items
+   computing as a column that is not one.
+   ------------------------------------------------------------------------- */
+.hero__content {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 900px) {
+  .hero__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: var(--width-hero);
+  }
+}
+
+/* The ring is the first shadow in --shadow-portrait, not a border: a border
+   would sit inside the 132px box and shrink the image, and would not carry the
+   .65 alpha over the page surface the way the spread shadow does. */
+.hero__portrait {
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: var(--shadow-portrait);
+}
+
+.hero__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+
+.hero__eyebrow {
+  margin-top: 26px;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-muted-light);
+}
+
+.hero__name {
+  margin: 14px 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-hero);
+  line-height: 1;
+  letter-spacing: var(--tracking-hero);
+}
+
+.hero__surname {
+  font-style: italic;
+}
+
+.hero__bio {
+  margin: 28px 0 0;
+  max-width: 52ch;
+  font-size: var(--text-bio);
+  line-height: 1.7;
+  font-weight: 300;
+  color: var(--color-body);
+}
+
+/* ── Calls to action ────────────────────────────────────────────────────────
+   Both buttons carry the sheen: a 260%-wide highlight gradient parked off the
+   right edge at 140% that sweeps to -60% on hover. The solid button takes the
+   dark surface's gradient and the outline button the light one — the same
+   gesture reading over two very different surfaces. Both come from
+   app/sheen.css, which owns every copy of them.
+   ------------------------------------------------------------------------- */
+.hero__ctas {
+  display: flex;
+  gap: 11px;
+  justify-content: center;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.hero__cta {
+  padding: 15px 28px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-cta);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.hero__cta--solid {
+  background-color: var(--color-ink);
+  color: var(--color-ink-on-dark);
+  font-weight: 500;
+}
+
+.hero__cta--outline {
+  border: 1px solid var(--color-border-warm);
+  color: var(--color-ink-soft);
+}
+
+/* The phone CTA is the desktop one with the routing swapped, so it carries the
+   same two classes; only which of the pair is shown changes. See app/hero.tsx
+   for why both are in the markup. */
+.hero__cta--phone {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .hero__cta {
+    background-size: 260% 100%;
+    background-repeat: no-repeat;
+    background-position: 140% 0;
+  }
+
+  .hero__cta--solid {
+    background-image: var(--sheen-dark);
+    transition:
+      var(--sheen-sweep),
+      transform var(--duration-micro-slow) var(--ease-lift),
+      box-shadow var(--duration-micro-slow) ease;
+  }
+
+  /* The design file carries a second style-hover="background:#413830" on this
+     button. It is a duplicate attribute — the HTML parser drops it and the
+     running design never darkens the fill, so neither does this. */
+  .hero__cta--solid:hover {
+    background-position: -60% 0;
+    color: var(--color-ink-on-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-cta-hover);
+  }
+
+  .hero__cta--outline {
+    background-image: var(--sheen-light);
+    transition:
+      var(--sheen-sweep),
+      border-color var(--duration-micro-slow) ease,
+      transform var(--duration-micro-slow) var(--ease-lift),
+      box-shadow var(--duration-micro-slow) ease;
+  }
+
+  .hero__cta--outline:hover {
+    background-position: -60% 0;
+    border-color: var(--color-accent);
+    color: var(--color-ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-outline-hover);
+  }
+}
+
+.hero__meta {
+  display: flex;
+  gap: 28px;
+  margin-top: 36px;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--color-faint);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Scroll cue ─────────────────────────────────────────────────────────── */
+.hero__cue {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--text-cue);
+  letter-spacing: var(--tracking-count);
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+.hero__cue-rule {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(var(--color-cue), transparent);
+}
+
+/* ── Phone ──────────────────────────────────────────────────────────────────
+   design/Portfolio Atelier Mobile.dc.html lines 43–69. The section box's own
+   padding (70px 24px 90px) is in globals.css with the rest of the shell; this
+   block is the contents, in DOM order.
+
+   The column stops being a flex column entirely — the phone design's
+   [data-hero] is `position:relative;z-index:5;text-align:center` and nothing
+   else — so the portrait centres on `margin:0 auto` rather than on
+   `align-items`, and the CTA stack has to declare its own flex.
+   ------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  /* Wider, higher, softer, and rotated a little towards the middle. .55 is the
+     resting scale MOBILE.blushRest in app/use-hero-parallax.ts grows from —
+     the two must agree or the first scroll event jumps. */
+  .hero__blush {
+    top: 46%;
+    width: var(--width-blush-mobile);
+    transform: translate(-50%, -50%) scale(0.55);
+    background: radial-gradient(
+      circle at 44% 40%,
+      var(--color-blush-hero),
+      rgb(168 135 124 / 0) 70%
+    );
+    filter: blur(20px);
+  }
+
+  .hero__dots {
+    opacity: 0.45;
+  }
+
+  .hero__portrait {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-portrait-mobile);
+  }
+
+  .hero__eyebrow {
+    margin-top: 22px;
+    font-size: var(--text-cue);
+    letter-spacing: var(--tracking-kicker);
+  }
+
+  .hero__name {
+    margin-top: 12px;
+    font-size: var(--text-hero-mobile);
+    line-height: 0.94;
+  }
+
+  .hero__bio {
+    margin-top: 22px;
+    max-width: none;
+    font-size: 16px;
+  }
+
+  /* A column, not a wrapped row: both CTAs go full width. No justify-content
+     and no flex-wrap — neither is in the phone design, and on a column axis
+     `justify-content:center` would collapse the stack's height distribution. */
+  .hero__ctas {
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 28px;
+    justify-content: normal;
+    flex-wrap: nowrap;
+  }
+
+  /* Square padding, one step up in size, and centred text — with the column
+     stretching them, the label no longer centres itself. */
+  .hero__cta {
+    padding: 16px;
+    font-size: 15px;
+    text-align: center;
+  }
+
+  .hero__cta--desktop {
+    display: none;
+  }
+
+  .hero__cta--phone {
+    display: block;
+  }
+
+  .hero__meta {
+    gap: 20px;
+    margin-top: 28px;
+    font-size: 10.5px;
+  }
+
+  .hero__cue {
+    bottom: 26px;
+    gap: 8px;
+    font-size: 10.5px;
+  }
+
+  .hero__cue-rule {
+    height: 28px;
+  }
+}

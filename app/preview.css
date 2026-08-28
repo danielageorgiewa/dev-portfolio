@@ -1,0 +1,187 @@
+/* ============================================================================
+   Project preview frames — design/Portfolio Atelier.dc.html lines 123-140 and
+   359-453, design/Portfolio Atelier Mobile.dc.html lines 121-136 and 359-450.
+   ----------------------------------------------------------------------------
+   Everything the design computes in JS but that does not actually vary — the
+   border, the radius, the shadow, the crossfade, the tab strip — is here. Only
+   the numbers that depend on a measured column or on the active target's own
+   dimensions stay inline in app/preview.tsx.
+   ========================================================================= */
+
+/* ── Column ─────────────────────────────────────────────────────────────── */
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Tabs ───────────────────────────────────────────────────────────────────
+   The design's tabs are spans. These are buttons — a control that changes what
+   the frame shows has to be reachable from the keyboard — so the UA chrome and
+   the type inheritance a button brings are undone by hand, the way
+   lang-toggle.css does it. Resting pixels are unchanged.
+   ------------------------------------------------------------------------- */
+.preview__tabs {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.preview__tab {
+  position: relative;
+  margin: 0;
+  padding: 0 0 4px;
+  border: 0;
+  appearance: none;
+  background: none;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: normal;
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--color-body);
+  cursor: pointer;
+}
+
+/* The active tab's 1px underline. A pseudo-element rather than the design's
+   nested span — same box, one fewer node. */
+.preview__tab[data-active]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--color-accent);
+}
+
+/* The design has no focus style — its tabs are spans and cannot be focused.
+   Keyboard reach is the reason these are buttons, so they need a ring. */
+.preview__tab:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* ── Holder ─────────────────────────────────────────────────────────────────
+   Full width and left-aligned, so it reports the column's width to the
+   ResizeObserver rather than the frame's, and so a frame narrower than the
+   column sits against the text rather than floating in the middle of it.
+   ------------------------------------------------------------------------- */
+.preview__holder {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* ── Screen ─────────────────────────────────────────────────────────────────
+   Two shapes behind one name. The live frame is a fixed, measured box that
+   crops a scaled document; the screenshot frame is a full-width flex box that
+   the fitted image sizes from the inside, so the border always hugs the
+   picture. CLAUDE.md § The five details, 1.
+   ------------------------------------------------------------------------- */
+.preview__screen {
+  position: relative;
+}
+
+.preview__screen--live {
+  overflow: hidden;
+  border-radius: var(--radius-frame);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-frame);
+  /* width / height / background are measured — app/preview.tsx writes them. */
+}
+
+.preview__screen--shots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* ── Layers ─────────────────────────────────────────────────────────────────
+   Every target is mounted and crossfaded; nothing swaps a src. CLAUDE.md §
+   The five details, 3. `--duration-preview` is .42s — design/HANDOFF.md
+   § Project preview tabs calls the 420ms deliberate. The two .dc.html files
+   write .78s cubic-bezier(.4,0,.2,1) inline instead; PROGRESS.md carries the
+   disagreement.
+   ------------------------------------------------------------------------- */
+.preview__layer {
+  transition: opacity var(--duration-preview) ease;
+  /* The frame is a picture, not a surface to interact with. */
+  pointer-events: none;
+}
+
+.preview__layer--live {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  transform-origin: top left;
+  /* width / height / transform / opacity are measured — written inline. */
+}
+
+/* The screenshot layers size themselves: aspect-ratio holds one axis and the
+   cap holds the other, so the element is the fitted image and never mats. The
+   cap is the width at which `maxH` binds, handed in as a custom property
+   because it differs per capture; the breakpoint is decided here rather than
+   in JS so the phone value applies on the first paint. */
+.preview__layer--shot {
+  display: block;
+  width: min(100%, var(--frame-cap));
+  height: auto;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: var(--radius-frame);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-frame);
+
+  /* Out of flow and centred under the active one, which is the layer that
+     gives the flex box its height. */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.preview__layer--shot[data-active] {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  opacity: 1;
+}
+
+/* ── Phone ──────────────────────────────────────────────────────────────────
+   design/Portfolio Atelier Mobile.dc.html lines 121-136. The column and tab
+   gaps tighten, the type drops to 10.5px and the height cap falls to 380.
+   ------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .preview {
+    gap: 10px;
+  }
+
+  .preview__tabs {
+    gap: 16px;
+  }
+
+  .preview__tab {
+    font-size: 10.5px;
+    /* The phone design gives the tab a hover it wants to animate; the desktop
+       design gives it neither. Below 900px that file is authoritative, so the
+       gesture lives here — the mirror of the tag sheen, which is desktop-only
+       for the same reason. .2s is the design's own figure and is not
+       --duration-micro, which is .22s. */
+    transition: color 0.2s ease;
+  }
+
+  .preview__tab:hover {
+    color: var(--color-ink);
+  }
+
+  .preview__layer--shot {
+    width: min(100%, var(--frame-cap-mobile));
+  }
+}

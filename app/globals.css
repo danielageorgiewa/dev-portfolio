@@ -1,0 +1,185 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './sheen.css';
+
+/* ============================================================================
+   Page shell — design/HANDOFF.md § Design Tokens, § Screens
+   ----------------------------------------------------------------------------
+   Only the shell lives here: the body surface, the two section backgrounds,
+   and the reduced-motion floor. Section-specific styling belongs with its
+   section.
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* The design file sets scroll-behavior:smooth, but § Interactions requires
+     in-page nav to be a JS handler that measures the target and subtracts the
+     header height. Leaving smooth on here would compound with scrollTo's own
+     behavior, so smoothness is the handler's job and this stays auto. */
+  scroll-behavior: auto;
+  background: var(--color-page);
+}
+
+body {
+  margin: 0;
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  /* The design leaves body line-height at `normal` and sets it explicitly
+     wherever it matters (hero bio 1.7, hero name 1). Tailwind's preflight
+     forces 1.5 on the root, which silently grows every uppercase kicker and
+     pill button by 3-5px. Put it back. */
+  line-height: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-accent-tint);
+}
+
+a {
+  color: var(--color-ink);
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+/* Every multi-line paragraph in the design carries text-wrap:pretty. */
+p {
+  text-wrap: pretty;
+}
+
+/* ── The shell ──────────────────────────────────────────────────────────────
+   Desktop: full width, sections cap their own content at --width-content.
+   Below 900px the mobile design is a 440px centred column (its root wrapper is
+   max-width:440px; margin:0 auto; position:relative), so the shell carries
+   that constraint rather than each section repeating it.
+   ------------------------------------------------------------------------- */
+.shell {
+  position: relative;
+  background: var(--color-page);
+}
+
+@media (max-width: 899px) {
+  .shell {
+    max-width: var(--width-mobile);
+    margin-inline: auto;
+  }
+}
+
+/* ── Section backgrounds ────────────────────────────────────────────────────
+   The hero is position:sticky; top:0, so every section after it needs its own
+   opaque background and a stacking context to slide over the pinned hero.
+   Two surfaces only: --color-page everywhere, --color-alt for the tech stack.
+   ------------------------------------------------------------------------- */
+.section {
+  position: relative;
+  z-index: 2;
+  background: var(--color-page);
+  padding-inline: var(--gutter);
+  scroll-margin-top: var(--scroll-offset);
+}
+
+.section--alt {
+  background: var(--color-alt);
+}
+
+.section__inner {
+  max-width: var(--width-content);
+  margin-inline: auto;
+}
+
+@media (max-width: 899px) {
+  .section {
+    padding-inline: var(--gutter-mobile);
+    /* 76px, not the 64px header height: the mobile design leaves the same
+       12px of air above a scrolled-to section that desktop's 88px does. */
+    scroll-margin-top: var(--scroll-offset-mobile);
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────────
+   design/HANDOFF.md § Reduced motion, and line 11 of both design files.
+
+   The design's whole answer is two rules: `* { animation: none !important }`
+   and `html { scroll-behavior: auto }`. The first runs on nothing — neither
+   design file declares a single @keyframes or `animation` property, and
+   neither does this build — so the design honours the preference in exactly
+   one place, the `behavior:'auto'` in `jumpTo`, which app/jump-to.ts already
+   does.
+
+   What stood here before was the opposite mistake: a blanket
+   `transition-duration: 0.01ms !important` over every element. It did stop the
+   reveal's rise, but it also turned the fades into flashes — a language swap
+   jumped to opacity .22 with a 1.5px blur and back inside one frame, and the
+   sheen teleported across a button rather than sweeping. Under a preference
+   for *less* motion, a flash is worse than the fade it replaced.
+
+   So the rule this build settles on is narrower than either: **automatic
+   translation is removed, fades are kept.** Nothing travels unless the user
+   asked for it; nothing that only changes opacity is touched. Exactly two
+   gestures qualify, and each is handled where it is declared — the section
+   reveal's 20–28px rise (app/reveal.css) and the pinned bar's 16px slide
+   (app/bookbar.css for the resting rule, app/use-hero-parallax.ts for the
+   handler — it takes both, or the bar slides once on mount). The parallax
+   stays, and stays whole: it is coupled 1:1 to
+   the scrollbar, has no duration of its own, and stops the instant the user
+   does. PROGRESS.md § Settled decisions carries the per-gesture ruling.
+
+   `scroll-behavior` needs no rule here — html is unconditionally auto above.
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  /* The design's own rule. Kept although it runs on nothing today: it is the
+     page-wide floor both authoritative documents name, and one line keeps an
+     animation added later from arriving unguarded. */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+}
+
+/* ── Hero shell ─────────────────────────────────────────────────────────────
+   position:sticky; top:0 with min-height:100vh is the mechanism the whole page
+   rests on: the hero pins while the sections below scroll over it. Content and
+   the two background layers (blush + dot grid) land in step 2.
+   ------------------------------------------------------------------------- */
+.hero {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 34px 96px;
+}
+
+/* ── Section vertical rhythm ────────────────────────────────────────────────
+   Transcribed per section; the design does not use one uniform value.
+   ------------------------------------------------------------------------- */
+.section--about   { padding-block: 120px 40px; }
+.section--work    { padding-block: 70px 40px; }
+.section--stack   { padding-block: 100px; }
+.section--contact { padding-block: 120px 90px; overflow: hidden; }
+
+@media (max-width: 899px) {
+  /* Mobile hero padding follows the design file (70px 24px 90px). HANDOFF.md
+     § Hero states 96px/120px; the running design disagrees and wins. */
+  .hero {
+    padding: 70px 24px 90px;
+  }
+
+  .section--about   { padding-block: 70px 10px; }
+  .section--work    { padding-block: 52px 10px; }
+  .section--stack   { padding-block: 56px; margin-top: 46px; }
+  .section--contact { padding-block: 70px 120px; }
+}

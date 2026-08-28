@@ -231,4 +231,20 @@ export const copy = {
 } as const;
 
 export type Lang = keyof typeof copy;
-export type Copy = (typeof copy)['en'];
+
+/**
+ * The dictionary shape, with the literal types widened.
+ *
+ * `copy` is `as const`, so `copy.en.navWork` is the type `"Work"`, not
+ * `string`. That is right for the data and wrong for anything that holds
+ * *either* dictionary: `copy[lang]` would otherwise be a union of two
+ * mutually-unassignable shapes, and `"Проекти"` is not a `"Work"`. Widening
+ * once here gives every consumer one type it can hold.
+ */
+type Widen<T> = T extends string
+  ? string
+  : T extends readonly (infer U)[]
+    ? readonly Widen<U>[]
+    : { [K in keyof T]: Widen<T[K]> };
+
+export type Copy = Widen<(typeof copy)['en']>;

@@ -1,0 +1,58 @@
+/* ============================================================================
+   Sheen hover — design/HANDOFF.md § Sheen hover
+   ----------------------------------------------------------------------------
+   The signature hover: a 260%-wide diagonal highlight, parked off the right
+   edge, sweeps across the element. One gesture over two surfaces — white at
+   .98 on the light ones, dropped to .30 on the dark ones (primary CTA, active
+   language pill, selected slot) so it reads as a highlight rather than a wash.
+
+   Where it is applied, against the spec's own list:
+
+     nav links            app/header.css      none — the design file gives
+                          them no gradient; see the note in PROGRESS.md
+     book-a-call link     app/header.css      135% / -50%, like the tag
+     hero CTAs            app/hero.css        140% / -60%, both alphas
+     language pills       app/lang-toggle.css 140% / -60%, both alphas
+     tech stack cards     app/stack.css       140% / -60%, desktop only
+     project tag pills    app/work.css        135% / -50%, desktop only
+     calendar slots       app/contact.css     140% / -60%, both alphas
+
+   Why custom properties and not one shared class. What actually repeats is the
+   gradient — five copies of the light one and three of the dark before this
+   pass — and the duration/easing pair the sweep transitions on. Everything
+   else about the gesture is per-element: the resting position is 140% on the
+   wide elements and 135% on the two narrow ones with the sweep matching, the
+   transition each element needs also carries that element's own colour, border
+   and lift, and two of the seven run the gesture only above 900px because the
+   phone design gives them no gradient at all. A class would also collide on
+   specificity with the dark variants that override its `background-image`
+   (`.langtoggle__opt--active`, `.contact__slot[aria-pressed]`), making the
+   resting fill depend on stylesheet order. So the two gradients and the sweep
+   live here, and the geometry stays with the element that sizes it.
+
+   The two var()s inside --sheen-sweep are substituted here, at :root, which is
+   the trap app/reveal.css documents at length. It is safe in this direction:
+   --duration-sheen and --ease-sheen are declared once, on :root, and nothing
+   overrides them at a lower scope, so there is no per-block value to lose.
+   ========================================================================= */
+
+:root {
+  /* design/HANDOFF.md § Sheen hover, verbatim. */
+  --sheen-light: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0) 32%,
+    rgb(255 255 255 / 0.98) 50%,
+    rgb(255 255 255 / 0) 68%
+  );
+
+  --sheen-dark: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0) 32%,
+    rgb(255 255 255 / 0.3) 50%,
+    rgb(255 255 255 / 0) 68%
+  );
+
+  /* One entry in a transition list. Elements with more to transition write
+     `transition: var(--sheen-sweep), color .24s ease` and so on. */
+  --sheen-sweep: background-position var(--duration-sheen) var(--ease-sheen);
+}

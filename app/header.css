@@ -1,0 +1,182 @@
+/* ============================================================================
+   Sticky header — design/HANDOFF.md § 2, desktop line 34, mobile line 36.
+   ----------------------------------------------------------------------------
+   Written desktop-first, like every file but app/bookbar.css: both designs
+   have a header, and the phone's is the desktop one with the nav removed and
+   the brand a step smaller.
+
+   Resting state is the hidden one — opacity 0, translated up — and the page's
+   scroll handler (app/use-hero-parallax.ts) writes the visible state in past
+   p > .55 (.5 on a phone). The transform is the whole property on both
+   breakpoints, so the phone's centring translateX(-50%) is part of it rather
+   than an inset offset: the handler rewrites the property and has to keep it.
+   ------------------------------------------------------------------------- */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60; /* under the language toggle (80), over the sections (2) */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px var(--gutter);
+  opacity: 0;
+  transform: translateY(-8px);
+  background: var(--color-glass-header);
+  backdrop-filter: blur(16px);
+  /* .4s fits no token — it is slower than every micro transition and faster
+     than the reveal — and it drives this one element, like the bar's .35s. */
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+/* The bar's slide is automatic translation on a threshold crossing, the same
+   shape as the booking bar's 16px, so app/globals.css § Reduced motion removes
+   it and keeps the fade. The resting rule has to agree with the handler from
+   the first paint or the bar animates its 8px exactly once, on mount. */
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    transform: none;
+  }
+}
+
+.header__brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+/* 28px round crop of the hero portrait, without the hero's ring — the design
+   gives the header's copy no box-shadow at all. `flex:none` so the name
+   cannot squeeze it. */
+.header__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  flex: none;
+}
+
+.header__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+
+.header__name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-name-header);
+}
+
+/* 112px of right padding, not a gap: it is the room the fixed language toggle
+   needs at the viewport's right edge, so it belongs to the nav's box rather
+   than to the bar's. */
+.header__nav {
+  display: flex;
+  gap: 28px;
+  font-size: var(--text-nav);
+  color: var(--color-muted);
+  padding-right: 112px;
+}
+
+/* No sheen. § Sheen hover opens its list with "nav links", but the design file
+   gives these three only the colour and the underline — and that is exactly
+   what the spec's own § Accompanying hover states gives them, so nothing was
+   dropped. The link beside them does carry the gradient; the file distinguishes
+   them deliberately. See PROGRESS.md § Settled decisions. */
+.header__link {
+  text-decoration: none;
+  color: inherit;
+  padding: 2px 2px 3px;
+  transition:
+    color var(--duration-micro) ease,
+    box-shadow var(--duration-micro-slow) var(--ease-lift);
+}
+
+/* An inset shadow rather than a border or an underline: it draws inside the
+   2px of padding without moving the text or changing the box. */
+.header__link:hover {
+  color: var(--color-ink);
+  box-shadow: inset 0 -1px 0 var(--color-accent);
+}
+
+/* Book a call — the sheened one, parked at 135% and swept to -50% like the
+   project tag pills rather than the CTAs' 140% / -60% (app/sheen.css). It sits
+   on the page surface, so the light gradient. */
+.header__book {
+  text-decoration: none;
+  color: var(--color-ink);
+  border-bottom: 1px solid var(--color-accent);
+  padding-bottom: 2px;
+  background-image: var(--sheen-light);
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  background-position: 135% 0;
+  /* The .24s on the border is the design's own figure, the same one the
+     language toggle's colour carries — between the two micro tokens. */
+  transition:
+    var(--sheen-sweep),
+    border-color 0.24s ease;
+}
+
+/* Holds its colour — only the rule under it warms to ink. globals.css warms
+   every anchor to --color-accent on hover, which this undoes. */
+.header__book:hover {
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+  background-position: -50% 0;
+}
+
+/* ── Phone ──────────────────────────────────────────────────────────────────
+   A 440px bar centred on the viewport rather than a full-bleed one, so it
+   lines up with the shell's column the way the language toggle's track does.
+   Brand only, one step smaller, and a hairline under it in place of the
+   desktop bar's soft edge.
+   ------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .header {
+    left: 50%;
+    right: auto;
+    width: 100%;
+    max-width: var(--width-mobile);
+    /* The phone bar declares no justify-content — one visible child, so the
+       computed value is the only difference the desktop rule leaves behind. */
+    justify-content: normal;
+    transform: translateX(-50%) translateY(-10px);
+    /* 20px sides, not --gutter-mobile's 24 — inset like the toggle's track. */
+    padding: 13px 20px;
+    background: var(--color-glass-toggle); /* .86, not the desktop bar's .74 */
+    border-bottom: 1px solid var(--color-border-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header {
+      transform: translateX(-50%);
+    }
+  }
+
+  .header__brand {
+    gap: 9px;
+  }
+
+  .header__avatar {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* 18px. Shares its value with --text-bio and names something else — this is
+     the header name's phone step, not body copy. */
+  .header__name {
+    font-size: 18px;
+  }
+
+  .header__nav {
+    display: none;
+  }
+}

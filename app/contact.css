@@ -1,0 +1,451 @@
+/* ============================================================================
+   Contact + calendar — design/Portfolio Atelier.dc.html lines 192–221 and
+   design/Portfolio Atelier Mobile.dc.html lines 178–210
+   ----------------------------------------------------------------------------
+   The section box (page surface, gutters, 120px/90px block padding,
+   overflow:hidden, scroll margin) is .section / .section--contact in
+   globals.css. This file is the blush, the centred column and everything in
+   it.
+
+   Base rules are the desktop design; the phone block at the foot overrides.
+   The two files differ enough in the footer that both structures are in the
+   markup and one is display:none per breakpoint — see app/contact.tsx.
+   ========================================================================= */
+
+/* ── Blush ──────────────────────────────────────────────────────────────────
+   The hero's gesture at a lower alpha and a different origin: 64vw wide,
+   parked at 14% of the section's height, clipped by the section's own
+   overflow. Static — nothing moves it, unlike the hero's.
+   ------------------------------------------------------------------------- */
+.contact__blush {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  transform: translateX(-50%);
+  width: 64vw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 45%,
+    var(--color-blush-contact),
+    rgb(168 135 124 / 0) 66%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* ── Column ─────────────────────────────────────────────────────────────────
+   820px rather than the page's 1180px — the one section that reads as a
+   single centred block. position:relative lifts it over the blush.
+   ------------------------------------------------------------------------- */
+.contact__inner {
+  position: relative;
+  max-width: var(--width-contact);
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* ── Availability chip ──────────────────────────────────────────────────── */
+.contact__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  /* Asymmetric: the dot needs less air on its side than the text does. */
+  padding: 7px 15px 7px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-chip);
+  font-size: var(--text-tag);
+  color: var(--color-body);
+  margin-bottom: 30px;
+}
+
+.contact__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  display: inline-block;
+}
+
+/* ── Heading ────────────────────────────────────────────────────────────── */
+.contact__title {
+  /* The design's heading travels 22px, not the 24px the about columns use;
+     app/reveal.css owns everything else about the reveal. */
+  --reveal-shift: 22px;
+
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-contact-h2);
+  line-height: 1.03;
+  /* -.02em, its own value — between the section headings' -.015em and the
+     hero name's -.022em. */
+  letter-spacing: var(--tracking-contact);
+}
+
+.contact__title-em {
+  font-style: italic;
+}
+
+/* ── Sub-line ───────────────────────────────────────────────────────────────
+   One word set in the display face, italic, a sixth larger than the line it
+   sits in. text-wrap:pretty comes from globals.css's `p` rule.
+   ------------------------------------------------------------------------- */
+.contact__sub {
+  margin: 30px auto 0;
+  max-width: 42ch;
+  font-size: var(--text-contact-sub);
+  line-height: 1.72;
+  font-weight: 300;
+  color: var(--color-body);
+}
+
+.contact__sub em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.16em;
+}
+
+/* ── Slot picker ────────────────────────────────────────────────────────────
+   Six pills, three across. Selected is the dark fill; unselected is the alt
+   surface with the section rule as its border. Both carry the sheen, at the
+   two alphas § Sheen hover specifies — .30 over the dark fill so it reads as
+   a highlight, .98 over the light one.
+
+   Unlike the work tag's, this sheen runs at both breakpoints: the phone
+   design gives the slot the same gradient and the same style-hover the
+   desktop one does. Both gradients live in app/sheen.css.
+   ------------------------------------------------------------------------- */
+.contact__slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 540px;
+  margin: 42px auto 0;
+}
+
+/* Buttons, not the design's divs, so the type inheritance and the UA chrome
+   have to be undone by hand — the same reset the language toggle's options
+   and the preview's tabs carry. */
+.contact__slot {
+  margin: 0;
+  appearance: none;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: normal;
+
+  padding: 13px 8px;
+  text-align: center;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-nav);
+  cursor: pointer;
+
+  /* A button centres its content vertically and no `align-items` on the button
+     itself overrides that in Chrome — but making it a real flex container does.
+     It matters because the selected slot has no border (below) while the grid
+     stretches every cell to the same height, so the design's div sits its label
+     1px higher when selected. Measured: 13px from the box top selected, 14px
+     unselected, on both pages. Without these three the button reads 14 either
+     way. `text-align` is the design's own declaration and stays. */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  background-color: var(--color-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-body);
+  background-image: var(--sheen-light);
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  background-position: 140% 0;
+  /* .2s on colour and border-colour is the design's own figure here, a
+     notch under the .22s --duration-micro; .24s on the lift matches the tag's. */
+  transition:
+    var(--sheen-sweep),
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.24s var(--ease-lift);
+}
+
+/* The lift and the sweep are the design file's style-hover. The border warming
+   is design/HANDOFF.md § Accompanying hover states, which names "tag pills and
+   slots" together; the design file leaves it out of the slot's style-hover
+   while still transitioning border-color, so the spec is what is built —
+   the same call as the preview crossfade's .42s and the stack card's sweep. */
+.contact__slot:hover {
+  background-position: -60% 0;
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
+}
+
+.contact__slot[aria-pressed='true'] {
+  background-color: var(--color-ink);
+  color: var(--color-ink-on-dark);
+  /* The design's selected slot declares no border at all, so it loses the 1px
+     the others carry. The grid stretches every cell to the row height, so the
+     pill is the same size either way. */
+  border: 0;
+  background-image: var(--sheen-dark);
+}
+
+/* The design has no focus style — its slots are divs and cannot be focused.
+   Keyboard reach is the reason these are buttons, so they need a ring. */
+.contact__slot:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── Selection echo + confirm ───────────────────────────────────────────── */
+.contact__confirm-row {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.contact__picked {
+  font-size: var(--text-nav);
+  color: var(--color-muted-light);
+}
+
+/* The page's second solid pill. Unlike the hero's it carries no sheen — the
+   spec's list of sheened elements does not include it — and it does darken on
+   hover, which the hero's only appears to: there the second style-hover is a
+   duplicate attribute the parser drops, here it is the only one. Untransitioned,
+   as the design has it. */
+.contact__confirm {
+  padding: 15px 30px;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-ink-on-dark);
+  font-size: var(--text-cta);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.contact__confirm:hover {
+  background: var(--color-ink-soft);
+  /* globals.css turns every hovered link accent-coloured; this one keeps its
+     own label colour, as the design does. */
+  color: var(--color-ink-on-dark);
+}
+
+/* ── Footer row ─────────────────────────────────────────────────────────────
+   Desktop: one centred row above a rule — three links and the location
+   string, 26px apart. Each link is `label ↗` with a transparent bottom border
+   that warms on hover.
+   ------------------------------------------------------------------------- */
+.contact__footer {
+  display: flex;
+  gap: 26px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 64px;
+  padding-top: 26px;
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-footer);
+  color: var(--color-muted-light);
+  flex-wrap: wrap;
+}
+
+.contact__social {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted-light);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* One rule for both breakpoints: desktop moves the label to #2e2523, the phone
+   design's row is already #2e2523 and its style-hover leaves the colour alone.
+   Either way it overrides globals.css's accent-on-hover for links. */
+.contact__social:hover {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-accent);
+}
+
+/* The phone's label and handle columns. Above 900px the handle is not shown at
+   all and the meta wrapper carries only the arrow, which is the design's
+   desktop structure — label, 6px, glyph. */
+.contact__social-label-m,
+.contact__social-handle {
+  display: none;
+}
+
+.contact__social-meta {
+  display: inline-flex;
+  align-items: center;
+}
+
+.contact__social-arrow {
+  font-size: var(--text-cue);
+}
+
+/* Desktop's last item in the row; the phone replaces it with .contact__footer-note. */
+.contact__location {
+  display: inline;
+}
+
+.contact__footer-note {
+  display: none;
+}
+
+/* ── Phone ──────────────────────────────────────────────────────────────────
+   design/Portfolio Atelier Mobile.dc.html lines 178–210. The column loses its
+   820px cap, the type comes down a step, the slots go two across, the confirm
+   pill leaves for the pinned booking bar, and the footer stops being a row: it
+   becomes a stack of full-width rows, each with the label left and the handle
+   right, under an uppercase footer line.
+   ------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .contact__blush {
+    top: 10%;
+    /* 150% of the section, not 64% of the viewport — the phone shell is a
+       440px column and a vw figure would not fill it. */
+    width: 150%;
+    background: radial-gradient(
+      circle at 50% 42%,
+      var(--color-blush-contact-mobile),
+      rgb(168 135 124 / 0) 66%
+    );
+    filter: blur(18px);
+  }
+
+  .contact__inner {
+    max-width: none;
+  }
+
+  .contact__chip {
+    gap: 8px;
+    padding: 7px 14px 7px 11px;
+    font-size: var(--text-kicker);
+    margin-bottom: 24px;
+  }
+
+  .contact__title {
+    --reveal-shift: 20px;
+
+    font-size: 46px;
+    line-height: 1.04;
+  }
+
+  .contact__sub {
+    margin: 22px 0 0;
+    max-width: none;
+    font-size: 16px;
+  }
+
+  .contact__slots {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    max-width: none;
+    margin: 30px 0 0;
+  }
+
+  .contact__slot {
+    padding: 14px 8px;
+    font-size: var(--text-sub);
+  }
+
+  /* The phone design has no confirm pill here — it is the pinned booking bar's
+     job — so the row holds only the echoed selection, at its own size. There
+     the echo is a block of its own carrying `margin-top:18px`, and it is only
+     in the tree when a slot is picked; here the row is always in the tree, so
+     the 18px has to ride on the echo rather than on the row. An empty flex
+     container does not collapse its margins through in Chrome, and leaving the
+     18px on the row pushed everything below it down by that much whenever no
+     slot was selected. Measured: 18px out on the footer, the footer note and
+     the section's own height. */
+  .contact__confirm-row {
+    margin-top: 0;
+  }
+
+  .contact__picked {
+    margin-top: 18px;
+    font-size: var(--text-footer);
+  }
+
+  .contact__confirm {
+    display: none;
+  }
+
+  .contact__footer {
+    flex-direction: column;
+    /* 1px, not 0: the rules under adjacent rows would otherwise touch. */
+    gap: 1px;
+    margin-top: 40px;
+    padding-top: 0;
+    border-top: 0;
+    text-align: left;
+    font-size: inherit;
+    color: inherit;
+    /* The phone design's list declares none of the three the desktop row does,
+       and `align-items` is the one that matters: left at `center` the rows
+       shrink to their content instead of stretching across the column. */
+    justify-content: normal;
+    align-items: normal;
+    flex-wrap: nowrap;
+  }
+
+  .contact__social {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 2px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-ink);
+    /* The phone's gesture is the row sliding right, not the label warming. */
+    transition: padding 0.2s ease;
+  }
+
+  .contact__social:hover {
+    padding-left: 8px;
+    border-bottom-color: var(--color-border);
+  }
+
+  .contact__social-label {
+    display: none;
+  }
+
+  .contact__social-label-m {
+    display: inline;
+    font-size: var(--text-built);
+  }
+
+  .contact__social-handle {
+    display: inline;
+  }
+
+  .contact__social-meta {
+    gap: 7px;
+    font-size: var(--text-nav);
+    font-weight: 300;
+    color: var(--color-muted-light);
+  }
+
+  .contact__social-arrow {
+    font-size: inherit;
+    color: var(--color-accent);
+  }
+
+  .contact__location {
+    display: none;
+  }
+
+  .contact__footer-note {
+    display: block;
+    margin-top: 34px;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+}

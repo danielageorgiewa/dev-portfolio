@@ -1,0 +1,189 @@
+/* ============================================================================
+   Tech stack — design/Portfolio Atelier.dc.html lines 162–191 and
+   design/Portfolio Atelier Mobile.dc.html lines 154–177
+   ----------------------------------------------------------------------------
+   The section box (the page's only second background, gutters, 100px block
+   padding, the phone's 46px top margin, scroll margin) is .section--alt /
+   .section--stack in globals.css, and the 1180px inner column is
+   .section__inner. This file is the header row, the card grid and the card.
+   ========================================================================= */
+
+/* ── Header ─────────────────────────────────────────────────────────────────
+   Heading block left, note right, bottom-aligned. Wraps rather than squeezing
+   the note; below 900px the phone design stacks the three lines and drops the
+   note's max-width.
+   ------------------------------------------------------------------------- */
+.stack__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 34px;
+  margin-bottom: 46px;
+  flex-wrap: wrap;
+}
+
+.stack__kicker {
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--color-faint);
+  margin-bottom: 20px;
+}
+
+.stack__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-stack-h2);
+  /* -.015em, the work heading's tracking, not the -.01em the about lead uses. */
+  letter-spacing: var(--tracking-project);
+}
+
+.stack__note {
+  margin: 0;
+  max-width: 40ch;
+  font-size: var(--text-built);
+  line-height: 1.7;
+  font-weight: 300;
+  color: var(--color-muted);
+}
+
+/* ── Grid ───────────────────────────────────────────────────────────────── */
+.stack__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+/* ── Card ───────────────────────────────────────────────────────────────────
+   A [data-rv] block that also carries the sheen, so its transition has to hold
+   both. app/reveal.css leaves an appendable slot on [data-rv] for exactly
+   this; the sheen goes in there rather than declaring a transition of its own,
+   which would replace the reveal's.
+   ------------------------------------------------------------------------- */
+.stack__card {
+  /* The design's card travels 22px, not the 24px the about columns use. */
+  --reveal-shift: 22px;
+
+  border-radius: var(--radius-card);
+  background: var(--color-page);
+  border: 1px solid var(--color-border);
+  padding: 30px;
+}
+
+@media (min-width: 900px) {
+  /* Sheen, at the canonical figures — design/HANDOFF.md § Sheen hover, which
+     names the stack card as one of the elements it applies to. The gradient
+     and the sweep's duration/easing come from app/sheen.css. The design file
+     paints the gradient and moves it on hover but never transitions it, since
+     its one `transition` attribute is spent on the reveal; the spec's own
+     block includes `background-position .72s`, and a sheen that does not sweep
+     is not the gesture either document describes. Same call as the preview
+     crossfade's .42s.
+
+     The border warms with it (HANDOFF § Accompanying hover states). That one
+     is left to snap, as the design file has it — no document gives it a
+     duration, and inventing one is not this step's call. */
+  .stack__card {
+    background-image: var(--sheen-light);
+    background-size: 260% 100%;
+    background-repeat: no-repeat;
+    background-position: 140% 0;
+    /* Appended to app/reveal.css's transition, not replacing it — the card is
+       a [data-rv] block and still has to fade and rise. Leading comma. */
+    --reveal-transition-extra: , var(--sheen-sweep);
+  }
+
+  .stack__card:hover {
+    background-position: -60% 0;
+    border-color: var(--color-border-hover);
+  }
+}
+
+.stack__card-head {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-border-faint);
+}
+
+.stack__card-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-card-title);
+}
+
+/* ── Items ──────────────────────────────────────────────────────────────────
+   The phone design has no wrapper around the rows, which is the whole of the
+   difference: 6px of air under the card's rule on desktop, none below 900px.
+   ------------------------------------------------------------------------- */
+.stack__items {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+}
+
+.stack__item {
+  display: flex;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--color-border-fainter);
+  /* The design's row is also `justify-content:space-between; gap:16px` (14px
+     on a phone). Both are inert — the row has one child — so they are not
+     carried; the row once had a second column and no longer does. */
+}
+
+.stack__item-name {
+  font-size: var(--text-note);
+  font-weight: 400;
+  color: var(--color-ink);
+}
+
+/* ── Phone ──────────────────────────────────────────────────────────────────
+   design/Portfolio Atelier Mobile.dc.html lines 154–177. The header stacks,
+   the grid becomes one column, the type comes down a step and the card loses
+   the sheen — the phone design gives it no gradient and no hover, the same as
+   the work tag.
+   ------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .stack__head {
+    display: block;
+    margin-bottom: 32px;
+  }
+
+  .stack__kicker {
+    font-size: 11px;
+    margin-bottom: 16px;
+  }
+
+  .stack__title {
+    font-size: 34px;
+  }
+
+  .stack__note {
+    margin-top: 16px;
+    max-width: none;
+    font-size: 15px;
+  }
+
+  .stack__grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .stack__card {
+    --reveal-shift: 20px;
+
+    padding: 24px;
+  }
+
+  .stack__card-head {
+    padding-bottom: 14px;
+  }
+
+  .stack__card-title {
+    font-size: 23px;
+  }
+
+  .stack__items {
+    margin-top: 0;
+  }
+}

@@ -1,0 +1,146 @@
+/* ============================================================================
+   Design tokens — design/HANDOFF.md § Design Tokens
+   ----------------------------------------------------------------------------
+   Canonical source for every colour, type size, radius, shadow and easing in
+   the build. Values are transcribed from the handoff table and cross-checked
+   against the inline styles in design/Portfolio Atelier.dc.html.
+
+   Tailwind v4 reads @theme and generates utilities from it, so a token is
+   reachable two ways: `bg-page` / `text-ink` / `shadow-portrait` as a utility,
+   or `var(--color-page)` in hand-written CSS. Nothing here is a Tailwind
+   default override — the design is bespoke and none of its values land on
+   Tailwind's default scales (16.5px body, .26em kickers, 8.2vw display).
+
+   Do not round these. Fidelity is the acceptance criterion.
+   ========================================================================= */
+
+@theme {
+  /* ── Colours ───────────────────────────────────────────────────────────── */
+  --color-page: #f2f0ed;        /* body, hero, about, work, contact          */
+  --color-alt: #e9e6e2;         /* tech stack section, unselected slots      */
+  --color-ink: #2e2523;         /* primary text, dark buttons                */
+  --color-ink-on-dark: #f2f0ed; /* text on dark buttons                      */
+  --color-ink-soft: #423a36;    /* outline CTA label                         */
+  --color-body: #5f5450;        /* bio, paragraphs                           */
+  --color-body-soft: #7b7069;   /* project `built` line                      */
+  --color-muted: #716660;       /* nav, secondary detail                     */
+  --color-muted-light: #8a7f79; /* eyebrow, footer links                     */
+  --color-faint: #a29790;       /* kickers, meta rows, italic notes          */
+  --color-accent: #a8877c;      /* underlines, dots, blush, hover borders    */
+  --color-accent-tint: #e0cfc9; /* text selection                            */
+  --color-border: #ded8d3;      /* section rules, cards, frames              */
+  --color-border-warm: #d7d1cb; /* outline buttons, tag pills                */
+  --color-border-faint: #e3ddd8;/* card internals — heading rule             */
+  --color-border-fainter: #ece8e4; /* card internals — item rows             */
+  --color-border-hover: #c9bfb7;/* stack card hover                          */
+  --color-border-chip: #dbd5cf; /* availability chip                         */
+  --color-cue: #bdb4ad;         /* scroll-cue gradient rule                  */
+
+  /* Glass — header .74, language toggle .86, mobile booking bar .94 */
+  --color-glass-header: rgb(246 243 238 / 0.74);
+  --color-glass-toggle: rgb(246 243 238 / 0.86);
+  --color-glass-toggle-mobile: rgb(246 243 238 / 0.9);
+  --color-glass-bar: rgb(246 243 238 / 0.94);
+
+  /* Accent at the alphas the design actually uses */
+  --color-blush-hero: rgb(168 135 124 / 0.4);
+  --color-blush-contact: rgb(168 135 124 / 0.26);
+  --color-blush-contact-mobile: rgb(168 135 124 / 0.24);
+  --color-ring: rgb(168 135 124 / 0.65);
+  --color-dots: rgb(46 37 35 / 0.09);
+
+  /* ── Fonts ─────────────────────────────────────────────────────────────── */
+  /* --font-display / --font-body are wired to next/font in layout.tsx        */
+  --font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
+  --font-body: var(--font-inter-tight), system-ui, -apple-system, sans-serif;
+
+  /* ── Type scale ────────────────────────────────────────────────────────── */
+  --text-hero: clamp(52px, 8.2vw, 118px);
+  --text-hero-mobile: clamp(52px, 17vw, 74px);
+  --text-contact-h2: clamp(42px, 6.2vw, 88px);
+  --text-project: clamp(32px, 3.6vw, 50px);
+  --text-work-h2: 44px;
+  --text-stack-h2: clamp(30px, 3.6vw, 48px);
+  --text-about-lead: clamp(26px, 2.9vw, 40px);
+  --text-card-title: 26px;
+  --text-education: 25px;
+  --text-language: 21px;
+  --text-name-header: 20px;
+  --text-bio: 18px;
+  --text-contact-sub: 17px;
+  --text-base: 16.5px;
+  --text-built: 15.5px;
+  --text-note: 15px;
+  --text-cta: 14.5px;
+  --text-sub: 14px;
+  --text-nav: 13.5px;
+  --text-footer: 13px;
+  --text-tag: 12.5px;
+  --text-kicker: 12px;
+  --text-cue: 11px;
+
+  /* ── Tracking ──────────────────────────────────────────────────────────── */
+  --tracking-eyebrow: 0.28em;
+  --tracking-kicker: 0.26em;
+  --tracking-kind: 0.24em;
+  --tracking-count: 0.2em;
+  --tracking-meta: 0.16em;
+  --tracking-toggle: 0.08em;
+  --tracking-display: -0.01em;   /* section headings                         */
+  --tracking-project: -0.015em;  /* project titles                           */
+  --tracking-hero: -0.022em;     /* hero name                                */
+  --tracking-contact: -0.02em;   /* contact heading                          */
+
+  /* ── Radius ────────────────────────────────────────────────────────────── */
+  --radius-pill: 999px;
+  --radius-phone: 20px;   /* phone screenshots  */
+  --radius-frame: 10px;   /* preview frames     */
+  --radius-card: 6px;     /* stack cards        */
+
+  /* ── Shadows ───────────────────────────────────────────────────────────── */
+  --shadow-portrait: 0 0 0 2px rgb(168 135 124 / 0.65), 0 16px 38px rgb(46 37 35 / 0.12);
+  --shadow-portrait-mobile: 0 0 0 2px rgb(168 135 124 / 0.65), 0 14px 32px rgb(46 37 35 / 0.12);
+  --shadow-frame: 0 16px 38px rgb(46 37 35 / 0.12);
+  --shadow-phone: 0 14px 34px rgb(46 37 35 / 0.12);
+  --shadow-phone-mobile: 0 10px 24px rgb(46 37 35 / 0.12);
+  --shadow-cta-hover: 0 10px 26px rgb(46 37 35 / 0.24);
+  --shadow-outline-hover: 0 8px 20px rgb(46 37 35 / 0.12);
+  --shadow-tag-hover: 0 6px 16px rgb(46 37 35 / 0.1);
+  --shadow-toggle: 0 4px 16px rgb(46 37 35 / 0.07);
+  --shadow-toggle-mobile: 0 4px 14px rgb(46 37 35 / 0.08);
+
+  /* ── Easing ────────────────────────────────────────────────────────────── */
+  --ease-lift: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-sheen: cubic-bezier(0.3, 0.7, 0.4, 1);
+
+  /* ── Durations ─────────────────────────────────────────────────────────── */
+  --duration-micro: 0.22s;      /* nav colour                                */
+  --duration-micro-slow: 0.26s; /* lifts, language crossfade (.26s)          */
+  --duration-preview: 0.42s;    /* preview tab crossfade — deliberate        */
+  --duration-sheen: 0.72s;      /* sheen sweep                               */
+  --duration-reveal: 0.9s;      /* section reveal, desktop                   */
+  --duration-reveal-mobile: 0.8s; /* section reveal, phone                   */
+
+  /* ── Layout ────────────────────────────────────────────────────────────── */
+  --width-content: 1180px;  /* section content max-width  */
+  --width-contact: 820px;   /* contact column             */
+  --width-mobile: 440px;    /* mobile shell               */
+  --width-hero: 900px;      /* hero column                */
+  --width-blush: min(88vw, 1000px);
+  --width-blush-mobile: 150%;   /* of the hero box, not the viewport */
+
+  --gutter: 46px;           /* horizontal section padding, desktop */
+  --gutter-mobile: 24px;    /* horizontal section padding, mobile  */
+  --scroll-offset: 88px;        /* scroll-margin-top, desktop  */
+  --scroll-offset-mobile: 76px; /* scroll-margin-top, mobile   */
+}
+
+/* ── Values JS reads ────────────────────────────────────────────────────────
+   The in-page nav subtracts the sticky-header height before scrollTo, and the
+   layout switches on one breakpoint. Both are mirrored in lib/tokens.ts —
+   these are the CSS-side copies used by the media queries and shell padding.
+   ------------------------------------------------------------------------- */
+:root {
+  --header-h: 76px;         /* sticky header height, desktop */
+  --header-h-mobile: 64px;  /* sticky header height, mobile  */
+}

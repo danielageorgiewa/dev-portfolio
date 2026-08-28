@@ -1,0 +1,84 @@
+/* ============================================================================
+   Section reveal — design/Portfolio Atelier.dc.html lines 505–511,
+   design/Portfolio Atelier Mobile.dc.html lines 507–515
+   ----------------------------------------------------------------------------
+   Every revealing block in the design carries `data-rv` plus an inline style
+   that starts it at opacity 0 / translateY(n) with a matching transition; one
+   IntersectionObserver lifts it to opacity 1 / translateY(0) and unobserves.
+
+   Here the attribute is the whole selector and `data-revealed` is what the
+   observer writes (app/reveal.tsx). The distance and the duration differ per
+   block and per breakpoint, so both are custom properties, declared on :root
+   and overridden *on the element* by whichever section needs a different one:
+   inheritance proximity decides, not selector specificity, so a section never
+   has to out-specify this file or worry about import order.
+
+   The design's four sets of values:
+
+     block            desktop        phone
+     about columns    24px / .9s     20px / .8s   (+.12s stagger on desktop)
+     work row         28px / .9s     22px / .8s
+     stack card       22px / .9s     20px / .8s
+     contact heading  22px / .9s     20px / .8s
+
+   So the root defaults are the about column's, and the three others set
+   --reveal-shift on themselves. Duration is uniform within a breakpoint.
+   ========================================================================= */
+
+:root {
+  --reveal-shift: 24px;
+  --reveal-duration: var(--duration-reveal);
+  --reveal-delay: 0s;
+}
+
+@media (max-width: 899px) {
+  :root {
+    --reveal-shift: 20px;
+    --reveal-duration: var(--duration-reveal-mobile);
+  }
+}
+
+/* Under prefers-reduced-motion the rise flattens to a pure fade. The distance
+   goes to zero rather than the transition being killed, so a block still
+   arrives over --reveal-duration exactly as the design staged it — it just
+   arrives in place instead of travelling. Both design files leave the full
+   translate running under the preference; this is the one piece of automatic,
+   unrequested motion on the page that the preference plainly exists for, and
+   app/globals.css § Reduced motion carries the reasoning for the whole audit.
+
+   Declared after the breakpoint block rather than with extra specificity:
+   :root beats :root on source order alone, and both branches have to lose to
+   this one. It is here rather than in globals.css for the same reason — the
+   two files' :root blocks land in different CSS chunks and their relative
+   order is the bundler's to decide, whereas within one file it is not. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --reveal-shift: 0px;
+  }
+}
+
+[data-rv] {
+  opacity: 0;
+  transform: translateY(var(--reveal-shift));
+  /* A revealing block that also has a hover transition would replace this one
+     by declaring its own, so the list ends in an appendable slot: such a block
+     sets --reveal-transition-extra to a *leading-comma* list of its own
+     transitions and the reveal survives. The empty fallback is what makes the
+     property optional; every other block leaves it unset.
+
+     It has to be a hole in this declaration rather than the whole declaration
+     packed into one custom property: a custom property's var()s are
+     substituted where the property is *declared*, so a :root-level bundle
+     would freeze --reveal-duration and --reveal-delay at the root's values and
+     silently drop both the phone's shorter duration and the about column's
+     stagger. */
+  transition:
+    opacity var(--reveal-duration) ease var(--reveal-delay),
+    transform var(--reveal-duration) ease var(--reveal-delay)
+      var(--reveal-transition-extra, );
+}
+
+[data-rv][data-revealed] {
+  opacity: 1;
+  transform: translateY(0);
+}

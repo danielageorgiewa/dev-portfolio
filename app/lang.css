@@ -1,0 +1,32 @@
+/* ============================================================================
+   Language crossfade — design/HANDOFF.md § Language switching
+   ----------------------------------------------------------------------------
+   Every translated block on the page carries `.lang-fade`. During the 260ms
+   swap it drops to opacity .22 with a 1.5px blur, then comes back.
+
+   In the design this is the `{{ langFade }}` hole, an inline style string
+   repeated on each translated block:
+
+     transition:opacity .26s ease,filter .26s ease;opacity:.22;filter:blur(1.5px)
+
+   Same three declarations, hoisted to a class and switched by one attribute on
+   <html> (set in app/lang.tsx). The root — not .shell — because the header and
+   the language toggle are fixed-position siblings of the shell, outside it.
+
+   The hero is the exception: its opacity is written directly by the scroll
+   handler, which multiplies in the same .22 itself. It must not also carry
+   this class, or the two would compound.
+   ------------------------------------------------------------------------- */
+
+.lang-fade {
+  opacity: 1;
+  filter: none;
+  transition:
+    opacity var(--duration-micro-slow) ease,
+    filter var(--duration-micro-slow) ease;
+}
+
+[data-fading] .lang-fade {
+  opacity: 0.22;
+  filter: blur(1.5px);
+}

@@ -1,0 +1,312 @@
+/* ============================================================================
+   Selected work — design/Portfolio Atelier.dc.html lines 106–161 and
+   design/Portfolio Atelier Mobile.dc.html lines 106–153
+   ----------------------------------------------------------------------------
+   The section box (background, gutters, 70px/40px block padding, scroll
+   margin) is .section--work in globals.css, and the 1180px inner column is
+   .section__inner. This file is the head rule, the row grid and the text
+   column.
+
+   The preview frames the first two rows hold are not here — they are
+   app/preview.css.
+   ========================================================================= */
+
+/* ── Head ───────────────────────────────────────────────────────────────────
+   Heading and count sit on a baseline, separated by the section's only rule.
+   ------------------------------------------------------------------------- */
+.work__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 30px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.work__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-work-h2);
+  letter-spacing: var(--tracking-project);
+}
+
+/* "Selected" / "Избрани" — the first word only. */
+.work__title-em {
+  font-style: italic;
+}
+
+.work__count {
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-count);
+  text-transform: uppercase;
+  color: var(--color-faint);
+  /* The count is one line against a 44px heading; it must not wrap. */
+  white-space: nowrap;
+}
+
+/* Long on desktop, short on a phone — the design uses two different strings
+   (t.workCount / t.workCountShort). Both render; one is hidden. */
+.work__count--short {
+  display: none;
+}
+
+/* ── Row ────────────────────────────────────────────────────────────────────
+   1.1fr / .9fr, centred, with the media and text columns swapping sides on
+   every odd row. The design writes that swap as `order:` on both children,
+   which is what makes one grid serve both directions.
+   ------------------------------------------------------------------------- */
+.work__row {
+  /* The design's reveal for a work row travels 28px, not the 24px the about
+     columns use; app/reveal.css owns everything else about it. */
+  --reveal-shift: 28px;
+
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 70px;
+  align-items: center;
+  padding: 78px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.work__media {
+  order: 1;
+}
+
+.work__text {
+  order: 2;
+}
+
+.work__row--flip .work__media {
+  order: 2;
+}
+
+.work__row--flip .work__text {
+  order: 1;
+}
+
+/* ── OurMoney phone shots ───────────────────────────────────────────────────
+   Two portrait captures at 47% each, the second dropped 34px so the pair
+   reads as a stagger rather than a diptych.
+   ------------------------------------------------------------------------- */
+.work__shots {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.work__shot {
+  width: 47%;
+  height: auto;
+  border-radius: var(--radius-phone);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-phone);
+}
+
+.work__shot--offset {
+  margin-top: 34px;
+}
+
+/* ── Text column ────────────────────────────────────────────────────────── */
+.work__kind {
+  font-size: var(--text-kicker);
+  letter-spacing: var(--tracking-kind);
+  text-transform: uppercase;
+  color: var(--color-faint);
+  margin-bottom: 16px;
+}
+
+.work__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-project);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-project);
+}
+
+.work__what {
+  margin: 22px 0 0;
+  max-width: 42ch;
+  font-size: var(--text-base);
+  line-height: 1.7;
+  font-weight: 300;
+  color: var(--color-body);
+}
+
+.work__built {
+  margin: 16px 0 0;
+  max-width: 42ch;
+  font-size: var(--text-built);
+  line-height: 1.7;
+  font-weight: 300;
+  color: var(--color-body-soft);
+}
+
+/* The confidentiality disclaimer. CLAUDE.md § Hard rules keeps it. */
+.work__note {
+  margin: 14px 0 0;
+  max-width: 44ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-note);
+  line-height: 1.55;
+  color: var(--color-faint);
+}
+
+/* ── Tags ───────────────────────────────────────────────────────────────────
+   Resting geometry is shared; the sheen and the hover it sweeps on are
+   desktop-only, because the phone design's tag has neither — no background
+   gradient, no transition, no style-hover. Below 900px that file is
+   authoritative, so the gesture stops at the breakpoint rather than being
+   left running against a surface that has no pointer.
+   ------------------------------------------------------------------------- */
+.work__tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.work__tag {
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-warm);
+  font-size: var(--text-tag);
+  color: var(--color-body);
+}
+
+@media (min-width: 900px) {
+  /* Same sheen gesture as the hero CTAs and the language toggle (app/sheen.css),
+     parked at 135% rather than 140% and swept to -50% rather than -60% — the
+     design's own figures for this pill, which is narrower than either of those.
+     The header's book-a-call link is the other element on that pair. */
+  .work__tag {
+    background-image: var(--sheen-light);
+    background-size: 260% 100%;
+    background-repeat: no-repeat;
+    background-position: 135% 0;
+    /* .24s is the design's own figure — it sits between --duration-micro and
+       --duration-micro-slow, so neither token fits. Same as the toggle's. */
+    transition:
+      border-color 0.24s ease,
+      color 0.24s ease,
+      transform 0.24s var(--ease-lift),
+      box-shadow 0.24s ease,
+      var(--sheen-sweep);
+  }
+
+  .work__tag:hover {
+    border-color: var(--color-accent);
+    color: var(--color-ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-tag-hover);
+    background-position: -50% 0;
+  }
+}
+
+/* ── Phone ──────────────────────────────────────────────────────────────────
+   design/Portfolio Atelier Mobile.dc.html lines 106–153. One column, media
+   first, no flip. The gap between media and text is the kind kicker's 18px
+   top margin there, not a grid gap, so the grid gap goes to zero.
+   ------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .work__head {
+    gap: 14px;
+    padding-bottom: 16px;
+  }
+
+  .work__title {
+    font-size: 32px;
+  }
+
+  .work__count {
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+  }
+
+  .work__count--long {
+    display: none;
+  }
+
+  .work__count--short {
+    display: inline;
+  }
+
+  .work__row {
+    --reveal-shift: 22px;
+
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 34px 0;
+  }
+
+  /* No flip on a phone: media always above its text. */
+  .work__media,
+  .work__row--flip .work__media {
+    order: 1;
+  }
+
+  .work__text,
+  .work__row--flip .work__text {
+    order: 2;
+  }
+
+  .work__shots {
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .work__shot {
+    width: calc(50% - 6px);
+    border-radius: 14px;
+    box-shadow: var(--shadow-phone-mobile);
+  }
+
+  .work__shot--offset {
+    margin-top: 22px;
+  }
+
+  .work__kind {
+    margin-top: 18px;
+    margin-bottom: 0;
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+  }
+
+  .work__name {
+    margin-top: 8px;
+    font-size: 34px;
+    line-height: 1.08;
+  }
+
+  .work__what {
+    margin-top: 16px;
+    max-width: none;
+    font-size: var(--text-built);
+  }
+
+  .work__built {
+    margin-top: 14px;
+    max-width: none;
+    font-size: 15px;
+  }
+
+  .work__note {
+    margin-top: 12px;
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .work__tags {
+    gap: 7px;
+    margin-top: 18px;
+  }
+
+  .work__tag {
+    padding: 7px 13px;
+    font-size: 12px;
+  }
+}
