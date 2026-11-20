@@ -15,7 +15,7 @@ export const cv: CvContent = {
   links: { github: 'GitHub', linkedin: 'LinkedIn' },
   profile: {
     label: 'Profile',
-    text: 'Full stack DevOps engineer who takes products from the first design to production and keeps them running there. I create brand identities and build websites, online shops and internal systems that drive sales for small businesses. I’m proactive and I learn fast: in four months at XTRMND I went from learning the codebase to owning projects and leading their presentations to shareholders in plain language, and the stock system I took over was in production by my second month. I’m as good in a team as on my own. People say I’m patient and clear to work with, and I hit deadlines either way. I plan to be the best in this field, so I look at every problem from all sides until the work is right.',
+    text: 'Full stack DevOps engineer who takes products from first design to production and keeps them running. Offensive security is my biggest passion and where my career is heading: outside my full-time job I practise every day, playing CTFs, reproducing public CVEs and learning how vulnerabilities are found and exploited. I’m proactive and learn fast: in four months at XTRMND I went from learning the codebase to owning projects and leading their shareholder presentations in plain language, and the stock system I took over was live by my second month. I work as well in a team as alone, people find me patient and clear, and I hit my deadlines. I aim to be the best in this field and look at every problem from all sides.',
   },
   experience: {
     label: 'Experience',
@@ -25,11 +25,11 @@ export const cv: CvContent = {
         place: 'XTRMND · Plovdiv',
         dates: 'Jul 2026 – present',
         bullets: [
-          'Warehouse management system for a rooflight manufacturer, in production since August 2026. I took over the build and moved the business off a shared spreadsheet: five sales channels now share one stock count, and sales that took stock from the wrong product went from 47 to 0.',
-          'I release and run it myself on a Linux server: Docker Compose, PostgreSQL with nightly backups, Caddy, and GitHub Actions deploying to staging and production with health checks and a one-step rollback. I shipped six releases between 6 and 19 November 2026.',
-          'B2B trade portal, live for trade customers. On 22 October 2026 I moved its stock onto the new system in production with a backup, a guarded SQL transaction and a rollback plan. The switch had 0 stock mismatches.',
-          'Language school website and brand identity, designed, built and hosted by me, with a CMS the staff edit themselves. The Google speed score went from 31 to 100 on desktop and from 54 to 95 on mobile.',
-          'One platform for nine WordPress and Shopify shops, so a fix or a price change happens once and every product size gets its own page on Google.',
+          'I took over a rooflight manufacturer’s warehouse management system and moved the business off its shared spreadsheet. In production since August 2026: five sales channels share one stock count, and sales taking stock from the wrong product fell from 47 to 0.',
+          'I release and run it on a Linux server (Docker Compose, PostgreSQL with nightly backups, Caddy). GitHub Actions deploys to staging, then production, with health checks and a one-step rollback. Six releases between 6 and 19 November 2026.',
+          'B2B trade portal: customers order online and get their proforma, VAT invoice and monthly statement automatically, with live stock from the warehouse system. I built the stock link and the statements, and on 22 October 2026 switched its stock over in production (backup, guarded SQL transaction, rollback plan) with 0 mismatches.',
+          'I designed, built and host a language school’s website and brand identity, with a CMS the staff edit themselves. Google speed score: 31 to 100 on desktop, 54 to 95 on mobile.',
+          'I’m moving nine WordPress and Shopify shops onto one platform I designed and built: a fix or price change happens once, and every product size gets its own page on Google.',
         ],
       },
     ],
@@ -82,7 +82,20 @@ export const cv: CvContent = {
   },
   training: {
     label: 'Training',
-    items: [{ title: 'Cloud & DevOps programme', place: 'EPAM · Linux, Bash, Python, Docker, AWS, Kubernetes' }],
+    // Newest first.
+    items: [
+      {
+        title: 'Inside a Cyber Attack: Student Bootcamp',
+        place: 'Focal Point Academy · breach to data theft, SIEM, KQL detections',
+        dates: 'Nov 2026',
+      },
+      {
+        title: 'Cloud Hacking & Cloud Defence',
+        place: 'Focal Point Academy · Microsoft cloud attacks and detection',
+        dates: 'Nov 2026',
+      },
+      { title: 'Cloud & DevOps programme', place: 'EPAM · Linux, Bash, Python, Docker, AWS, Kubernetes' },
+    ],
   },
   educationAndTraining: { label: 'Education and training' },
   languages: {
@@ -93,7 +106,7 @@ export const cv: CvContent = {
     label: 'Security and volunteering',
     items: [
       'CTF player. One of the winners of TryHackMe’s Women in Cyber campaign.',
-      'Women4Cyber volunteer. For the nationwide school visits that teach children about cybersecurity, I took on project management on my own initiative, was the regional lead for Plovdiv, and designed and built the presentation as a web app for grades 1 to 4.',
+      'I volunteer in Women4Cyber Bulgaria’s 40-minute cyber-safety sessions in schools across the country. I took on managing the project, led the Plovdiv region, and designed and built the grades 1 to 4 presentation as a web app presenters run in class.',
     ],
   },
 };

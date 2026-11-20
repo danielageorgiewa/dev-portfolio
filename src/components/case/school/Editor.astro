@@ -2,15 +2,16 @@
 // "The editor" on the language school case study, between "What changed" and "Results"
 // (Figma 129:35 EN, 129:95 BG, 129:155 phone): a heading, a paragraph and the CMS frame.
 //
-// The frame shows a still for now: the whole "CMS recording" frame exported from Figma
-// (129:68 at 2x, 129:188 at 4x for phone), with the Redacted badge and the rewritten city
-// ("в Шумен") baked in. The hidden "Recording (animated GIF)" layer inside that frame still
-// shows the real city: never export, download or publish it.
+// The frame plays the CMS recording: the course title is typed, the live preview follows, the
+// title is deleted again. It was captured from the staging admin at 2x (2112 x 1188) with the
+// city already swapped in the page ("в Шумен"), the school logo hidden in the page and the
+// Redacted badge baked into every frame. Files: public/video/cms-live-preview.{webm,mp4} and
+// the poster (the first frame, title typed) next to them. `data-autoplay-inview` plays it muted
+// on loop while in view; with JavaScript off the poster shows.
 //
-// When the clean recording exists (city already swapped in the page, logo cover baked into the
-// video), put the files in public/video/ and set `recording` below. Nothing else changes: the
-// still becomes the poster and `data-autoplay-inview` plays it muted on loop while in view.
-import { getImage } from 'astro:assets';
+// Set `recording` to undefined to fall back to the Figma still (129:68 at 2x, 129:188 at 4x for
+// phone). The hidden "Recording (animated GIF)" layer inside that Figma frame still shows the
+// real city: never export, download or publish it.
 import ScreenShot from '../ScreenShot.astro';
 import type { CaseContent } from '../../../content/case';
 import type { Lang } from '../../../i18n';
@@ -23,10 +24,11 @@ interface Props {
 }
 const t = Astro.props.t.editor!;
 
-/** e.g. { webm: '/video/cms-live-preview.webm', mp4: '/video/cms-live-preview.mp4' } */
-const recording = undefined as { webm?: string; mp4?: string } | undefined;
-
-const poster = recording ? await getImage({ src: cms, format: 'webp', width: 1344 }) : undefined;
+const recording = {
+  webm: '/video/cms-live-preview.webm',
+  mp4: '/video/cms-live-preview.mp4',
+  poster: '/video/cms-live-preview-poster.webp',
+} as { webm?: string; mp4?: string; poster: string } | undefined;
 ---
 
 <section class="editor">
@@ -43,7 +45,7 @@ const poster = recording ? await getImage({ src: cms, format: 'webp', width: 134
             loop
             playsinline
             preload="none"
-            poster={poster!.src}
+            poster={recording.poster}
             width="1344"
             height="756"
             aria-label={t.alt}

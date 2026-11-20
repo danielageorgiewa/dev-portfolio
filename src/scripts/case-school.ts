@@ -1,5 +1,5 @@
 // Before and after slider on the language school case study (Screens section).
-// Loaded by src/components/case/school/Screens.astro, on that page only.
+// Loaded by src/components/case/school/Compare.astro, on that page only.
 //
 // The HTML already holds both screenshots, the labels and a real <input type="range">. An inline
 // script next to the markup switches the CSS to the overlaid layout before first paint; this
@@ -8,7 +8,10 @@
 //   - arrow keys, Home and End on the range input, which is what screen readers see;
 //   - on first view the handle sweeps in from the right and stops in the middle. Any press
 //     takes over at once, and nothing sweeps under prefers-reduced-motion.
-// Both pages are children of one scrolling box, so a single scroll position moves both.
+// Both pages are children of one scrolling box, so a single scroll position moves both (the
+// shorter page pins its footer to the bottom of the frame in CSS, see school/Compare.astro).
+// The box is a tab stop with a label, so the keyboard scrolls it; the wheel and a vertical swipe
+// scroll it natively.
 // One position, 0 to 100, is written to `--pos` on the slider: the share of the frame, from the
 // left, that shows the old site.
 import { lift, onEnter, placement, prefersReduced } from './motion/env';
@@ -97,6 +100,19 @@ function initCompare(root: HTMLElement) {
     if (scrollable) scroller.tabIndex = 0;
     else scroller.removeAttribute('tabindex');
   };
+  // The handle sits on top of the scrolling box, not in it: pass the wheel through, so the
+  // pages also scroll with the pointer resting on the handle. At either end the page scrolls.
+  handle.addEventListener(
+    'wheel',
+    (event) => {
+      if (event.ctrlKey || !event.deltaY) return;
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? scroller.clientHeight : 1;
+      const before = scroller.scrollTop;
+      scroller.scrollTop += event.deltaY * unit;
+      if (scroller.scrollTop !== before) event.preventDefault();
+    },
+    { passive: false },
+  );
   // Watch the frame and the pages inside it: either changing size can start or end scrolling.
   const sizes = new ResizeObserver(syncScrollable);
   sizes.observe(scroller);

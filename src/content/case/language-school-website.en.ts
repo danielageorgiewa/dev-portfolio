@@ -19,24 +19,29 @@ export const school: CaseContent = {
     ],
   },
   screens: {
-    // Figma draws two tabs, DESKTOP and PHONE, but only the desktop pair of screenshots exists
-    // there (the 390 frame shows a crop of the same pair). There is no redacted phone capture of
-    // either site to export yet. When there is, add { id: 'phone', label: 'PHONE' } here, its
-    // alt texts below and its images in src/components/case/school/Screens.astro.
-    tabs: [{ id: 'desktop', label: 'DESKTOP' }],
+    // Figma draws the two tabs, DESKTOP and PHONE. Each holds one before and after slider with
+    // the full-page captures (src/components/case/school/Screens.astro).
+    tabs: [
+      { id: 'desktop', label: 'DESKTOP' },
+      { id: 'phone', label: 'PHONE' },
+    ],
     caption: 'Both sites captured the same week, old on the left and new on the right. Photos are stand-ins.',
     compare: {
       before: 'BEFORE',
       after: 'AFTER',
-      // Not in Figma: the slider's accessible name and its spoken value ({n} is 0 to 100).
+      // Not in Figma: the slider's accessible name, its spoken value ({n} is 0 to 100) and the
+      // name of the box the two pages scroll in.
       handle: 'Before and after: how much of the old site is shown',
       valueText: '{n}% old site, {m}% new site',
+      scroll: 'Old and new homepage, top to bottom. Scroll to move down both pages together.',
     },
     // Not in Figma.
     tablistLabel: 'Screens',
     alt: {
-      before: 'Homepage of the old school website, with the client logo redacted',
-      after: 'Homepage of the new school website, with the client logo redacted',
+      before: 'The whole homepage of the old school website on a computer. The client logo is redacted and the photos are stand-ins.',
+      after: 'The whole homepage of the new school website on a computer. The client logo is redacted and the photos are stand-ins.',
+      beforePhone: 'The whole homepage of the old school website on a phone. The client logo is redacted and the photos are stand-ins.',
+      afterPhone: 'The whole homepage of the new school website on a phone. The client logo is redacted and the photos are stand-ins.',
     },
     openLabel: 'Open the screenshot at full size',
   },

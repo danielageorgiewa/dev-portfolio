@@ -51,8 +51,8 @@ email link, the same as in production.
 
 Notes:
 
-- The root URL `/` redirects by browser language on Netlify (Bulgarian to `/bg/`, everything
-  else to `/en/`). That rule is in `netlify.toml`. Under `npm run dev` and `npm run preview`
+- The root URL `/` always redirects to the English site, `/en/`, on Netlify. That rule is in
+  `netlify.toml`. Under `npm run dev` and `npm run preview`
   the root is a small page that forwards to `/en/`.
 - To screenshot a page for comparison with Figma:
   `node scripts/shot.mjs <url> <width> <out.png> [--no-js] [--reduced-motion]`.

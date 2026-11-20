@@ -75,9 +75,10 @@ export interface CaseContent {
     /**
      * Before and after slider (language school). `before` / `after` are the labels drawn in
      * Figma. Not in Figma: `handle` is the slider's accessible name, `valueText` its spoken
-     * value with {n} (percent of the old site shown) and {m} (percent of the new one).
+     * value with {n} (percent of the old site shown) and {m} (percent of the new one), `scroll`
+     * the accessible name of the box both pages scroll in.
      */
-    compare?: { before: string; after: string; handle: string; valueText: string };
+    compare?: { before: string; after: string; handle: string; valueText: string; scroll?: string };
   };
   started: {
     kicker: string;

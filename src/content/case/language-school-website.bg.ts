@@ -22,22 +22,28 @@ export const school: CaseContent = {
     ],
   },
   screens: {
-    // Figma draws two tabs, КОМПЮТЪР and ТЕЛЕФОН; only the desktop pair of screenshots exists.
-    // See the note in the English file. The second tab would be { id: 'phone', label: 'ТЕЛЕФОН' }.
-    tabs: [{ id: 'desktop', label: 'КОМПЮТЪР' }],
+    // Figma draws the two tabs, КОМПЮТЪР and ТЕЛЕФОН. See the note in the English file.
+    tabs: [
+      { id: 'desktop', label: 'КОМПЮТЪР' },
+      { id: 'phone', label: 'ТЕЛЕФОН' },
+    ],
     caption: 'Двата сайта са заснети в една и съща седмица, старият вляво, новият вдясно. Снимките са примерни.',
     compare: {
       before: 'ПРЕДИ',
       after: 'СЛЕД',
-      // Not in Figma: the slider's accessible name and its spoken value ({n} is 0 to 100).
+      // Not in Figma: the slider's accessible name, its spoken value ({n} is 0 to 100) and the
+      // name of the box the two pages scroll in.
       handle: 'Преди и след: каква част от стария сайт се вижда',
       valueText: '{n}% стар сайт, {m}% нов сайт',
+      scroll: 'Старата и новата начална страница, от горе до долу. Превъртете, за да се движат двете заедно.',
     },
     // Not in Figma.
     tablistLabel: 'Екрани',
     alt: {
-      before: 'Начална страница на стария сайт на училището, логото на клиента е скрито',
-      after: 'Начална страница на новия сайт на училището, логото на клиента е скрито',
+      before: 'Цялата начална страница на стария сайт на училището на компютър. Логото на клиента е скрито, а снимките са примерни.',
+      after: 'Цялата начална страница на новия сайт на училището на компютър. Логото на клиента е скрито, а снимките са примерни.',
+      beforePhone: 'Цялата начална страница на стария сайт на училището на телефон. Логото на клиента е скрито, а снимките са примерни.',
+      afterPhone: 'Цялата начална страница на новия сайт на училището на телефон. Логото на клиента е скрито, а снимките са примерни.',
     },
     openLabel: 'Отвори екрана в пълен размер',
   },

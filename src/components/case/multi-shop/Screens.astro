@@ -4,7 +4,9 @@
 // The screenshots are the whole "Homepage screen" composites exported from Figma (54:201 at 2x,
 // 81:128 at 4x for the phone thumbnail), with the Redacted badge and the rewritten promo bar
 // baked in. The BG frame (91:110) is the same composite, so both languages share the files.
-// Figma also names a PRODUCT tab but draws no Product screen; see the content file.
+// Figma names a PRODUCT tab but draws no Product screen: that one is a capture of the product
+// page, redacted in the page before the screenshot (same badge, same promo bar strings, prices
+// changed), cropped to the Homepage frame. Its phone file is the same view with the lock-only badge.
 import Screens from '../Screens.astro';
 import ScreenShot from '../ScreenShot.astro';
 import CustomSize from './CustomSize.astro';
@@ -14,6 +16,8 @@ import { customSize as customSizeBg } from '../../../content/case/multi-shop-pla
 import type { Lang } from '../../../i18n';
 import home from '../../../assets/case/multi-shop/screen-home.png';
 import homePhone from '../../../assets/case/multi-shop/screen-home-phone.png';
+import product from '../../../assets/case/multi-shop/screen-product.png';
+import productPhone from '../../../assets/case/multi-shop/screen-product-phone.png';
 
 interface Props {
   lang: Lang;
@@ -29,6 +33,13 @@ const customSize = { en: customSizeEn, bg: customSizeBg }[lang];
     shot={{ src: home, width: 1344, height: 726 }}
     phone={{ src: homePhone, width: 350, height: 189 }}
     alt={t.alt.homepage}
+    openLabel={t.openLabel}
+  />
+  <ScreenShot
+    slot="product"
+    shot={{ src: product, width: 1344, height: 726 }}
+    phone={{ src: productPhone, width: 350, height: 189 }}
+    alt={t.alt.product}
     openLabel={t.openLabel}
   />
   <CustomSize slot="custom-size" t={customSize} />

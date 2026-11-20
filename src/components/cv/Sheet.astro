@@ -18,7 +18,8 @@ const { t } = Astro.props;
 const contact = [
   { text: t.location },
   { text: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
-  { text: new URL(SITE_URL).host, href: SITE_URL },
+  // Shown with the scheme (Daniela, Nov 2026).
+  { text: SITE_URL, href: SITE_URL },
   { text: t.links.github, href: GITHUB_URL },
   { text: t.links.linkedin, href: LINKEDIN_URL },
 ];
@@ -193,6 +194,7 @@ const SEP = '   ·   ';
   }
   .cv__content--jobs,
   .cv__content--notes,
+  .cv__content--entries,
   .cv__skills {
     display: flex;
     flex-direction: column;
@@ -264,12 +266,15 @@ const SEP = '   ·   ';
 
   /* A4 PDF (Figma 51:106 EN, 89:26 BG). Kept after the phone rules: the print viewport is
      narrower than 768px, so both blocks apply and this one has to win.
-     Body line height 138%, section padding 6pt, page padding 30/40/24pt. */
+     Body line height 138%. Vertical whitespace is tighter than the frames (Nov 2026, to make
+     room for the longer copy; type sizes and line heights are untouched): page padding
+     24/40/20pt (was 30/40/24), section padding 4pt (was 6), row gaps 6pt (was 8.68),
+     bullet and skill gaps 2pt (was 3). */
   @media print {
     .cv {
       box-sizing: border-box;
       width: 595pt;
-      padding: 30pt 40pt 24pt;
+      padding: 24pt 40pt 20pt;
       background: #fff;
       border-radius: 0;
       box-shadow: none;
@@ -279,7 +284,7 @@ const SEP = '   ·   ';
     }
     .cv__head {
       gap: 4.96pt;
-      padding-bottom: 10pt;
+      padding-bottom: 8pt;
     }
     .cv__name {
       font-size: calc(28.52pt * var(--cv-serif));
@@ -298,7 +303,7 @@ const SEP = '   ·   ';
       align-items: flex-start;
       gap: 17.36pt;
       /* The 1pt rule is drawn as one device pixel (0.75pt); the padding makes up the rest. */
-      padding-block: 6.25pt 6pt;
+      padding-block: 4.25pt 4pt;
       border-top-width: 1pt;
       break-inside: avoid;
     }
@@ -323,21 +328,22 @@ const SEP = '   ·   ';
 
     .cv__job,
     .cv__content--jobs {
-      gap: 6pt;
+      gap: 5pt;
     }
     .cv__bullets {
-      gap: 3pt;
+      gap: 2pt;
     }
     .cv__bullets li {
       gap: 6.2pt;
     }
-    .cv__content--notes {
-      gap: 8.68pt;
+    .cv__content--notes,
+    .cv__content--entries {
+      gap: 6pt;
     }
 
     /* Skill group names inline in bold. */
     .cv__skills {
-      gap: 3pt;
+      gap: 2pt;
     }
     .cv__skill {
       display: block;
@@ -354,13 +360,13 @@ const SEP = '   ·   ';
     }
 
     /* Education and Training merged: Training loses its rule and its label and sits
-       8.68pt under Education, the gap between the two entries in the A4 frame. */
+       6pt under Education, the same gap as between the other entries. */
     .cv__section--education {
       padding-bottom: 0;
     }
     .cv__section--training {
       border-top: 0;
-      padding-top: 8.68pt;
+      padding-top: 6pt;
     }
     .cv__section--training .cv__label {
       visibility: hidden;

@@ -20,11 +20,11 @@ export const multiShop: CaseContent = {
   },
   screens: {
     // Figma draws three tabs: HOMEPAGE, PRODUCT, CUSTOM SIZE. Only the Homepage screen is drawn
-    // (54:201), so there is no redacted Product composite to export yet. When it exists, add
-    // { id: 'product', label: 'PRODUCT' } here, its alt below and its image in
-    // src/components/case/multi-shop/Screens.astro.
+    // (54:201). The Product screen is a capture of the product page, redacted in the page before
+    // the screenshot (logo badge, promo bar, prices), not a Figma export.
     tabs: [
       { id: 'homepage', label: 'HOMEPAGE' },
+      { id: 'product', label: 'PRODUCT' },
       { id: 'custom-size', label: 'CUSTOM SIZE' },
     ],
     caption: 'Shown with the client’s permission.',
@@ -32,6 +32,7 @@ export const multiShop: CaseContent = {
     tablistLabel: 'Screens',
     alt: {
       homepage: 'Homepage of the new online shop, with the client logo redacted',
+      product: 'Product page of the new online shop, with the client logo redacted',
     },
     openLabel: 'Open the screenshot at full size',
   },

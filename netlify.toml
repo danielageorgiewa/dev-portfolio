@@ -23,16 +23,10 @@
 # --- Redirects ---------------------------------------------------------------------------
 # Rules are read top to bottom and the first match wins.
 
-# The root goes to the visitor's language: Bulgarian browsers to /bg/, everyone else to /en/.
+# The root always opens the English site (Daniela, Nov 2026). Bulgarian is one click away
+# through the EN / БГ switch.
 # `force` is needed because dist/index.html exists (the fallback for hosts without these
 # rules) and a file normally wins over a redirect.
-[[redirects]]
-  from = "/"
-  to = "/bg/"
-  status = 302
-  force = true
-  conditions = { Language = ["bg"] }
-
 [[redirects]]
   from = "/"
   to = "/en/"

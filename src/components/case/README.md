@@ -71,10 +71,11 @@ Helpers: `getCase(lang, slug)`, `caseSlugs()`, `nextCaseSlug(slug)`, `getCaseSta
 | `Built.astro` | `t: built` | Flow of steps; arrows turn down below 1024px. |
 | `Next.astro` | `t: next`, `href` | The band is one link. Round button, as drawn. |
 | `CaseFooter.astro` | `lang`, `t: footer` | Case study footer with the footnote. The route passes `footer={false}` to Base. |
-| `multi-shop/Screens.astro` | `lang`, `t: screens` | Homepage screenshot and the Custom size demo. |
+| `multi-shop/Screens.astro` | `lang`, `t: screens` | Homepage and Product screenshots and the Custom size demo. |
 | `multi-shop/CustomSize.astro` | `t` | The live demo; script in `src/scripts/case-multi-shop.ts`. |
 | `multi-shop/Vignette.astro` | `vignette` | The four multi-shop drawings. |
-| `school/Screens.astro` | `lang`, `t: screens` | The before and after slider (below). Script in `src/scripts/case-school.ts`. |
+| `school/Screens.astro` | `lang`, `t: screens` | The DESKTOP and PHONE tabs, one before and after slider each (below). |
+| `school/Compare.astro` | `variant`, `before`, `after`, `alt`, `c` | One before and after slider with tandem scroll. Script in `src/scripts/case-school.ts`. |
 | `school/Vignette.astro` | `vignette` | The four language school drawings. |
 | `school/Editor.astro` | `lang`, `t` | "The editor" (`AfterChanges`): heading, text and the CMS frame, a still until the recording exists (below). |
 | `warehouse/Screens.astro` | `lang`, `t: screens` | The Today screenshot (the only screen Figma draws). Loads `src/scripts/case-warehouse.ts`, which cycles the tabs every 4s while in view once there is more than one. |
@@ -100,27 +101,45 @@ shows one panel at a time. Hooks for a study's own script, on the `[data-screens
 
 ### Before and after slider (language school)
 
-`school/Screens.astro` puts one slider in the `desktop` slot of `<Screens>`. Copy comes from
-`t.screens.compare` (`before`, `after` as drawn; `handle` and `valueText` are the accessible
-name and spoken value, not in Figma).
+`school/Screens.astro` fills the `desktop` and `phone` slots of `<Screens>` with one
+`school/Compare.astro` each (`variant="desktop"` / `"phone"`). Copy comes from
+`t.screens.compare` (`before`, `after` as drawn; `handle`, `valueText` and `scroll` are the
+slider's accessible name, its spoken value and the name of the scrolling box, not in Figma).
+Alt texts are `t.screens.alt.before` / `after` / `beforePhone` / `afterPhone`.
 
-- Without JavaScript the two screenshots are stacked, each with its label. An inline script
-  sets `data-enhanced` before first paint, which overlays them and shows the handle.
+- Images: full-page captures of both homepages in `src/assets/case/school/*-full.png`
+  (desktop 2688 wide = 1344 CSS px at 2x; phone 780 wide = 390 at 2x). They are the one
+  exception to "export from Figma": each was redacted in the page before the screenshot (logo
+  replaced by the Redacted badge, identifying text rewritten or hidden, client photos replaced
+  by stock photos). The capture scripts are private and not in this repo; never drop in an
+  unredacted capture. Keep every side under 16383px (the WebP limit; AVIF and WebP both
+  encode at the current sizes).
+- Without JavaScript the two pages are stacked, each with its label, each in its own scrolling
+  box no taller than the frame (707px, or 120vw on small screens), focusable and named by its
+  label. An inline script sets `data-enhanced` before first paint, which overlays them, shows
+  the handle and moves the tab stop to the shared scrolling box.
 - One number, `--pos` (0 to 100%), is the share of the frame that shows the old site. The new
   site is clipped with `clip-path`, the line and handle sit at `left: var(--pos)`.
 - The control is a real `<input type="range">` under the handle: arrow keys, Home, End and
   screen readers work through it. Pointer events on the frame do the dragging (`touch-action:
-  pan-y`, so a vertical swipe still scrolls the page; the handle itself is `touch-action: none`).
-- Both pages are children of one scrolling box (`data-compare-scroll`), so they always scroll
-  together. The Figma composites are exactly the height of the frame, so today there is nothing
-  to scroll; drop in a taller pair and it scrolls (the script then adds `data-lenis-prevent`
-  and a tab stop).
+  pan-y`, so a vertical swipe scrolls; the handle itself is `touch-action: none`).
+- Tandem scroll: both pages are children of one scrolling box (`data-compare-scroll`), so one
+  scroll position moves both, 1:1. Wheel, swipe and the keyboard scroll it (it is a tab stop
+  with `role="group"` and a label; the script also sets `data-lenis-prevent` and passes the
+  wheel through the handle). The handle, the line and the labels are outside the scrolled
+  content and stay put. At either end the scroll carries on to the page.
+- The two pages are not the same height. The box is as tall as the longer one; the shorter one
+  is `position: sticky` with `top: frame height − its own height` (from `--ratio`, set inline
+  per image, and `--page-w`), so when its footer reaches the bottom of the frame it stays there
+  while the longer page finishes. There is never empty space, and no scroll listener.
 - First view: the handle sweeps from 100 to 50 (1.1s, ease lift); any press takes over. Under
-  reduced motion it just rests at 50.
-- Below 768px the frame is the 350 × 420 crop from the phone frame, centred on the handle.
-- A PHONE tab needs redacted phone captures of both sites, which Figma does not have yet. When
-  it does: add the tab in both content files and a second slider block in `slot="phone"`. The
-  script handles any number of `[data-compare]` blocks.
+  reduced motion, and on a tab that is opened later, it just rests at 50.
+- Frame sizes. DESKTOP tab: 1344 × 707; below 768px the 350 × 420 frame shows a crop of the
+  desktop pages (2.28 frames wide, centred). PHONE tab: the panel keeps 1344 × 707 and the
+  phone pages sit in a 390px column in its middle; below 768px they fill the 350 × 420 frame.
+- Images are lazy; the hidden tab's pair is only fetched when that tab is opened. The `sizes`
+  for the desktop pair on phones deliberately asks for the 1344 file, not the 2688 one.
+- The script handles any number of `[data-compare]` blocks.
 
 ### The editor recording (language school)
 

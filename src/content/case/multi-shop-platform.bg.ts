@@ -20,10 +20,11 @@ export const multiShop: CaseContent = {
   },
   screens: {
     // Figma draws three tabs: НАЧАЛНА СТРАНИЦА, ПРОДУКТ, РАЗМЕР ПО ПОРЪЧКА. Only the Homepage
-    // screen is drawn (91:110), so there is no redacted Product composite to export yet. When it
-    // exists, add { id: 'product', label: 'ПРОДУКТ' } here and its alt below.
+    // screen is drawn (91:110). The Product screen is a capture of the product page, redacted in
+    // the page before the screenshot, not a Figma export; both languages share the file.
     tabs: [
       { id: 'homepage', label: 'НАЧАЛНА СТРАНИЦА' },
+      { id: 'product', label: 'ПРОДУКТ' },
       { id: 'custom-size', label: 'РАЗМЕР ПО ПОРЪЧКА' },
     ],
     caption: 'Показано с разрешение на клиента.',
@@ -31,6 +32,7 @@ export const multiShop: CaseContent = {
     tablistLabel: 'Екрани',
     alt: {
       homepage: 'Начална страница на новия онлайн магазин, логото на клиента е скрито',
+      product: 'Продуктова страница на новия онлайн магазин, логото на клиента е скрито',
     },
     openLabel: 'Отвори екрана в пълен размер',
   },
