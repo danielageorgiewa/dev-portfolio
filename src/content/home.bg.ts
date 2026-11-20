@@ -19,7 +19,7 @@ export const home: HomeContent = {
     start: 'Започнете проект',
     projects: 'Вижте трите проекта',
     cv: 'Вижте или свалете CV',
-    meta: ['БРАНД, FULL STACK И DEVOPS', 'ПЛОВДИВ · UTC+2', 'СВОБОДНА ЗА ПРОЕКТИ'],
+    meta: ['FULL STACK И DEVOPS', 'ПЛОВДИВ · UTC+2', 'СВОБОДНА ЗА ПРОЕКТИ'],
     scroll: 'СКРОЛ',
     // Not in Figma.
     portraitAlt: 'Портрет на Даниела Георгиева',

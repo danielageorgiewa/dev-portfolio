@@ -138,7 +138,7 @@ export const home: HomeContent = {
     start: 'Start a project',
     projects: 'See three projects',
     cv: 'See or download my CV',
-    meta: ['BRAND, FULL STACK & DEVOPS', 'PLOVDIV · UTC+2', 'OPEN TO FREELANCE WORK'],
+    meta: ['FULL STACK & DEVOPS', 'PLOVDIV · UTC+2', 'OPEN TO FREELANCE WORK'],
     metaPhone: ['FULL STACK & DEVOPS', 'UTC+2', 'OPEN TO WORK'],
     scroll: 'SCROLL',
     portraitAlt: 'Portrait of Daniela Georgieva',

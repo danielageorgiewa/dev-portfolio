@@ -9,7 +9,7 @@ import gsap from 'gsap';
 import { inOut, lift, type Cleanup, type MotionEnv } from './env';
 import { splitChars, splitWords } from './split';
 
-const PIN_LENGTH = 1.2; // of the viewport height
+const PIN_LENGTH = 0.6; // of the viewport height
 
 /** Deterministic scatter, so a refresh or resize never reshuffles the letters. */
 function seeded(seed: number): () => number {
@@ -80,14 +80,12 @@ export function manifesto(env: MotionEnv): Cleanup | void {
       y: (i: number) => scatter[i].y,
       rotation: (i: number) => scatter[i].rotation,
       opacity: 0,
-      ...(env.desktop ? { filter: 'blur(6px)' } : {}),
     },
     {
       x: 0,
       y: 0,
       rotation: 0,
       opacity: 1,
-      ...(env.desktop ? { filter: 'blur(0px)' } : {}),
       duration: 0.5,
       ease: 'back.out(1.8)',
       stagger: 0.12,

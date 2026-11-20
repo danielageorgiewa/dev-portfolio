@@ -67,8 +67,8 @@ const pictures: Record<string, CardPicture> = Object.fromEntries(
       const phone = phoneShots[lang][card.slug];
       const formats = ['avif', 'webp'] as const;
       const [phoneSet, deskSet, fallback] = await Promise.all([
-        Promise.all(formats.map((format) => getImage({ src: phone, format, width: phone.width }))),
-        Promise.all(formats.map((format) => getImage({ src: desk.src, format, widths: [696, 1044, 1392] }))),
+        Promise.all(formats.map((format) => getImage({ src: phone, format, width: phone.width, quality: 86 }))),
+        Promise.all(formats.map((format) => getImage({ src: desk.src, format, widths: [696, 1044, 1392], quality: 86 }))),
         getImage({ src: desk.src, format: 'png', width: desk.src.width }),
       ]);
       const picture: CardPicture = {
@@ -335,7 +335,8 @@ const pictures: Record<string, CardPicture> = Object.fromEntries(
     display: block;
     border-radius: var(--radius-shot);
     overflow: clip;
-    filter: drop-shadow(0 24px 30px rgb(13 8 5 / 0.3));
+    /* box-shadow, not a drop-shadow filter: the filter repainted the whole card on every scroll frame. */
+    box-shadow: 0 24px 30px rgb(13 8 5 / 0.3);
   }
   .card__shot :global(img) {
     width: 100%;

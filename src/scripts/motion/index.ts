@@ -66,7 +66,9 @@ export function boot(): void {
       await ready;
       if (cancelled) return;
       const [smoothModule, homeModule] = await Promise.all([
-        env.hover ? import('./smooth') : null,
+        // Smooth scrolling (Lenis) is off: it made scrolling feel slow (Daniela, Nov 2026).
+        // Native scrolling is used everywhere; ./smooth is kept for reference.
+        null as null | typeof import('./smooth'),
         isHome ? import('./home') : null,
       ]);
       if (cancelled) return;

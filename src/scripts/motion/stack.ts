@@ -50,6 +50,7 @@ export function stack(env: MotionEnv): Cleanup | void {
       card.style.position = 'sticky';
       card.style.top = `${stickTop[i]}px`;
       card.style.transformOrigin = '50% 0';
+      card.style.willChange = 'transform';
     });
   };
 
