@@ -7,6 +7,9 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # The site used to be a Next.js app and Netlify still has its Next.js Runtime attached to
+  # the project. This turns that plugin off so it does not fail the Astro build.
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
 [functions]
   directory = "netlify/functions"
