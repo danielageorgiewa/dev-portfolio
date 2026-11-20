@@ -1,0 +1,301 @@
+---
+// Hero (Figma 43:53 EN, 61:125 BG, 56:82 phone).
+import { Image } from 'astro:assets';
+import Button from '../Button.astro';
+import Toggles from '../Toggles.astro';
+import portrait from '../../assets/portrait.jpg';
+import glow from '../../assets/home/hero-blush-glow.svg?url';
+import type { HomeContent } from '../../content/home';
+import { cvHref, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+  t: HomeContent['hero'];
+}
+const { lang, t } = Astro.props;
+---
+
+<section class="hero" data-hero>
+  <img class="hero__glow" src={glow} alt="" width="1000" height="720" data-glow />
+  <div class="hero__toggles">
+    <Toggles lang={lang} page="" />
+  </div>
+  <div class="hero__center">
+    <div class="hero__portrait" data-hero-portrait>
+      <Image
+        src={portrait}
+        alt={t.portraitAlt}
+        width={176}
+        height={176}
+        densities={[1, 2, 3]}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+    <p class="hero__kicker eyebrow">
+      {
+        t.kickerPhone ? (
+          <Fragment>
+            <span class="only-desktop">{t.kicker}</span>
+            <span class="only-phone">{t.kickerPhone}</span>
+          </Fragment>
+        ) : (
+          t.kicker
+        )
+      }
+    </p>
+    <h1 class="hero__name display">
+      <span class="hero__first" data-hero-first>{t.firstName}</span>
+      <em class="hero__last" data-hero-last>{t.lastName}</em>
+    </h1>
+    <p class="hero__tagline body-large">{t.tagline}</p>
+    <div class="hero__actions" data-hero-actions>
+      <span class="hero__start" data-pulse>
+        <span class="hero__ring hero__ring--2" aria-hidden="true" data-pulse-ring="2"></span>
+        <span class="hero__ring hero__ring--1" aria-hidden="true" data-pulse-ring="1"></span>
+        <Button variant="primary" href="#contact" arrow="→" class="hero__start-btn" data-magnetic>{t.start}</Button>
+      </span>
+      <Button variant="secondary" href="#work" data-magnetic>{t.projects}</Button>
+      <Button variant="secondary" href={cvHref(lang)} arrow="↓" data-magnetic>{t.cv}</Button>
+    </div>
+    <ul class:list={['hero__meta tag', { 'only-desktop': t.metaPhone }]}>
+      {t.meta.map((m) => <li>{m}</li>)}
+    </ul>
+    {
+      t.metaPhone && (
+        <ul class="hero__meta tag only-phone">
+          {t.metaPhone.map((m) => (
+            <li>{m}</li>
+          ))}
+        </ul>
+      )
+    }
+    <p class="hero__scroll" aria-hidden="true">{t.scroll}</p>
+    <span class="hero__scroll-line" aria-hidden="true"></span>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding: 96px var(--gutter) 38px;
+    background: var(--bg-linen);
+  }
+  .hero__glow {
+    position: absolute;
+    left: 50%;
+    top: 246px;
+    width: calc(1000 * var(--u));
+    max-width: none;
+    height: 720px;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .hero__toggles {
+    position: absolute;
+    top: 24px;
+    right: var(--gutter);
+    z-index: 2;
+  }
+  .hero__center {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .hero__portrait {
+    width: 176px;
+    height: 176px;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 2px var(--accent-crimson),
+      0 16px 38px rgb(46 37 35 / 0.12);
+  }
+  .hero__portrait :global(img) {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .hero__kicker {
+    margin-top: 34px;
+  }
+  .hero__name {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: calc(132 * var(--u));
+    line-height: 1;
+    letter-spacing: -0.022em;
+    white-space: nowrap;
+  }
+  .hero__first,
+  .hero__last {
+    display: block;
+  }
+  .hero__tagline {
+    margin-top: 28px;
+    max-width: 560px;
+    color: var(--text-secondary);
+  }
+  .hero__actions {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+  }
+  .hero__start {
+    position: relative;
+    display: inline-flex;
+  }
+  .hero__start :global(.hero__start-btn) {
+    position: relative;
+    filter: drop-shadow(0 10px 14px rgb(178 33 41 / 0.38));
+  }
+  .hero__ring {
+    position: absolute;
+    border: 1.5px solid var(--accent-crimson);
+    border-radius: 4px;
+    inset: -7px;
+    pointer-events: none;
+  }
+  .hero__ring--2 {
+    border-width: 1px;
+    inset: -13px;
+  }
+  .hero__meta {
+    margin-top: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-faint);
+    letter-spacing: 2px;
+  }
+  .hero__meta li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  .hero__meta li + li::before {
+    content: '';
+    width: 1px;
+    height: 12px;
+    margin-inline: 28px;
+    background: var(--border-line);
+  }
+  .hero__scroll {
+    margin-top: 28px;
+    font-size: 11px;
+    line-height: 16px;
+    letter-spacing: 2.2px;
+    color: var(--text-faint);
+  }
+  .hero__scroll-line {
+    margin-top: 8px;
+    width: 1px;
+    height: 34px;
+    background: var(--site-faint);
+  }
+
+  /* Bulgarian (Figma 61:125): Cormorant is set 10% larger on the same 132px line. */
+  @media (min-width: 768px) {
+    :global(:lang(bg)) .hero__name {
+      font-size: calc(145.2 * var(--u));
+      line-height: calc(132 / 145.2);
+    }
+  }
+
+  /* ---- Phone (Figma 56:82) ---- */
+  @media (max-width: 767.98px) {
+    .hero {
+      /* The site header is always visible on phone and sits on top of the hero. */
+      padding: calc(var(--header-h) + 28px) var(--gutter) 20px;
+      overflow-x: clip; /* the 520px glow is wider than the screen */
+    }
+    .hero__toggles {
+      display: none; /* the header carries EN / БГ and the menu */
+    }
+    .hero__glow {
+      top: calc(var(--header-h) + 120 * var(--u));
+      width: calc(520 * var(--u));
+      height: calc(520 * var(--u));
+    }
+    .hero__portrait {
+      width: 132px;
+      height: 132px;
+    }
+    .hero__kicker {
+      margin-top: 24px;
+      /* One line at 390; below that it shrinks with the screen instead of wrapping. */
+      font-size: min(11px, calc(11 * var(--u)));
+      line-height: 1.55;
+      letter-spacing: 0.24em;
+    }
+    .hero__name {
+      margin-top: 14px;
+      font-size: calc(74 * var(--u));
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .hero__tagline {
+      margin-top: 18px;
+      max-width: none;
+      font-size: 16.5px;
+      line-height: 1.55;
+    }
+    .hero__actions {
+      margin-top: 24px;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 22px;
+      width: 100%;
+    }
+    .hero__start {
+      display: flex;
+    }
+    .hero__start :global(.hero__start-btn) {
+      flex: 1 0 0;
+      padding-block: 15px; /* 50px high */
+    }
+    /* The phone frame draws the outlined buttons 52px high (border outside the 50px box). */
+    .hero__actions > :global(.btn--secondary) {
+      padding-block: 15px;
+    }
+    .hero__meta {
+      margin-top: 26px;
+      font-size: min(10.5px, calc(10.5 * var(--u)));
+      line-height: 1.55;
+      letter-spacing: 0.14em;
+    }
+    .hero__meta li + li::before {
+      content: '·';
+      width: auto;
+      height: auto;
+      margin-inline: 0.84em;
+      background: none;
+    }
+    /* No phone meta row in the copy (Bulgarian, which is not drawn on phone): the three
+       desktop items are too long for one line, so they stack without separators. */
+    .hero__meta:not(.only-phone) {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hero__meta:not(.only-phone) li {
+      white-space: normal;
+    }
+    .hero__meta:not(.only-phone) li + li::before {
+      content: none;
+    }
+    .hero__scroll,
+    .hero__scroll-line {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,115 @@
+/* Motion styles. Everything here applies only with JavaScript on (`html.js`), except the
+   reduced-motion rule for the pulse rings. The scripts live in src/scripts/motion/. */
+
+/* First-paint cover for the load animations. The inline script in <head> adds `js-intro`
+   only when motion is allowed, the entry script removes it as it starts the animations, and
+   a timeout in that inline script removes it anyway if the bundle never arrives. */
+html.js-intro :is([data-hero-portrait], [data-hero-actions]),
+html.js-intro :is([data-reveal], [data-rise-lines]),
+html.js-intro [data-reveal-group] > * {
+  opacity: 0;
+}
+/* The hero name is covered on desktop only: on phones it is the largest paint and shows at once. */
+@media (min-width: 768px) {
+  html.js-intro :is([data-hero-first], [data-hero-last]) {
+    opacity: 0;
+  }
+}
+
+/* Lenis (smooth scrolling on mouse / trackpad). */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Sections focused by in-page navigation are not interactive: no focus ring. */
+[data-scroll-target]:focus {
+  outline: none;
+}
+
+/* Home · Start CTA: heartbeat pulse every 2.4s. Ring 1, then ring 2 0.2s later, scale out
+   from the button (1 → 1.18) and fade to 0; the red glow breathes with it. On hover the
+   pulse stops and the button lifts 2px. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-pulse-ring] {
+    animation: pulse-ring 2.4s cubic-bezier(0.22, 0.61, 0.36, 1) infinite backwards;
+  }
+  html.js [data-pulse-ring='2'] {
+    animation-delay: 0.2s;
+  }
+  html.js [data-pulse]::before {
+    content: '';
+    position: absolute;
+    inset: 8px 6px -10px;
+    border-radius: 8px;
+    background: var(--accent-crimson);
+    filter: blur(16px);
+    opacity: 0;
+    pointer-events: none;
+    animation: pulse-glow 2.4s ease-in-out infinite;
+  }
+  html.js [data-pulse] {
+    transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  html.js [data-pulse]:hover {
+    transform: translateY(-2px);
+  }
+  html.js [data-pulse]:hover [data-pulse-ring],
+  html.js [data-pulse]:hover::before {
+    animation: none;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-pulse-ring] {
+    opacity: 0.3;
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  7% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  45%,
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+@keyframes pulse-glow {
+  0%,
+  55%,
+  100% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.4;
+  }
+}
+
+/* Home · CTF flag: the script sets data-ctf-state to "typing" or "done". */
+html.js [data-ctf-state] [data-ctf-hint] {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+html.js [data-ctf-state='done'] [data-ctf-hint] {
+  opacity: 1;
+}
+html.js [data-ctf-state='done'] [data-ctf-cursor] {
+  animation: ctf-blink 1.1s steps(1, end) infinite;
+}
+@keyframes ctf-blink {
+  50% {
+    opacity: 0;
+  }
+}

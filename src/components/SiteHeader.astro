@@ -1,0 +1,324 @@
+---
+// Site header (Figma: case study 54:38 EN / 91:77 BG, CV 51:11, phone 56:72).
+//
+// Desktop (768 and up): name, links, EN / БГ, Portfolio / CV. 79px high (--header-h).
+//   mode 'fixed'  (case studies, CV, 404): always visible, linen with a hairline under it.
+//   mode 'reveal' (home): glass bar that starts hidden and slides down when a script adds
+//     `.is-visible` to [data-site-header="reveal"]. Without JS the home page has no bar;
+//     the hero carries the two switches.
+// Phone (below 768): name, EN / БГ and a menu button, 66px high, always visible in both
+//   modes with CSS only. The menu (a <details>, so it works without JS) holds the links
+//   and the Portfolio / CV switch.
+//
+// The bar is position: fixed in every case, so pages that use it start their content
+// `var(--header-h)` down (the home hero does this on phone only).
+import Toggles from './Toggles.astro';
+import { getHome } from '../content/home';
+import { header } from '../content/header';
+import { href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  /** Path without the language prefix: '' | 'cv' | 'work/<slug>'. */
+  page?: string;
+  mode?: 'reveal' | 'fixed';
+}
+const { lang, page = '', mode = 'fixed' } = Astro.props;
+const t = header[lang];
+const hero = getHome(lang).hero;
+const home = href(lang);
+const isCase = page.startsWith('work/');
+const isCv = page === 'cv';
+
+// Case studies link back to the work list; the CV has no links; everything else lists the home sections.
+const links: { label: string; href: string; back?: boolean }[] = isCase
+  ? [{ label: t.back, href: `${home}#work`, back: true }]
+  : isCv
+    ? []
+    : t.sections.map((s) => ({ label: s.label, href: `${home}#${s.hash}` }));
+---
+
+<header
+  class:list={['site-header', `site-header--${mode}`, { 'site-header--cv': isCv }]}
+  data-site-header={mode}
+>
+  <div class="wrap site-header__row">
+    <a class="site-header__name display-italic" href={home}>{hero.firstName} {hero.lastName}</a>
+    {
+      links.length > 0 && (
+        <nav class="site-header__nav" aria-label={t.navLabel}>
+          {links.map((l) => (
+            <a href={l.href}>
+              {l.back && (
+                <span class="site-header__arrow" aria-hidden="true">
+                  ←
+                </span>
+              )}
+              {l.label}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+    <Toggles lang={lang} page={page} />
+    <details class="site-header__menu" data-site-menu>
+      <summary aria-label={t.menu}>
+        <span class="site-header__bars" aria-hidden="true"><span></span><span></span></span>
+      </summary>
+      <div class="site-header__panel">
+        {
+          links.length > 0 && (
+            <nav class="site-header__panel-nav" aria-label={t.navLabel}>
+              {links.map((l) => (
+                <a href={l.href}>
+                  {l.back && (
+                    <span class="site-header__arrow" aria-hidden="true">
+                      ←
+                    </span>
+                  )}
+                  {l.label}
+                </a>
+              ))}
+            </nav>
+          )
+        }
+        <div class="site-header__panel-mode">
+          <Toggles lang={lang} page={page} only="mode" />
+        </div>
+      </div>
+    </details>
+  </div>
+</header>
+
+<script>
+  // Progressive enhancement for the phone menu: close it after a choice, on Escape and on
+  // a tap outside. Without this the <details> still opens and closes on its own.
+  for (const menu of document.querySelectorAll<HTMLDetailsElement>('[data-site-menu]')) {
+    menu.addEventListener('click', (e) => {
+      if ((e.target as Element).closest('a')) menu.open = false;
+    });
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--header-h);
+    background: var(--bg-linen);
+    border-bottom: 1px solid var(--border-line);
+  }
+  .site-header--reveal {
+    background: var(--site-glass);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    visibility: hidden;
+    transform: translateY(-100%);
+  }
+  .site-header--reveal.is-visible {
+    visibility: visible;
+    transform: none;
+  }
+  /* The slide only exists where a script can toggle the class. Without JS the bar never
+     changes state, and a transition here made Chromium paint a half-slid header into
+     full-page screenshots now and then. */
+  :global(html.js) .site-header--reveal {
+    transition:
+      transform 0.5s var(--ease-lift),
+      visibility 0s linear 0.5s;
+  }
+  :global(html.js) .site-header--reveal.is-visible {
+    transition:
+      transform 0.5s var(--ease-lift),
+      visibility 0s;
+  }
+  .site-header__row {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 100%;
+  }
+  .site-header--cv .site-header__row {
+    gap: 24px;
+  }
+  .site-header__name {
+    margin-right: auto;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    color: var(--text-primary);
+  }
+  .site-header__name:lang(bg) {
+    font-size: 22px;
+  }
+  .site-header__nav {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 28px;
+    font-size: 13.5px;
+    line-height: 18px;
+    letter-spacing: -0.002em;
+    white-space: nowrap;
+    color: var(--site-ink-soft);
+  }
+  .site-header__nav a,
+  .site-header__panel-nav a {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .site-header__arrow {
+    transition: transform 0.3s var(--ease-lift);
+  }
+  .site-header__nav a:hover {
+    color: var(--text-primary);
+  }
+  .site-header__nav a:hover .site-header__arrow {
+    transform: translateX(-3px);
+  }
+  /* The two switches sit a full row gap apart in the header (10px in the hero). */
+  .site-header :global(.toggles) {
+    flex: none;
+    gap: 32px;
+  }
+  .site-header--cv :global(.toggles) {
+    gap: 24px;
+  }
+  .site-header__menu {
+    display: none;
+  }
+
+  /* ---- Phone (Figma 56:72) ---- */
+  @media (max-width: 767.98px) {
+    /* Always visible on phone, in both modes. */
+    .site-header,
+    .site-header--reveal,
+    .site-header--reveal.is-visible {
+      visibility: visible;
+      transform: none;
+      transition: none;
+      border-bottom: 0;
+      background: color-mix(in srgb, var(--bg-linen) 86%, transparent);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+    }
+    .site-header__row,
+    .site-header--cv .site-header__row {
+      gap: 8px;
+    }
+    .site-header__name {
+      flex: 1 0 0;
+      min-width: 0;
+      margin-right: 0;
+      font-size: 18px;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .site-header__name:lang(bg) {
+      /* Shrinks below 390 so the longer Cyrillic name clears the switch at 320. */
+      font-size: min(20px, calc(20 * var(--u)));
+    }
+    .site-header__nav {
+      display: none;
+    }
+    /* Only EN / БГ stays in the bar; Portfolio / CV moves into the menu. */
+    .site-header__row > :global(.toggles > .switch:nth-child(2)) {
+      display: none;
+    }
+    /* 38px switch, 44px tap target. */
+    .site-header__row > :global(.toggles .switch__opt) {
+      position: relative;
+    }
+    .site-header__row > :global(.toggles .switch__opt)::after {
+      content: '';
+      position: absolute;
+      inset: -7px 0;
+    }
+
+    .site-header__menu {
+      display: block;
+      position: relative;
+      flex: none;
+    }
+    .site-header__menu summary {
+      /* Drawn 36 x 28; the padding and negative margin make the tap target 44 x 44. */
+      display: block;
+      padding: 18px 12px;
+      margin: -8px -4px;
+      list-style: none;
+      cursor: pointer;
+      border-radius: var(--radius);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .site-header__menu summary::-webkit-details-marker {
+      display: none;
+    }
+    .site-header__bars {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .site-header__bars span {
+      width: 20px;
+      height: 1.5px;
+      border-radius: var(--radius);
+      background: var(--text-primary);
+    }
+    .site-header__panel {
+      position: absolute;
+      top: calc(100% + 14px);
+      right: 0;
+      min-width: 208px;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      border: 1px solid var(--border-line);
+      border-radius: var(--radius);
+      background: var(--bg-paper);
+      box-shadow: 0 16px 38px rgb(46 37 35 / 0.12);
+    }
+    .site-header__panel-nav {
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-line);
+      font-size: 15px;
+      line-height: 22px;
+      letter-spacing: -0.005em;
+      color: var(--text-primary);
+    }
+    .site-header__panel-nav a {
+      padding: 11px 12px;
+    }
+    .site-header__panel-mode {
+      padding: 4px;
+    }
+    .site-header__panel-mode :global(.toggles) {
+      display: block;
+    }
+    .site-header__panel-mode :global(.switch) {
+      display: flex;
+      filter: none;
+      background: var(--bg-sand);
+    }
+    .site-header__panel-mode :global(.switch__opt) {
+      flex: 1 0 0;
+      padding-block: 11px;
+      text-align: center;
+    }
+  }
+</style>

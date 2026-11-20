@@ -1,0 +1,369 @@
+---
+// The CV sheet (Figma 51:30 EN, 95:36 BG, 83:66 phone) and, through the print styles at the
+// bottom of this file, the A4 PDF (51:106 EN, 89:26 BG). Same markup, same content object.
+//
+// Print differences from the web sheet, all done in CSS:
+//   - metrics from the A4 frames, in pt (A4 is 595 x 842 pt);
+//   - skill group names run inline in bold with a colon instead of sitting in a column;
+//   - Education and Training read as one section under the `educationAndTraining` label.
+import Entry from './Entry.astro';
+import type { CvContent } from '../../content/cv';
+import { CONTACT_EMAIL, GITHUB_URL, LINKEDIN_URL, SITE_URL } from '../../i18n';
+
+interface Props {
+  t: CvContent;
+}
+const { t } = Astro.props;
+
+const contact = [
+  { text: t.location },
+  { text: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  { text: new URL(SITE_URL).host, href: SITE_URL },
+  { text: t.links.github, href: GITHUB_URL },
+  { text: t.links.linkedin, href: LINKEDIN_URL },
+];
+// Figma sets the separators as three spaces, a middle dot and three spaces.
+const SEP = '   ·   ';
+---
+
+<article class="cv" data-reveal-group>
+  <header class="cv__head" data-reveal>
+    <h1 class="cv__name display">{t.name}</h1>
+    <p class="cv__title display-italic">{t.title}</p>
+    <p class="cv__contact">{contact.map((c, i) => <Fragment>{i > 0 && SEP}{c.href ? <a href={c.href}>{c.text}</a> : c.text}</Fragment>)}</p>
+  </header>
+
+  <section class="cv__section" data-reveal>
+    <h2 class="cv__label">{t.profile.label}</h2>
+    <div class="cv__content">
+      <p class="cv__profile">{t.profile.text}</p>
+    </div>
+  </section>
+
+  <section class="cv__section" data-reveal>
+    <h2 class="cv__label">{t.experience.label}</h2>
+    <div class="cv__content cv__content--jobs">
+      {
+        t.experience.jobs.map((job) => (
+          <div class="cv__job">
+            <Entry entry={job} size="job" />
+            <ul class="cv__bullets">
+              {job.bullets.map((b) => (
+                <li>{b}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="cv__section" data-reveal>
+    <h2 class="cv__label">{t.skills.label}</h2>
+    <dl class="cv__content cv__skills">
+      {
+        t.skills.groups.map((g) => (
+          <div class:list={['cv__skill', { 'cv__skill--screen-only': g.screenOnly }]}>
+            <dt>{g.name}</dt>
+            <dd>{g.items}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="cv__section cv__section--education" data-reveal>
+    <h2 class="cv__label">
+      <span class="cv__screen">{t.education.label}</span>
+      <span class="cv__print">{t.educationAndTraining.label}</span>
+    </h2>
+    <div class="cv__content cv__content--entries">
+      {t.education.items.map((e) => <Entry entry={e} />)}
+    </div>
+  </section>
+
+  <section class="cv__section cv__section--training" data-reveal>
+    <h2 class="cv__label">{t.training.label}</h2>
+    <div class="cv__content cv__content--entries">
+      {t.training.items.map((e) => <Entry entry={e} />)}
+    </div>
+  </section>
+
+  <section class="cv__section" data-reveal>
+    <h2 class="cv__label">{t.languages.label}</h2>
+    <div class="cv__content">
+      <p>{t.languages.text}</p>
+    </div>
+  </section>
+
+  <section class="cv__section" data-reveal>
+    <h2 class="cv__label">{t.volunteering.label}</h2>
+    <div class="cv__content cv__content--notes">
+      {t.volunteering.items.map((p) => <p>{p}</p>)}
+    </div>
+  </section>
+</article>
+
+<style>
+  .cv {
+    /* Cormorant runs smaller than Instrument Serif: the Bulgarian frames set every serif
+       line 8% larger (64 → 69.1, 26 → 28.1, 20 → 21.6, 18 → 19.4). */
+    --cv-serif: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 72px;
+    background: var(--bg-paper);
+    border-radius: var(--radius-shot);
+    box-shadow: 0 12px 32px rgb(46 37 35 / 0.08);
+    color: var(--site-ink-soft);
+    /* Line heights are the whole-pixel values Figma lays the 150% text out with. */
+    font-size: 13.5px;
+    line-height: 20px;
+    letter-spacing: -0.005em;
+    overflow-wrap: break-word;
+  }
+  .cv:lang(bg) {
+    --cv-serif: 1.08;
+  }
+
+  .cv__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 24px;
+  }
+  .cv__name {
+    font-size: calc(64px * var(--cv-serif));
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--text-primary);
+  }
+  .cv__title {
+    font-size: calc(26px * var(--cv-serif));
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--text-secondary);
+  }
+  .cv__contact {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--site-muted);
+    white-space: pre-wrap;
+  }
+  .cv__contact a:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .cv__section {
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    padding-block: 22px;
+    border-top: 1px solid var(--border-line);
+  }
+  .cv__label {
+    flex: none;
+    width: 150px;
+    font-size: 10.5px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cv__print {
+    display: none;
+  }
+  .cv__content {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+  .cv__profile {
+    font-size: 14.5px;
+    line-height: 22px;
+  }
+
+  .cv__job {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .cv__content--jobs,
+  .cv__content--notes,
+  .cv__skills {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .cv__bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cv__bullets li {
+    display: flex;
+    gap: 10px;
+  }
+  .cv__bullets li::before {
+    content: '•';
+    flex: none;
+    color: var(--text-faint);
+  }
+
+  .cv__skill {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cv__skill dt {
+    flex: none;
+    width: 150px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .cv__skill dd {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+
+  /* Phone (Figma 83:66): the sheet runs edge to edge, labels sit above their content. */
+  @media (max-width: 767.98px) {
+    .cv {
+      padding: 40px var(--gutter);
+    }
+    .cv__name {
+      font-size: calc(36 * var(--u) * var(--cv-serif));
+    }
+    .cv__title {
+      font-size: calc(22px * var(--cv-serif));
+    }
+    .cv__section {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .cv__label,
+    .cv__skill dt {
+      width: auto;
+    }
+    .cv__content {
+      flex: none;
+    }
+    .cv__skill {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+    }
+    .cv__skill dd {
+      flex: none;
+    }
+  }
+
+  /* A4 PDF (Figma 51:106 EN, 89:26 BG). Kept after the phone rules: the print viewport is
+     narrower than 768px, so both blocks apply and this one has to win.
+     Body line height 138%, section padding 6pt, page padding 30/40/24pt. */
+  @media print {
+    .cv {
+      box-sizing: border-box;
+      width: 595pt;
+      padding: 30pt 40pt 24pt;
+      background: #fff;
+      border-radius: 0;
+      box-shadow: none;
+      /* 138% line height, on the whole-point grid Figma lays it out with. */
+      font-size: 8.37pt;
+      line-height: 12pt;
+    }
+    .cv__head {
+      gap: 4.96pt;
+      padding-bottom: 10pt;
+    }
+    .cv__name {
+      font-size: calc(28.52pt * var(--cv-serif));
+    }
+    .cv__title {
+      font-size: calc(12.4pt * var(--cv-serif));
+    }
+    .cv__contact {
+      font-size: 7.44pt;
+      line-height: 10pt;
+      white-space: pre;
+    }
+
+    .cv__section {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 17.36pt;
+      /* The 1pt rule is drawn as one device pixel (0.75pt); the padding makes up the rest. */
+      padding-block: 6.25pt 6pt;
+      border-top-width: 1pt;
+      break-inside: avoid;
+    }
+    .cv__label {
+      width: 93pt;
+      font-size: 6.51pt;
+      line-height: 9pt;
+    }
+    .cv__screen {
+      display: none;
+    }
+    .cv__print {
+      display: inline;
+    }
+    .cv__content {
+      flex: 1 0 0;
+    }
+    .cv__profile {
+      font-size: 8.99pt;
+      line-height: 12pt;
+    }
+
+    .cv__job,
+    .cv__content--jobs {
+      gap: 6pt;
+    }
+    .cv__bullets {
+      gap: 3pt;
+    }
+    .cv__bullets li {
+      gap: 6.2pt;
+    }
+    .cv__content--notes {
+      gap: 8.68pt;
+    }
+
+    /* Skill group names inline in bold. */
+    .cv__skills {
+      gap: 3pt;
+    }
+    .cv__skill {
+      display: block;
+    }
+    .cv__skill--screen-only {
+      display: none;
+    }
+    .cv__skill dt,
+    .cv__skill dd {
+      display: inline;
+    }
+    .cv__skill dt::after {
+      content: ': ';
+    }
+
+    /* Education and Training merged: Training loses its rule and its label and sits
+       8.68pt under Education, the gap between the two entries in the A4 frame. */
+    .cv__section--education {
+      padding-bottom: 0;
+    }
+    .cv__section--training {
+      border-top: 0;
+      padding-top: 8.68pt;
+    }
+    .cv__section--training .cv__label {
+      visibility: hidden;
+    }
+  }
+</style>

@@ -1,0 +1,202 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: var(--header-h);
+}
+
+body {
+  margin: 0;
+  background: var(--bg-linen);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16.5px;
+  line-height: 26px;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--display-weight, 400);
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-crimson);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent-crimson);
+  color: var(--text-on-dark);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 100;
+  padding: 12px 18px;
+  background: var(--bg-espresso);
+  color: var(--text-on-dark);
+  border-radius: var(--radius);
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+/* Page width: sections are full bleed, their content sits in a 1440 column. */
+.wrap {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Shared type styles (Figma text styles). */
+.display {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight, 400);
+  font-style: normal;
+}
+.display em,
+.display-italic {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight, 400);
+  font-style: italic;
+}
+/* Cormorant swaps in Bulgarian letterforms (locl) when the page is lang="bg". The Figma
+   frames are drawn with the default Cyrillic forms, so the feature is turned off. */
+:lang(bg) .display,
+:lang(bg) .display-italic {
+  font-feature-settings: 'locl' 0;
+}
+
+.eyebrow {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.body-large {
+  font-size: 18px;
+  line-height: 30px;
+  letter-spacing: -0.005em;
+}
+
+.label {
+  font-size: 14.5px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: -0.003em;
+}
+
+.small {
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: -0.002em;
+}
+
+.tag {
+  font-size: 12.5px;
+  line-height: 16px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Phone / desktop variants of the same copy (the 390 frames shorten some of it).
+   display: none also removes the hidden variant from the accessibility tree. */
+@media (min-width: 768px) {
+  .only-phone {
+    display: none !important;
+  }
+}
+@media (max-width: 767.98px) {
+  .only-desktop {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,49 @@
+---
+// Case study footer (Figma 54:182 EN, 91:213 BG, 81:231 phone): the name on the left and the
+// footnote about placeholder client names on the right. The shared Footer shows the home
+// page lines, so the case pages render this one (Base gets footer={false}).
+// The hidden flag sits in a data attribute on the footer, as in the shared Footer: devtools only.
+import type { CaseContent } from '../../content/case';
+import { href, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+  t: CaseContent['footer'];
+}
+const { lang, t } = Astro.props;
+---
+
+<footer class="case-footer" data-flag="dg{l3ts_t4lk}">
+  <div class="wrap case-footer__row">
+    <p class="case-footer__left">{t.left}</p>
+    <p class="case-footer__right">{t.right}</p>
+  </div>
+</footer>
+
+<style>
+  .case-footer {
+    color: var(--text-faint);
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .case-footer__row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding-top: 24px;
+    padding-bottom: 32px;
+  }
+  .case-footer__left {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+  @media (max-width: 767.98px) {
+    .case-footer__row {
+      position: relative;
+      flex-direction: column;
+    }
+    .case-footer__left {
+      flex: none;
+    }
+  }
+</style>

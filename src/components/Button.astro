@@ -1,0 +1,75 @@
+---
+// Button (Figma component 4:11). Primary is crimson, Secondary is outlined, Light is a slot button.
+interface Props {
+  variant?: 'primary' | 'secondary' | 'light';
+  href?: string;
+  type?: 'button' | 'submit';
+  /** Trailing glyph, set apart by two spaces as in Figma ("Start a project  →"). */
+  arrow?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+const { variant = 'primary', href, type = 'button', arrow, class: cls, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  class:list={['btn', `btn--${variant}`, cls]}
+  href={href}
+  type={href ? undefined : type}
+  {...rest}
+>
+  <span class="btn__label"><slot /></span>
+  {arrow && <span class="btn__arrow" aria-hidden="true">{arrow}</span>}
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55em;
+    /* Figma draws borders inside the box: 15/26 padding including the 1px border, 50px tall. */
+    padding: 14px 25px;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    font-size: 14.5px;
+    line-height: 20px;
+    font-weight: 500;
+    letter-spacing: -0.003em;
+    white-space: nowrap;
+    transition:
+      transform 0.3s var(--ease-lift),
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      color 0.25s ease;
+  }
+  .btn__arrow {
+    transition: transform 0.3s var(--ease-lift);
+  }
+  .btn--primary {
+    padding: 15px 26px;
+    border: 0;
+    background: var(--accent-crimson);
+    color: var(--text-on-dark);
+  }
+  .btn--primary:hover {
+    background: var(--accent-crimson-deep);
+  }
+  .btn--secondary {
+    border-color: var(--site-border-warm);
+    color: var(--text-primary);
+  }
+  .btn--secondary:hover {
+    border-color: var(--text-primary);
+  }
+  .btn--light {
+    background: var(--bg-sand);
+    border-color: var(--border-line);
+    color: var(--text-secondary);
+    font-size: 13.5px;
+  }
+  .btn:hover .btn__arrow {
+    transform: translateX(3px);
+  }
+</style>

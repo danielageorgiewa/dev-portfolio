@@ -1,0 +1,356 @@
+---
+// The four mini interfaces on the language school "What changed" cards, built in HTML and CSS.
+// Figma: 154:16 brand-kit, 154:32 enquiry, 154:50 course-finder, 156:15 speed
+// (BG 154:86 / 102 / 120, 156:24; phone 154:156 / 172 / 190, 156:33).
+// Every number below is a vignette pixel: the drawings are 440 × 200 and Changes.astro sets
+// `--v` (0.98px on desktop, about 0.63px at 390), so `--x:200` is 200 of those.
+// No client marks: the words are generic and come from the content file; the navy, gold and
+// cream are the palette Figma draws on the brand card.
+import type { CaseVignette } from '../../../content/case';
+
+interface Props {
+  vignette: CaseVignette;
+}
+const { vignette } = Astro.props;
+const l = vignette.labels;
+
+/** Position and size of a box, in vignette pixels. */
+const at = (x: number, y: number, w?: number, h?: number) =>
+  `--x:${x};--y:${y}` + (w === undefined ? '' : `;--w:${w}`) + (h === undefined ? '' : `;--h:${h}`);
+/** Position and font size of a line of text. */
+const text = (x: number, y: number, size: number) => `--x:${x};--y:${y};--s:${size}`;
+
+const swatches = [
+  { x: 18, tone: 'navy' },
+  { x: 54, tone: 'gold' },
+  { x: 90, tone: 'cream' },
+  { x: 126, tone: 'night' },
+];
+const steps = [
+  { x: 16, label: l.step1, done: true },
+  { x: 186, label: l.step2, done: true },
+  { x: 356, label: l.step3, done: false },
+];
+const chips = [
+  { label: l.chip1, on: true },
+  { label: l.chip2, on: true },
+  { label: l.chip3, on: true },
+  { label: l.chip4, on: false },
+];
+const results = [
+  { y: 48, label: l.result1, lifted: true },
+  { y: 118, label: l.result2, lifted: false },
+];
+---
+
+{
+  vignette.kind === 'brand-kit' && (
+    <div class="vig">
+      <div class="box box--card box--r14" style={at(0, 10, 170, 180)}>
+        <span class="t t--navy t--600" style={text(18, 18, 64)}>
+          {l.type}
+        </span>
+        {swatches.map((s) => (
+          <span class:list={['dot', `dot--${s.tone}`]} style={at(s.x, 128, 28, 28)} />
+        ))}
+      </div>
+      <div class="box box--card box--r14" style={at(200, 30, 240, 140)}>
+        <span class="bar bar--navy" style={at(18, 22, 150, 10)} />
+        <span class="bar bar--faint" style={at(18, 42, 200, 6)} />
+        <span class="bar bar--faint" style={at(18, 56, 170, 6)} />
+        <span class="row row--buttons" style={at(18, 88)}>
+          <span class="pill pill--navy">{l.primary}</span>
+          <span class="pill pill--line pill--ink">{l.secondary}</span>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'enquiry' && (
+    <div class="vig">
+      <span class="bar bar--crimson" style={at(44, 27, 142, 2)} />
+      <span class="bar bar--crimson" style={at(214, 27, 142, 2)} />
+      {steps.map((step) => (
+        <>
+          <span class="dot dot--crimson dot--mark" style={at(step.x, 14, 28, 28)}>
+            {step.done ? (
+              <svg viewBox="0 0 14 14" fill="none">
+                <path
+                  d="M3.78 7.29 6.16 9.66 10.36 4.62"
+                  stroke="#fff"
+                  stroke-width="1.82"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            ) : (
+              l.step3Number
+            )}
+          </span>
+          <span
+            class:list={['t t--500 t--center', step.done ? 't--ink' : 't--crimson']}
+            style={`${text(step.x - 46, 50, 11)};--w:120`}
+          >
+            {step.label}
+          </span>
+        </>
+      ))}
+      <div class="box box--card box--r14" style={at(40, 100, 360, 64)}>
+        <span class="dot dot--crimson dot--mark" style={at(16, 18, 28, 28)}>
+          <svg viewBox="0 0 14 14" fill="none">
+            <path
+              d="M3.78 7.29 6.16 9.66 10.36 4.62"
+              stroke="#fff"
+              stroke-width="1.82"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+        <span class="t t--ink t--600" style={text(56, 14, 13)}>
+          {l.toast}
+        </span>
+        <span class="t t--muted" style={text(56, 34, 11)}>
+          {l.toastNote}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'course-finder' && (
+    <div class="vig">
+      <span class="row row--chips" style={at(0, 0)}>
+        {chips.map((chip) => (
+          <span class:list={['pill', chip.on ? 'pill--sky' : 'pill--line pill--muted']}>{chip.label}</span>
+        ))}
+      </span>
+      {results.map((row) => (
+        <div class:list={['box box--r12', row.lifted ? 'box--card' : 'box--line']} style={at(0, row.y, 440, 58)}>
+          <span class="t t--ink t--600" style={text(16, 20, 13)}>
+            {row.label}
+          </span>
+          <span class="pill pill--solid pill--right" style="--y:15">
+            {l.enrol}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'speed' && (
+    <div class="vig">
+      <div class="box box--soft box--r14" style={at(0, 10, 440, 180)}>
+        <span class="t t--muted t--500 t--spaced" style={text(20, 18, 11)}>
+          {l.title}
+        </span>
+        <span class="t t--ink t--500" style={text(20, 58, 12)}>
+          {l.old}
+        </span>
+        <span class="bar bar--faint" style={at(20, 78, 290, 14)} />
+        <span class="t t--muted t--600" style={text(320, 76, 13)}>
+          {l.oldValue}
+        </span>
+        <span class="t t--ink t--500" style={text(20, 116, 12)}>
+          {l.new}
+        </span>
+        <span class="bar bar--crimson" style={at(20, 136, 25, 14)} />
+        <span class="t t--crimson t--600" style={text(55, 134, 13)}>
+          {l.newValue}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .vig {
+    /* The school palette as drawn on the brand card. */
+    --navy: #1e3a6d;
+    --gold: #c8a15a;
+    --cream: #f3ebdb;
+    --night: #1a1a2e;
+    position: absolute;
+    inset: 0;
+    font-family: var(--font-body);
+    letter-spacing: 0;
+  }
+  .box,
+  .dot,
+  .bar,
+  .row,
+  .t {
+    position: absolute;
+    left: calc(var(--x) * var(--v));
+    top: calc(var(--y) * var(--v));
+  }
+  .box,
+  .dot,
+  .bar {
+    width: calc(var(--w) * var(--v));
+    height: calc(var(--h) * var(--v));
+  }
+
+  /* Boxes. Borders are inset shadows, so text positions match Figma's (measured from the outer edge). */
+  .box {
+    background: #fff;
+  }
+  .box--line {
+    box-shadow: inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint);
+  }
+  .box--card {
+    box-shadow:
+      inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint),
+      0 calc(6 * var(--v)) calc(8 * var(--v)) rgb(64 20 26 / 0.09);
+  }
+  .box--soft {
+    box-shadow:
+      inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint),
+      0 calc(6 * var(--v)) calc(16 * var(--v)) rgb(64 20 26 / 0.09);
+  }
+  .box--r12 {
+    border-radius: calc(12 * var(--v));
+  }
+  .box--r14 {
+    border-radius: calc(14 * var(--v));
+  }
+
+  /* Dots: swatches and step markers. */
+  .dot {
+    border-radius: 50%;
+  }
+  .dot--navy {
+    background: var(--navy);
+  }
+  .dot--gold {
+    background: var(--gold);
+  }
+  .dot--cream {
+    background: var(--cream);
+    box-shadow: inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint);
+  }
+  .dot--night {
+    background: var(--night);
+  }
+  .dot--crimson {
+    background: var(--accent-crimson);
+  }
+  .dot--mark {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: calc(12 * var(--v));
+    line-height: 1;
+    font-weight: 600;
+  }
+  .dot--mark svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Bars: placeholder lines of text, stepper lines and the speed bars. */
+  .bar {
+    border-radius: var(--radius);
+  }
+  .bar--navy {
+    background: var(--navy);
+  }
+  .bar--faint {
+    background: var(--site-border-faint);
+  }
+  .bar--crimson {
+    background: var(--accent-crimson);
+  }
+
+  /* Text. */
+  .t {
+    font-size: calc(var(--s) * var(--v));
+    line-height: 1.21;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .t--500 {
+    font-weight: 500;
+  }
+  .t--600 {
+    font-weight: 600;
+  }
+  .t--ink {
+    color: var(--text-ink);
+  }
+  .t--muted {
+    color: var(--site-muted);
+  }
+  .t--crimson {
+    color: var(--accent-crimson);
+  }
+  .t--navy {
+    color: var(--navy);
+  }
+  .t--spaced {
+    letter-spacing: 0.06em;
+  }
+  .t--center {
+    width: calc(var(--w) * var(--v));
+    text-align: center;
+  }
+
+  /* Pills hug their label, so the Bulgarian ones size themselves. */
+  .row {
+    display: flex;
+  }
+  .row--chips {
+    gap: calc(8 * var(--v));
+  }
+  .row--buttons {
+    gap: calc(32 * var(--v));
+  }
+  .row--buttons:lang(bg) {
+    gap: calc(21 * var(--v));
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    height: calc(21 * var(--v));
+    padding: 0 calc(10 * var(--v));
+    border-radius: var(--radius);
+    font-size: calc(11 * var(--v));
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pill--right {
+    position: absolute;
+    top: calc(var(--y) * var(--v));
+    right: calc(16 * var(--v));
+  }
+  .pill--line {
+    background: #fff;
+    box-shadow: inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint);
+  }
+  .pill--ink {
+    color: var(--text-ink);
+  }
+  .pill--muted {
+    color: var(--site-muted);
+  }
+  .pill--sky {
+    background: var(--project-sky);
+    color: var(--accent-crimson);
+  }
+  .pill--solid {
+    background: var(--accent-crimson);
+    color: #fff;
+    font-weight: 600;
+  }
+  .pill--navy {
+    background: var(--navy);
+    color: #fff;
+    font-weight: 600;
+  }
+</style>

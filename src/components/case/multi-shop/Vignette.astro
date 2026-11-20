@@ -1,0 +1,307 @@
+---
+// The four mini interfaces on the multi-shop "What changed" cards, built in HTML and CSS.
+// Figma: 153:16 fan-out, 153:60 size-rows, 153:80 stock-link, 153:93 custom-size
+// (BG 153:108 / 152 / 172 / 185, phone 153:200 / 244 / 264 / 277).
+// Every number below is a vignette pixel: the drawings are 440 × 200 and Changes.astro sets
+// `--v` (0.98px on desktop, about 0.63px at 390), so `--x:236` is 236 of those.
+// No client marks: the words are generic ("Shop 1", "Warehouse") and come from the content file.
+import type { CaseVignette } from '../../../content/case';
+
+interface Props {
+  vignette: CaseVignette;
+}
+const { vignette } = Astro.props;
+const l = vignette.labels;
+
+/** Position and size of a box, in vignette pixels. */
+const at = (x: number, y: number, w?: number, h?: number) =>
+  `--x:${x};--y:${y}` + (w === undefined ? '' : `;--w:${w}`) + (h === undefined ? '' : `;--h:${h}`);
+/** Position and font size of a line of text. */
+const text = (x: number, y: number, size: number) => `--x:${x};--y:${y};--s:${size}`;
+
+const shops = [10, 74, 138].flatMap((y) => [236, 306, 376].map((x) => ({ x, y })));
+const sizeRows = [
+  { y: 48, size: l.size1, pill: l.pill1, active: false },
+  { y: 98, size: l.size2, pill: l.pill2, active: true },
+  { y: 148, size: l.size3, pill: l.pill3, active: false },
+];
+---
+
+{
+  vignette.kind === 'fan-out' && (
+    <div class="vig">
+      <div class="box box--card box--r10" style={at(0, 80, 160, 40)}>
+        <span class="dot dot--crimson" style={at(11, 15, 8, 8)} />
+        <span class="t t--ink t--500" style={text(25, 11, 11)}>
+          {l.fix}
+        </span>
+      </div>
+      <svg class="abs lines" style={at(160, 36, 76, 128)} viewBox="0 0 76 128" fill="none">
+        <path d="M0 64C38 64 38 0 76 0" />
+        <path d="M0 64H76" />
+        <path d="M0 64C38 64 38 128 76 128" />
+      </svg>
+      {shops.map((shop, i) => (
+        <div class="box box--card box--r9" style={at(shop.x, shop.y, 62, 52)}>
+          <span class="t t--muted" style={text(7, 7, 9)}>
+            {l.shop} {i + 1}
+          </span>
+          <svg class="abs" style={at(39, 27, 14, 14)} viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="7" fill="var(--accent-crimson)" />
+            <path
+              d="M3.78 7.29 6.16 9.66 10.36 4.62"
+              stroke="#fff"
+              stroke-width="1.82"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'size-rows' && (
+    <div class="vig">
+      <div class="box box--card box--r2" style={at(0, 0, 440, 34)}>
+        <span class="dot dot--faint" style={at(13, 12, 8, 8)} />
+        <span class="t t--muted" style={text(29, 9, 11)}>
+          {l.url}
+        </span>
+      </div>
+      {sizeRows.map((row) => (
+        <div class:list={['box box--r10', row.active ? 'box--active' : 'box--line']} style={at(0, row.y, 440, 42)}>
+          <span class:list={['t t--ink', { 't--600': row.active }]} style={text(13, 12, 12)}>
+            {row.size}
+          </span>
+          <span class:list={['pill pill--right', row.active ? 'pill--sky' : 'pill--line']} style="--y:8;--h:20;--s:10">
+            <span class="pill__dot" />
+            {row.pill}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'stock-link' && (
+    <div class="vig">
+      <span class="abs link-line" style={at(150, 99.25, 100, 1.5)} />
+      <span class="dot dot--crimson" style={at(192, 96, 8, 8)} />
+      <div class="box box--card box--r12" style={at(0, 64, 150, 72)}>
+        <span class="t t--muted t--500 t--spaced" style={text(13, 11, 10)}>
+          {l.warehouse}
+        </span>
+        <span class="t t--ink t--600" style={text(13, 29, 26)}>
+          {l.count}
+        </span>
+      </div>
+      <div class="box box--card box--r12" style={at(250, 40, 190, 120)}>
+        <span class="t t--muted t--500 t--spaced" style={text(13, 11, 10)}>
+          {l.page}
+        </span>
+        <span class="t t--ink t--600" style={text(13, 33, 13)}>
+          {l.size}
+        </span>
+        <span class="pill pill--sky" style="--x:13;--y:65;--h:21;--s:11">
+          <span class="pill__dot" />
+          {l.pill}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'custom-size' && (
+    <div class="vig">
+      <div class="box box--card box--r10" style={at(0, 22, 170, 48)}>
+        <span class="t t--muted t--500" style={text(11, 6, 9)}>
+          {l.width}
+        </span>
+        <span class="t t--ink t--600" style={text(11, 21, 14)}>
+          {l.widthValue}
+        </span>
+      </div>
+      <div class="box box--card box--r10" style={at(0, 84, 170, 48)}>
+        <span class="t t--muted t--500" style={text(11, 6, 9)}>
+          {l.length}
+        </span>
+        <span class="t t--ink t--600" style={text(11, 21, 14)}>
+          {l.lengthValue}
+        </span>
+      </div>
+      <span class="abs opening" style={at(250, 14, 84, 150)} />
+      <span class="abs rule" style={at(250, 174, 84, 1)} />
+      <span class="abs rule" style={at(346, 14, 1, 150)} />
+      <span class="t t--crimson t--500 t--center" style={`${text(250, 178, 9)};--w:84`}>
+        {l.widthDim}
+      </span>
+      <span class="t t--crimson t--500" style={text(352, 83, 9)}>
+        {l.lengthDim}
+      </span>
+      <span class="pill pill--solid" style="--x:0;--y:160;--h:21;--s:11">
+        {l.pill}
+      </span>
+    </div>
+  )
+}
+
+<style>
+  .vig {
+    position: absolute;
+    inset: 0;
+    font-family: var(--font-body);
+    letter-spacing: 0;
+  }
+  .abs,
+  .box,
+  .dot,
+  .t,
+  .pill {
+    position: absolute;
+    left: calc(var(--x) * var(--v));
+    top: calc(var(--y) * var(--v));
+  }
+  .abs,
+  .box,
+  .dot {
+    width: calc(var(--w) * var(--v));
+    height: calc(var(--h) * var(--v));
+  }
+  svg.abs {
+    max-width: none;
+    overflow: visible;
+  }
+
+  /* Boxes. Borders are inset shadows, so text positions match Figma's (measured from the outer edge). */
+  .box {
+    background: #fff;
+  }
+  .box--line {
+    box-shadow: inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint);
+  }
+  .box--card {
+    box-shadow:
+      inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint),
+      0 calc(6 * var(--v)) calc(8 * var(--v)) rgb(64 20 26 / 0.09);
+  }
+  .box--active {
+    box-shadow:
+      inset 0 0 0 calc(1.5 * var(--v)) var(--accent-crimson),
+      0 calc(6 * var(--v)) calc(8 * var(--v)) rgb(64 20 26 / 0.09);
+  }
+  .box--r2 {
+    border-radius: var(--radius);
+  }
+  .box--r9 {
+    border-radius: calc(9 * var(--v));
+  }
+  .box--r10 {
+    border-radius: calc(10 * var(--v));
+  }
+  .box--r12 {
+    border-radius: calc(12 * var(--v));
+  }
+
+  .dot {
+    border-radius: 50%;
+  }
+  .dot--crimson {
+    background: var(--accent-crimson);
+  }
+  .dot--faint {
+    background: var(--site-border-faint);
+  }
+
+  /* Text. */
+  .t {
+    font-size: calc(var(--s) * var(--v));
+    line-height: 1.21;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .t--500 {
+    font-weight: 500;
+  }
+  .t--600 {
+    font-weight: 600;
+  }
+  .t--ink {
+    color: var(--text-ink);
+  }
+  .t--muted {
+    color: var(--site-muted);
+  }
+  .t--crimson {
+    color: var(--accent-crimson);
+  }
+  .t--spaced {
+    letter-spacing: 0.06em;
+  }
+  .t--center {
+    width: calc(var(--w) * var(--v));
+    text-align: center;
+  }
+
+  /* Pills hug their label, so the Bulgarian ones size themselves. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(6 * var(--v));
+    height: calc(var(--h) * var(--v));
+    padding: 0 calc(10 * var(--v));
+    border-radius: var(--radius);
+    font-size: calc(var(--s) * var(--v));
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pill--right {
+    left: auto;
+    right: calc(15 * var(--v));
+  }
+  .pill--line {
+    padding-left: calc(9 * var(--v));
+    background: #fff;
+    box-shadow: inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint);
+    color: var(--site-muted);
+  }
+  .pill--sky {
+    background: var(--project-sky);
+    color: var(--accent-crimson);
+  }
+  .pill--solid {
+    background: var(--accent-crimson);
+    color: #fff;
+    font-weight: 600;
+  }
+  .pill__dot {
+    width: calc(6 * var(--v));
+    height: calc(6 * var(--v));
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Lines. */
+  .lines path {
+    stroke: var(--accent-crimson);
+    stroke-opacity: 0.45;
+    stroke-width: 1.2;
+  }
+  .link-line {
+    background: var(--accent-crimson);
+    opacity: 0.5;
+  }
+  .opening {
+    border: calc(1.5 * var(--v)) solid var(--accent-crimson);
+    border-radius: calc(3 * var(--v));
+    background: rgb(179 32 42 / 0.08);
+  }
+  .rule {
+    background: var(--accent-crimson);
+  }
+</style>

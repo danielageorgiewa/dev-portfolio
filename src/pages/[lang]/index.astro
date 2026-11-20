@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/home/Hero.astro';
+import About from '../../components/home/About.astro';
+import Work from '../../components/home/Work.astro';
+import Manifesto from '../../components/home/Manifesto.astro';
+import Toolbox from '../../components/home/Toolbox.astro';
+import Beyond from '../../components/home/Beyond.astro';
+import Contact from '../../components/home/Contact.astro';
+import { getHome } from '../../content/home';
+import { getStaticLangPaths, type Lang } from '../../i18n';
+
+export const getStaticPaths = getStaticLangPaths;
+const lang = Astro.params.lang as Lang;
+const t = getHome(lang);
+---
+
+<Base lang={lang} title={t.meta.title} description={t.meta.description} page="" header="reveal">
+  <Hero lang={lang} t={t.hero} />
+  <About t={t.about} />
+  <Work lang={lang} t={t.work} />
+  <Manifesto t={t.manifesto} />
+  <Toolbox t={t.toolbox} />
+  <Beyond t={t.beyond} />
+  <Contact lang={lang} t={t.contact} />
+</Base>

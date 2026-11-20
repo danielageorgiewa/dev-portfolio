@@ -1,0 +1,35 @@
+---
+// Screens section of the multi-shop case study (Figma 54:66 EN, 91:104 BG, 81:122 phone):
+// the Homepage screenshot and the Custom size demo.
+// The screenshots are the whole "Homepage screen" composites exported from Figma (54:201 at 2x,
+// 81:128 at 4x for the phone thumbnail), with the Redacted badge and the rewritten promo bar
+// baked in. The BG frame (91:110) is the same composite, so both languages share the files.
+// Figma also names a PRODUCT tab but draws no Product screen; see the content file.
+import Screens from '../Screens.astro';
+import ScreenShot from '../ScreenShot.astro';
+import CustomSize from './CustomSize.astro';
+import type { CaseContent } from '../../../content/case';
+import { customSize as customSizeEn } from '../../../content/case/multi-shop-platform.en';
+import { customSize as customSizeBg } from '../../../content/case/multi-shop-platform.bg';
+import type { Lang } from '../../../i18n';
+import home from '../../../assets/case/multi-shop/screen-home.png';
+import homePhone from '../../../assets/case/multi-shop/screen-home-phone.png';
+
+interface Props {
+  lang: Lang;
+  t: CaseContent['screens'];
+}
+const { lang, t } = Astro.props;
+const customSize = { en: customSizeEn, bg: customSizeBg }[lang];
+---
+
+<Screens t={t}>
+  <ScreenShot
+    slot="homepage"
+    shot={{ src: home, width: 1344, height: 726 }}
+    phone={{ src: homePhone, width: 350, height: 189 }}
+    alt={t.alt.homepage}
+    openLabel={t.openLabel}
+  />
+  <CustomSize slot="custom-size" t={customSize} />
+</Screens>

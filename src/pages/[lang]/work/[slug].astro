@@ -1,0 +1,74 @@
+---
+// Case study pages: /en/work/<slug> and /bg/work/<slug>, one template for all three studies.
+// Sections, in the order of the Figma frames: Intro, Screens, Where it started, What changed,
+// (study extra), Results, How it is built, Next, Footer.
+// A study is its content (src/content/case/<slug>.<lang>.ts, registered in src/content/case.ts)
+// plus the parts registered in `studyParts` below. See src/components/case/README.md.
+import Base from '../../../layouts/Base.astro';
+import Intro from '../../../components/case/Intro.astro';
+import Started from '../../../components/case/Started.astro';
+import Changes from '../../../components/case/Changes.astro';
+import Results from '../../../components/case/Results.astro';
+import Built from '../../../components/case/Built.astro';
+import Next from '../../../components/case/Next.astro';
+import CaseFooter from '../../../components/case/CaseFooter.astro';
+import MultiShopScreens from '../../../components/case/multi-shop/Screens.astro';
+import MultiShopVignette from '../../../components/case/multi-shop/Vignette.astro';
+import SchoolScreens from '../../../components/case/school/Screens.astro';
+import SchoolVignette from '../../../components/case/school/Vignette.astro';
+import SchoolEditor from '../../../components/case/school/Editor.astro';
+import WarehouseScreens from '../../../components/case/warehouse/Screens.astro';
+import WarehouseVignette from '../../../components/case/warehouse/Vignette.astro';
+import { getCase, getCaseStaticPaths, nextCaseSlug, plainText } from '../../../content/case';
+import { caseHref, type CaseSlug, type Lang } from '../../../i18n';
+
+export const getStaticPaths = getCaseStaticPaths;
+const { lang, slug } = Astro.params as { lang: Lang; slug: CaseSlug };
+const t = getCase(lang, slug);
+
+/**
+ * What each study brings besides its copy. All optional:
+ *  Screens       the section under the intro, props { lang, t: t.screens }
+ *  Vignette      the mini interfaces on the change cards, props { vignette }
+ *  AfterChanges  an extra section between "What changed" and "Results", props { lang, t }
+ */
+interface StudyParts {
+  Screens?: any;
+  Vignette?: any;
+  AfterChanges?: any;
+}
+const studyParts: Partial<Record<CaseSlug, StudyParts>> = {
+  'multi-shop-platform': { Screens: MultiShopScreens, Vignette: MultiShopVignette },
+  'language-school-website': { Screens: SchoolScreens, Vignette: SchoolVignette, AfterChanges: SchoolEditor },
+  'warehouse-management-system': { Screens: WarehouseScreens, Vignette: WarehouseVignette },
+};
+const { Screens: StudyScreens, Vignette, AfterChanges } = studyParts[slug] ?? {};
+
+const title = `${plainText(t.intro.title)} · ${t.author}`;
+---
+
+<Base lang={lang} title={title} description={t.intro.lead} page={`work/${slug}`} header="fixed" footer={false}>
+  <article class="case">
+    <Intro lang={lang} t={t.intro} />
+    {StudyScreens && <StudyScreens lang={lang} t={t.screens} />}
+    <Started t={t.started} />
+    <Changes t={t.changes} Vignette={Vignette} />
+    {AfterChanges && <AfterChanges lang={lang} t={t} />}
+    <Results t={t.results} />
+    <Built t={t.built} />
+    <Next t={t.next} href={caseHref(lang, nextCaseSlug(slug))} />
+  </article>
+  <CaseFooter lang={lang} t={t.footer} />
+</Base>
+
+<style>
+  .case {
+    /* The header is fixed, so the page starts below it. */
+    padding-top: var(--header-h);
+  }
+  /* The Bulgarian frames set every heading 10% larger (Cormorant runs smaller than Instrument Serif). */
+  .case:lang(bg) {
+    --case-display: 1.1;
+    --case-display-phone: 1.1;
+  }
+</style>

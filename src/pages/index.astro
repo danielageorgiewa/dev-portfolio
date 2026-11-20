@@ -1,0 +1,43 @@
+---
+// The root URL. On Netlify this page is never served: netlify.toml redirects "/" to /bg/ or
+// /en/ by the browser's language. This file is the fallback for `npm run preview` and for
+// any host that does not read netlify.toml: it sends the visitor to the English home page
+// without JavaScript and offers both languages as plain links.
+import { SITE_URL, href } from '../i18n';
+
+const en = href('en');
+const bg = href('bg');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Daniela Georgieva</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={new URL(en, SITE_URL).href} />
+    <meta http-equiv="refresh" content={`0; url=${en}`} />
+    <link rel="icon" href="/icon.png" type="image/png" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-content: center;
+        gap: 12px;
+        text-align: center;
+        font: 16px/1.5 system-ui, sans-serif;
+        background: #f2f0ed;
+        color: #2e2523;
+      }
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <a href={en}>Daniela Georgieva</a>
+    <a href={bg} lang="bg" hreflang="bg">Даниела Георгиева</a>
+  </body>
+</html>

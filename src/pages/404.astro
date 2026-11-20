@@ -1,0 +1,25 @@
+---
+// Root 404 (/404.html): the fallback when the language is unknown. Shows both languages.
+import Base from '../layouts/Base.astro';
+import NotFound from '../components/NotFound.astro';
+import { notFound } from '../content/not-found';
+---
+
+<Base lang="en" title={notFound.en.title} description={notFound.en.body} page="" header="none" noindex>
+  <div class="nf-page">
+    <NotFound lang="en" />
+    <NotFound lang="bg" />
+  </div>
+</Base>
+
+<style>
+  .nf-page {
+    min-height: calc(100svh - 76px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .nf-page :global(.nf + .nf) {
+    border-top: 1px solid var(--border-line);
+  }
+</style>

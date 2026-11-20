@@ -1,0 +1,36 @@
+---
+// Screens section of the warehouse case study (Figma 53:51 EN, 91:436 BG, 81:285 phone).
+// Figma names four tabs (Today, Orders, Stock, Health) and draws one screen: Today. Only that
+// one is shipped; see the content file for how to add the others when they are drawn.
+// The screenshots are the whole "Today screen" composites exported from Figma (53:207 at 2x,
+// 81:292 at 4x for the phone thumbnail), with the Redacted badge over the logo and the retyped
+// alert ("Lightwell site didn’t arrive. Its stock didn’t move.") baked in. The BG frame
+// (91:443) is the same composite, so both languages share the files. Demo data only.
+// The script cycles the tabs every 4s while in view, once there is more than one.
+import Screens from '../Screens.astro';
+import ScreenShot from '../ScreenShot.astro';
+import type { CaseContent } from '../../../content/case';
+import type { Lang } from '../../../i18n';
+import today from '../../../assets/case/warehouse/screen-today.png';
+import todayPhone from '../../../assets/case/warehouse/screen-today-phone.png';
+
+interface Props {
+  lang: Lang;
+  t: CaseContent['screens'];
+}
+const { t } = Astro.props;
+---
+
+<Screens t={t}>
+  <ScreenShot
+    slot="today"
+    shot={{ src: today, width: 1344, height: 921 }}
+    phone={{ src: todayPhone, width: 350, height: 240 }}
+    alt={t.alt.today}
+    openLabel={t.openLabel}
+  />
+</Screens>
+
+<script>
+  import '../../../scripts/case-warehouse.ts';
+</script>

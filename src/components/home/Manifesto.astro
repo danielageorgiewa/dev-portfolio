@@ -1,0 +1,338 @@
+---
+// Manifesto band (Figma 148:15 EN, 148:29 BG, 148:43 phone).
+// The stage is drawn in design pixels (1344 wide at 1440) and scales with --u.
+// The selection box hugs the word, so it fits both "Perfectionism." and "Перфекционизъм.".
+import glow from '../../assets/home/manifesto-glow.svg?url';
+import type { HomeContent } from '../../content/home';
+
+interface Props {
+  t: HomeContent['manifesto'];
+}
+const { t } = Astro.props;
+
+// Ruler: a tick every 16px, a tall tick and a label every 80px, 0 to 1344.
+const ticks = Array.from({ length: 85 }, (_, i) => i * 16);
+const gridLines = Array.from({ length: 14 }, (_, i) => 34 + i * 24);
+const handles = ['tl', 'tc', 'tr', 'ml', 'mr', 'bl', 'bc', 'br'];
+---
+
+<section class="manifesto" data-manifesto>
+  <div class="wrap manifesto__inner">
+    <h2 class="manifesto__eyebrow">{t.eyebrow}</h2>
+
+    <div class="stage">
+      <img class="stage__glow" src={glow} alt="" width="1221" height="660" loading="lazy" />
+      <div class="stage__grid" aria-hidden="true">
+        {gridLines.map((y) => <span style={`--y:${y}`} />)}
+      </div>
+      <div class="stage__ruler" aria-hidden="true" data-ruler>
+        <span class="stage__ruler-line"></span>
+        {
+          ticks.map((x) =>
+            x % 80 === 0 ? (
+              <span class="tick tick--major" style={`--x:${x}`}>
+                <span class="tick__label only-desktop">{x}</span>
+                {/* Phone ruler: a tick every 10px, labelled every 100 (0 to 300). */}
+                {x % 160 === 0 && x <= 480 && <span class="tick__label only-phone">{(x / 16) * 10}</span>}
+              </span>
+            ) : (
+              <span class="tick" style={`--x:${x}`} />
+            ),
+          )
+        }
+      </div>
+
+      <p class="stage__word display" data-word>
+        <em>
+          <span data-word-text>{t.word}</span><span class="stage__dot">.</span>
+        </em>
+        <span class="stage__selection" aria-hidden="true" data-selection>
+          {handles.map((h) => <span class={`handle handle--${h}`} />)}
+        </span>
+        <span class:list={['stage__size', { 'only-desktop': t.sizeLabelPhone }]} aria-hidden="true" data-size-label>{t.sizeLabel}</span>
+        {
+          t.sizeLabelPhone && (
+            <span class="stage__size only-phone" aria-hidden="true" data-size-label-phone>
+              {t.sizeLabelPhone}
+            </span>
+          )
+        }
+        <span class="stage__off" aria-hidden="true" data-off-label>{t.offLabel}</span>
+        <span class="stage__baseline" aria-hidden="true" data-baseline></span>
+      </p>
+    </div>
+
+    <p class="manifesto__line display" data-manifesto-line>
+      {t.lineBefore}<em class="manifesto__accent">{t.lineAccent}</em>{t.lineAfter}
+    </p>
+  </div>
+</section>
+
+<style>
+  .manifesto {
+    background: var(--text-ink);
+    color: var(--text-on-dark);
+    overflow: clip;
+  }
+  .manifesto__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-top: 120px;
+    padding-bottom: 130px;
+  }
+  .manifesto__eyebrow {
+    font-size: 12px;
+    line-height: normal;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-on-dark-muted);
+  }
+
+  .stage {
+    --caramel: var(--accent-caramel);
+    position: relative;
+    height: calc(368 * var(--u));
+  }
+  .stage__glow {
+    position: absolute;
+    left: calc(-72.8 * var(--u));
+    top: calc(-120 * var(--u));
+    width: calc(1220.8 * var(--u));
+    height: calc(660 * var(--u));
+    max-width: none;
+    pointer-events: none;
+  }
+  /* Full-bleed lines: they run edge to edge of the viewport, not of the column. */
+  .stage__grid span,
+  .stage__ruler-line,
+  .stage__baseline {
+    position: absolute;
+    left: calc(50% - 50vw);
+    width: 100vw;
+  }
+  .stage__grid span {
+    top: calc(var(--y) * var(--u));
+    height: 0.5px;
+    background: rgb(242 240 237 / 0.04);
+  }
+  .stage__ruler {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: calc(27 * var(--u));
+  }
+  .stage__ruler-line {
+    top: calc(26 * var(--u));
+    height: 1px;
+    background: var(--caramel);
+  }
+  .tick {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(20 * var(--u));
+    width: 1px;
+    height: calc(6 * var(--u));
+    background: var(--caramel);
+  }
+  .tick--major {
+    top: calc(14 * var(--u));
+    height: calc(12 * var(--u));
+  }
+  .tick__label {
+    position: absolute;
+    left: 3px;
+    top: calc(-14 * var(--u));
+    font-size: max(7px, calc(9 * var(--u)));
+    line-height: normal;
+    font-weight: 500;
+    color: var(--caramel);
+  }
+
+  .stage__word {
+    position: absolute;
+    left: 0;
+    top: calc(66 * var(--u));
+    font-size: calc(270 * var(--u));
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .stage__word em {
+    display: block;
+  }
+  .stage__dot {
+    color: var(--caramel);
+  }
+  .stage__selection {
+    position: absolute;
+    inset: calc(-6 * var(--u)) calc(-10 * var(--u));
+    border: 1px solid var(--caramel);
+  }
+  .handle {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    margin: -4px;
+    background: var(--text-on-dark);
+    border: 1px solid var(--caramel);
+  }
+  .handle--tl { left: 0; top: 0; }
+  .handle--tc { left: 50%; top: 0; }
+  .handle--tr { left: 100%; top: 0; }
+  .handle--ml { left: 0; top: 50%; }
+  .handle--mr { left: 100%; top: 50%; }
+  .handle--bl { left: 0; top: 100%; }
+  .handle--bc { left: 50%; top: 100%; }
+  .handle--br { left: 100%; top: 100%; }
+
+  .stage__size,
+  .stage__off {
+    position: absolute;
+    top: calc(100% + 18 * var(--u));
+    font-family: var(--font-body);
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .stage__size {
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2.5px 6px;
+    border-radius: var(--radius);
+    background: var(--caramel);
+    color: var(--text-ink);
+    font-size: 10.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .stage__off {
+    right: calc(-10 * var(--u));
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--caramel);
+  }
+  .stage__baseline {
+    /* Baseline of the word, measured from the top of its line box (198.73 / 237.6). */
+    top: var(--baseline, 83.64%);
+    left: calc(-1 * var(--gutter) - (100vw - min(100vw, var(--page-max))) / 2);
+    height: 1px;
+    background: var(--caramel);
+  }
+
+  .manifesto__line {
+    position: relative;
+    font-size: calc(72 * var(--u));
+    line-height: 1.05;
+  }
+  .manifesto__accent {
+    color: var(--accent-caramel);
+  }
+
+  /* Bulgarian (Figma 148:29): the word is 210px in a 315px stage, the line below is 78px. */
+  @media (min-width: 768px) {
+    :global(:lang(bg)) .stage {
+      height: calc(315 * var(--u));
+    }
+    :global(:lang(bg)) .stage__word {
+      font-size: calc(210 * var(--u));
+      /* Baseline guide at 154.475 of the 184.8 line box. */
+      --baseline: 83.59%;
+    }
+    /* Ends at the right edge of the 1344 stage, as drawn. */
+    :global(:lang(bg)) .stage__off {
+      right: auto;
+      left: calc(1344 * var(--u));
+      translate: -100% 0;
+    }
+    :global(:lang(bg)) .manifesto__line {
+      font-size: calc(78 * var(--u));
+    }
+  }
+
+  /* ---- Phone (Figma 148:43) ----
+     The stage is redrawn on the 350px column: a tick every 10px (major every 50),
+     grid lines every 14px, the word at 70px. Still in design pixels, so it scales with --u. */
+  @media (max-width: 767.98px) {
+    .manifesto__inner {
+      gap: 18px;
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+    .manifesto__eyebrow {
+      font-size: 11px;
+      line-height: 13px;
+    }
+    .stage {
+      height: calc(142 * var(--u));
+    }
+    .stage__glow {
+      left: calc(-42.5 * var(--u));
+      top: calc(-50 * var(--u));
+      width: calc(365 * var(--u));
+      height: calc(280 * var(--u));
+    }
+    /* Desktop lines sit at 34 + 24i; phone at 26 + 14i, nine of them. */
+    .stage__grid span {
+      top: calc(((var(--y) - 34) / 24 * 14 + 26) * var(--u));
+    }
+    .stage__grid span:nth-child(n + 10) {
+      display: none;
+    }
+    .stage__ruler {
+      height: calc(19 * var(--u));
+    }
+    .stage__ruler-line {
+      top: calc(18 * var(--u));
+    }
+    /* Desktop ticks sit at 16i; phone at 10i, 0 to 350 (the ruler line is the first child). */
+    .tick {
+      left: calc(var(--x) / 16 * 10 * var(--u));
+      top: calc(14 * var(--u));
+      height: calc(4 * var(--u));
+    }
+    .tick--major {
+      top: calc(10 * var(--u));
+      height: calc(8 * var(--u));
+    }
+    .tick:nth-child(n + 38) {
+      display: none;
+    }
+    .tick__label {
+      top: calc(-10 * var(--u));
+      font-size: 7px;
+    }
+    .stage__word {
+      top: calc(40 * var(--u));
+      font-size: calc(70 * var(--u));
+    }
+    .handle {
+      width: 5px;
+      height: 5px;
+      margin: -2.5px;
+    }
+    .stage__size,
+    .stage__off {
+      top: calc(100% + 14 * var(--u));
+      font-size: 8px;
+    }
+    .stage__size {
+      padding: 1.5px 4px;
+    }
+    .stage__off {
+      right: calc(-7 * var(--u));
+    }
+    .manifesto__line {
+      font-size: calc(28 * var(--u));
+    }
+    /* Bulgarian is not drawn on phone: "Перфекционизъм." is set smaller so it fills the
+       same 343px as the English word, and the stage loses the height the word gives up. */
+    :global(:lang(bg)) .stage {
+      height: calc(128 * var(--u));
+    }
+    :global(:lang(bg)) .stage__word {
+      font-size: calc(54 * var(--u));
+    }
+  }
+</style>

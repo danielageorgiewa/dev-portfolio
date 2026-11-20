@@ -1,0 +1,488 @@
+---
+// Selected work (Figma 33:20 EN, 61:175 BG, 56:120 phone).
+// Screenshots are the composite frames exported from Figma at 2x, with the redaction
+// covers, badges and rewritten text baked in. Never swap in a bare base image.
+import { getImage } from 'astro:assets';
+import Chip from '../Chip.astro';
+import type { HomeContent } from '../../content/home';
+import { caseHref, type CaseSlug, type Lang } from '../../i18n';
+import shopEn from '../../assets/home/work-shop.png';
+import schoolEn from '../../assets/home/work-school.png';
+import warehouseEn from '../../assets/home/work-warehouse.png';
+// Phone composites (Figma 56:125, 56:141, 56:165 at 2x): same crop, lock-only Redacted badges.
+import shopPhone from '../../assets/home/work-shop-phone.png';
+import schoolPhone from '../../assets/home/work-school-phone.png';
+import warehousePhone from '../../assets/home/work-warehouse-phone.png';
+
+interface Props {
+  lang: Lang;
+  t: HomeContent['work'];
+}
+const { lang, t } = Astro.props;
+
+// CSS size of each composite at 1440 (the files are 2x).
+const shots: Record<Lang, Record<CaseSlug, { src: ImageMetadata; w: number; h: number }>> = {
+  en: {
+    'multi-shop-platform': { src: shopEn, w: 696, h: 376 },
+    'language-school-website': { src: schoolEn, w: 696, h: 366 },
+    'warehouse-management-system': { src: warehouseEn, w: 696, h: 477 },
+  },
+  bg: {
+    'multi-shop-platform': { src: shopEn, w: 696, h: 376 },
+    'language-school-website': { src: schoolEn, w: 696, h: 366 },
+    'warehouse-management-system': { src: warehouseEn, w: 696, h: 477 },
+  },
+};
+
+// Phone composites are 310 CSS px wide (620px files). The phone frames are only drawn in
+// English, so both languages use the same files.
+const phoneShots: Record<Lang, Record<CaseSlug, ImageMetadata>> = {
+  en: {
+    'multi-shop-platform': shopPhone,
+    'language-school-website': schoolPhone,
+    'warehouse-management-system': warehousePhone,
+  },
+  bg: {
+    'multi-shop-platform': shopPhone,
+    'language-school-website': schoolPhone,
+    'warehouse-management-system': warehousePhone,
+  },
+};
+
+// <Picture> cannot switch files by media query, so the <picture> is written out: the phone
+// composites on phone-sized screens, the desktop composite above (the phone layout runs up
+// to 767px, where a 620px file would be stretched, so large screens get the 2x desktop file).
+const PHONE = '(max-width: 479.98px)';
+interface CardPicture {
+  phone: { type: string; src: string }[];
+  desk: { type: string; srcset: string }[];
+  phoneW: number;
+  phoneH: number;
+  fallback: string;
+}
+const pictures: Record<string, CardPicture> = Object.fromEntries(
+  await Promise.all(
+    t.cards.map(async (card) => {
+      const desk = shots[lang][card.slug];
+      const phone = phoneShots[lang][card.slug];
+      const formats = ['avif', 'webp'] as const;
+      const [phoneSet, deskSet, fallback] = await Promise.all([
+        Promise.all(formats.map((format) => getImage({ src: phone, format, width: phone.width }))),
+        Promise.all(formats.map((format) => getImage({ src: desk.src, format, widths: [696, 1044, 1392] }))),
+        getImage({ src: desk.src, format: 'png', width: desk.src.width }),
+      ]);
+      const picture: CardPicture = {
+        phone: formats.map((format, i) => ({ type: `image/${format}`, src: phoneSet[i].src })),
+        desk: formats.map((format, i) => ({ type: `image/${format}`, srcset: deskSet[i].srcSet.attribute })),
+        phoneW: phone.width,
+        phoneH: phone.height,
+        fallback: fallback.src,
+      };
+      return [card.slug, picture] as const;
+    }),
+  ),
+);
+---
+
+<section class="work" id="work">
+  <div class="wrap work__inner">
+    <header class="work__header">
+      <h2 class="work__title display">
+        {
+          t.titleOrder === 'italic-first' ? (
+            <Fragment>
+              <em>{t.titleItalic}</em> {t.titleRest}
+            </Fragment>
+          ) : (
+            <Fragment>
+              {t.titleRest} <em>{t.titleItalic}</em>
+            </Fragment>
+          )
+        }
+      </h2>
+      <p class="work__count label">{t.count}</p>
+    </header>
+
+    <ol class="work__cards" data-stack>
+      {
+        t.cards.map((card) => {
+          const shot = shots[lang][card.slug];
+          const url = caseHref(lang, card.slug);
+          return (
+            <li class:list={['card', `card--${card.theme}`]} data-stack-card>
+              <article class="card__inner">
+                <header class="card__top label">
+                  <span class="card__index">{card.index}</span>
+                  <span class="card__client">
+                    {card.clientPhone ? (
+                      <Fragment>
+                        <span class="only-desktop">{card.client}</span>
+                        <span class="only-phone">{card.clientPhone}</span>
+                      </Fragment>
+                    ) : (
+                      card.client
+                    )}
+                  </span>
+                  <span class="card__kind">{card.kind}</span>
+                </header>
+                <div class="card__middle">
+                  <div class="card__text">
+                    <h3 class="card__title display">
+                      <a href={url} set:html={card.title} />
+                    </h3>
+                    {card.notePhone && <p class="card__note only-phone">{card.notePhone}</p>}
+                    <p class="card__body body-large">{card.body}</p>
+                    <dl class="card__numbers">
+                      {card.numbers.map((n) => (
+                        <div class="card__number">
+                          <dt class="small">{n.label}</dt>
+                          <dd data-count>{n.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <ul class="card__chips">
+                      {card.chips.map((c) => (
+                        <Chip size="sm" tone="inherit">
+                          {c}
+                        </Chip>
+                      ))}
+                    </ul>
+                  </div>
+                  <div class="card__shot" data-shot>
+                    <picture>
+                      {pictures[card.slug].phone.map((p) => (
+                        <source
+                          media={PHONE}
+                          type={p.type}
+                          srcset={p.src}
+                          width={pictures[card.slug].phoneW}
+                          height={pictures[card.slug].phoneH}
+                        />
+                      ))}
+                      {pictures[card.slug].desk.map((d) => (
+                        <source
+                          type={d.type}
+                          srcset={d.srcset}
+                          sizes="(max-width: 767.98px) calc(100vw - 80px), min(48vw, 696px)"
+                        />
+                      ))}
+                      <img
+                        src={pictures[card.slug].fallback}
+                        alt={card.shotAlt}
+                        width={shot.w}
+                        height={shot.h}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
+                  </div>
+                </div>
+                <a class="card__link label" href={url}>
+                  <span>{t.link}</span>
+                  <span class="visually-hidden" set:html={`: ${card.title}`} />
+                  <span class="card__arrow" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+              </article>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <p class="work__footnote">{t.footnote}</p>
+  </div>
+</section>
+
+<style>
+  .work__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 40px;
+    padding-bottom: 24px;
+  }
+  .work__header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding-bottom: 40px;
+  }
+  .work__title {
+    font-size: calc(160 * var(--u));
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+  }
+  .work__count {
+    color: var(--text-faint);
+  }
+  .work__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .work__footnote {
+    font-size: 13px;
+    line-height: normal;
+    color: var(--text-faint);
+  }
+
+  .card {
+    --card-text: var(--text-on-dark);
+    --card-muted: rgb(242 240 237 / 0.7);
+    --card-line: rgb(242 240 237 / 0.18);
+    --chip-border: var(--card-line);
+    --chip-text: var(--card-muted);
+    border-radius: var(--radius-card);
+    color: var(--card-text);
+    overflow: clip;
+  }
+  .card--sky {
+    --card-text: var(--text-ink);
+    --card-muted: rgb(42 18 21 / 0.65);
+    --card-line: rgb(16 23 30 / 0.15);
+    background: var(--project-sky);
+  }
+  .card--ea {
+    background: var(--project-ea);
+  }
+  .card--sis {
+    background: var(--project-sis);
+  }
+  .card__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: flex-start;
+    padding: 44px 56px 56px;
+  }
+  .card__top {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--card-line);
+    color: var(--card-muted);
+  }
+  .card__index {
+    color: var(--card-text);
+  }
+  .card__client {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+  .card__kind {
+    white-space: nowrap;
+  }
+  .card__middle {
+    display: flex;
+    gap: 56px;
+    align-items: flex-start;
+    width: 100%;
+  }
+  .card__text {
+    flex: none;
+    width: calc(480 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .card__title {
+    font-size: calc(80 * var(--u));
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    /* One design pixel of slack so the lines break where they do in Figma. */
+    padding-right: 2px;
+  }
+  .card__body {
+    color: var(--card-muted);
+  }
+  .card__numbers {
+    display: flex;
+    gap: 24px;
+    padding-top: 8px;
+  }
+  .card__number {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+    padding-top: 16px;
+    border-top: 1px solid var(--card-line);
+  }
+  .card__number dd {
+    font-size: 56px;
+    line-height: normal;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+  }
+  .card__number dt {
+    color: var(--card-muted);
+  }
+  .card__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .card__shot {
+    flex: 1 0 0;
+    min-width: 0;
+    display: block;
+    border-radius: var(--radius-shot);
+    overflow: clip;
+    filter: drop-shadow(0 24px 30px rgb(13 8 5 / 0.3));
+  }
+  .card__shot :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .card__link {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--card-text);
+  }
+  .card__arrow {
+    transition: transform 0.3s var(--ease-lift);
+  }
+  .card__link:hover .card__arrow {
+    transform: translateX(4px);
+  }
+
+  /* Bulgarian (Figma 61:175): larger section heading; the first card's title is 72px. */
+  @media (min-width: 768px) {
+    :global(:lang(bg)) .work__title {
+      font-size: calc(176 * var(--u));
+    }
+    :global(:lang(bg)) .card:first-child .card__title {
+      font-size: calc(72 * var(--u));
+    }
+    /* The self-hosted Inter sets Cyrillic a fraction of a pixel differently from Figma.
+       These hair-width tracking nudges put the line breaks where the frame has them. */
+    :global(:lang(bg)) .card:first-child .card__body {
+      letter-spacing: -0.006em;
+    }
+    :global(:lang(bg)) .card:nth-child(3) .card__body {
+      letter-spacing: -0.004em;
+    }
+    :global(:lang(bg)) .card:nth-child(3) .card__number dt {
+      letter-spacing: 0.002em;
+    }
+  }
+
+  /* ---- Phone (Figma 56:120) ----
+     The card becomes one column: screenshot, client line, title, (note), the first number,
+     link. The body text, the second number, the chips and the "(03)" count are not on phone. */
+  @media (max-width: 767.98px) {
+    .work__inner {
+      gap: 14px;
+      padding: 72px 14px 32px;
+    }
+    .work__header {
+      padding: 0 6px 10px;
+    }
+    .work__title {
+      font-size: calc(56 * var(--u));
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    /* Bulgarian is not drawn on phone: "Избрани проекти" at 56 runs past the 350 column. */
+    :global(:lang(bg)) .work__title {
+      font-size: calc(52 * var(--u));
+    }
+    .work__count {
+      display: none;
+    }
+    .work__cards {
+      gap: 14px;
+    }
+    .work__footnote {
+      font-size: 12px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+
+    .card__inner {
+      gap: 18px;
+      padding: 20px 20px 24px;
+    }
+    /* Flatten the two desktop columns so the pieces can be reordered. */
+    .card__middle,
+    .card__text {
+      display: contents;
+    }
+    .card__shot {
+      order: 1;
+      flex: none;
+      width: calc(310 / 322 * 100%); /* 310 of the 322 column, as drawn */
+      filter: none;
+    }
+    .card__top {
+      order: 2;
+      gap: 10px;
+      padding-bottom: 0;
+      border-bottom: 0;
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 400;
+      letter-spacing: -0.005em;
+    }
+    .card__index {
+      font-weight: 500;
+    }
+    .card__kind,
+    .card__body,
+    .card__chips,
+    .card__number:nth-child(n + 2) {
+      display: none;
+    }
+    .card__title {
+      order: 3;
+      width: 100%;
+      padding-right: 0;
+      font-size: calc(38 * var(--u));
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .card__note {
+      order: 4;
+      font-size: 13px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      color: var(--card-muted);
+    }
+    .card__numbers {
+      order: 5;
+      width: 100%;
+      padding-top: 0;
+    }
+    .card__number {
+      gap: 2px;
+      padding-top: 0;
+      border-top: 0;
+    }
+    .card__number dd {
+      font-size: 40px;
+      line-height: 1.1;
+    }
+    .card__number dt {
+      font-size: 13px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .card__link {
+      order: 6;
+      /* 22px line, 44px tap target */
+      padding-block: 11px;
+      margin-block: -11px;
+      font-size: 14px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+  }
+</style>

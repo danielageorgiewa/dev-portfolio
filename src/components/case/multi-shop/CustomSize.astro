@@ -1,0 +1,213 @@
+---
+// The CUSTOM SIZE tab of the multi-shop Screens section: a live mini demo. Typing a width and
+// a length redraws the opening to scale (src/scripts/case-multi-shop.ts).
+// The tab is not drawn in Figma (only the annotation on 54:72 describes it), so the panel
+// borrows the look of change card 04 (153:93): white fields, a crimson opening with its two
+// dimension lines. Without JavaScript the default 1000 × 2000 drawing is shown as static SVG
+// and the fields are read-only.
+import { DEFAULTS, LIMITS, VIEW, openingGeometry } from '../../../scripts/case-multi-shop';
+
+interface Props {
+  t: { width: string; length: string; unit: string; drawing: string };
+}
+const { t } = Astro.props;
+const g = openingGeometry(DEFAULTS.width, DEFAULTS.length);
+const fields = [
+  { name: 'width', label: t.width, value: DEFAULTS.width },
+  { name: 'length', label: t.length, value: DEFAULTS.length },
+] as const;
+const drawingLabel = t.drawing.replace('{w}', String(DEFAULTS.width)).replace('{l}', String(DEFAULTS.length));
+---
+
+<div class="demo" data-size-demo>
+  <form class="demo__fields">
+    {
+      fields.map((field) => (
+        <label class="field">
+          <span class="field__label">{field.label}</span>
+          <span class="field__row">
+            <input
+              class="field__input"
+              type="number"
+              inputmode="numeric"
+              name={field.name}
+              min={LIMITS.min}
+              max={LIMITS.max}
+              step={LIMITS.step}
+              value={field.value}
+              readonly
+              autocomplete="off"
+              data-size-input={field.name}
+            />
+            <span class="field__unit" aria-hidden="true">
+              {t.unit}
+            </span>
+          </span>
+        </label>
+      ))
+    }
+  </form>
+  <svg
+    class="demo__drawing"
+    viewBox={`0 0 ${VIEW.width} ${VIEW.height}`}
+    role="img"
+    aria-label={drawingLabel}
+    data-label={t.drawing}
+    data-size-drawing
+  >
+    <rect class="demo__opening" {...g.rect} rx="3" data-size-rect></rect>
+    <line class="demo__rule" x1={g.widthLine.x1} x2={g.widthLine.x2} y1={g.widthLine.y} y2={g.widthLine.y} data-size-line="width"
+    ></line>
+    <line
+      class="demo__rule"
+      x1={g.lengthLine.x}
+      x2={g.lengthLine.x}
+      y1={g.lengthLine.y1}
+      y2={g.lengthLine.y2}
+      data-size-line="length"></line>
+    <text class="demo__dim" x={g.widthLabel.x} y={g.widthLabel.y} text-anchor="middle" data-size-label="width">{DEFAULTS.width}</text>
+    <text class="demo__dim" x={g.lengthLabel.x} y={g.lengthLabel.y} data-size-label="length">{DEFAULTS.length}</text>
+  </svg>
+</div>
+
+<script>
+  import '../../../scripts/case-multi-shop.ts';
+</script>
+
+<style>
+  .demo {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: center;
+    /* Same shape as the screenshot frame, so the section does not jump between tabs. */
+    aspect-ratio: 1344 / 726;
+    background: var(--bg-paper);
+  }
+  .demo__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    justify-self: end;
+    width: min(300px, 100% - 48px);
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 18px 16px;
+    border-radius: var(--radius);
+    background: #fff;
+    box-shadow:
+      inset 0 0 0 1px var(--site-border-faint),
+      0 6px 8px rgb(64 20 26 / 0.09);
+    cursor: text;
+  }
+  .field:focus-within {
+    box-shadow:
+      inset 0 0 0 1.5px var(--accent-crimson),
+      0 6px 8px rgb(64 20 26 / 0.09);
+  }
+  .field__label {
+    font-size: 12.5px;
+    line-height: 16px;
+    font-weight: 500;
+    color: var(--site-muted);
+  }
+  .field__row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .field__input {
+    flex: 1 0 0;
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--text-ink);
+    font: inherit;
+    font-size: 26px;
+    line-height: 32px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  .field__input::-webkit-outer-spin-button,
+  .field__input::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .field__input:focus-visible {
+    /* The field box shows the focus ring. */
+    outline: none;
+  }
+  .field__unit {
+    font-size: 14px;
+    line-height: 21px;
+    color: var(--site-muted);
+  }
+  .demo__drawing {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    padding: 24px;
+  }
+  .demo__opening {
+    fill: rgb(179 32 42 / 0.08);
+    stroke: var(--accent-crimson);
+    stroke-width: 1.5;
+    transition:
+      x 0.35s var(--ease-lift),
+      y 0.35s var(--ease-lift),
+      width 0.35s var(--ease-lift),
+      height 0.35s var(--ease-lift);
+  }
+  .demo__rule {
+    stroke: var(--accent-crimson);
+    stroke-width: 1;
+  }
+  .demo__dim {
+    fill: var(--accent-crimson);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  @media (max-width: 767.98px) {
+    .demo {
+      grid-template-columns: minmax(0, 1fr);
+      aspect-ratio: auto;
+      gap: 4px;
+      padding-top: 20px;
+    }
+    .demo__fields {
+      flex-direction: row;
+      gap: 10px;
+      justify-self: stretch;
+      width: auto;
+      padding-inline: 16px;
+    }
+    .field {
+      flex: 1 0 0;
+      min-width: 0;
+      padding: 10px 12px 12px;
+    }
+    .field__input {
+      font-size: 22px;
+      line-height: 28px;
+    }
+    .demo__drawing {
+      height: auto;
+      max-height: 340px;
+      padding: 8px 16px 16px;
+    }
+  }
+</style>

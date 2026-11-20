@@ -1,0 +1,387 @@
+---
+// Contact and booking (Figma 44:53 EN, 61:430 BG, 58:205 phone).
+// Without JavaScript, or when the booking functions fail or are not configured, this section
+// shows the email link. The booking script (src/scripts/booking.ts) fills [data-slots] and
+// reveals [data-booking-ui] only once it has something real to show.
+import Button from '../Button.astro';
+import glow from '../../assets/home/contact-blush-glow.svg?url';
+import type { HomeContent } from '../../content/home';
+import { CONTACT_EMAIL, GITHUB_URL, LINKEDIN_URL, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+  t: HomeContent['contact'];
+}
+const { lang, t } = Astro.props;
+const mailto = `mailto:${CONTACT_EMAIL}`;
+---
+
+<section class="contact" id="contact">
+  <img class="contact__glow" src={glow} alt="" width="1100" height="760" loading="lazy" data-glow />
+  <div class="wrap contact__center">
+    <p class="contact__status tag"><span class="contact__dot" aria-hidden="true"></span>{t.status}</p>
+    <h2 class="contact__headline display" data-rise-lines>
+      <span>{t.headline}</span>
+      <em>{t.headlineItalic}</em>
+    </h2>
+    <p class="contact__intro" id="booking-intro">{t.intro}</p>
+
+    <div
+      class="booking"
+      data-booking
+      data-lang={lang}
+      data-no-slots={t.noSlots}
+      data-sending={t.form.sending}
+      data-success={t.form.success}
+      data-error={t.form.error}
+      data-taken={t.form.taken}
+    >
+      <div class="booking__ui" data-booking-ui hidden>
+        <div class="booking__slots" data-slots role="group" aria-labelledby="booking-intro"></div>
+        <Button variant="primary" arrow="→" class="booking__book" data-book aria-disabled="true">{t.book}</Button>
+        <form class="booking__form" data-booking-form hidden aria-labelledby="booking-intro">
+          <label>
+            <span>{t.form.name}</span>
+            <input type="text" name="name" autocomplete="name" maxlength="80" required />
+          </label>
+          <label>
+            <span>{t.form.email}</span>
+            <input type="email" name="email" autocomplete="email" maxlength="120" required />
+          </label>
+          <label>
+            <span>{t.form.message}</span>
+            <textarea name="message" rows="3" maxlength="1000" required></textarea>
+          </label>
+          <label class="booking__hp" aria-hidden="true">
+            <span>Leave this field empty</span>
+            <input type="text" name="hp_ref" tabindex="-1" autocomplete="off" />
+          </label>
+          <div class="booking__form-actions">
+            <button type="button" class="booking__cancel" data-booking-cancel>{t.form.cancel}</button>
+            <Button variant="primary" type="submit" arrow="→">{t.form.submit}</Button>
+          </div>
+        </form>
+        <p class="booking__message" data-booking-message role="status" tabindex="-1"></p>
+        <Button variant="primary" href={mailto} arrow="→" class="booking__email" data-booking-email hidden>
+          {t.emailCta}
+        </Button>
+      </div>
+      <p class="contact__fallback small" data-booking-fallback>
+        <a href={mailto}>{t.fallback}</a>
+      </p>
+    </div>
+
+    <ul class="contact__links">
+      <li><a href={GITHUB_URL} rel="noopener">{t.links.github} ↗</a></li>
+      <li><a href={LINKEDIN_URL} rel="noopener">{t.links.linkedin} ↗</a></li>
+      <li>
+        <a href={mailto}>
+          {
+            t.links.emailPhone ? (
+              <Fragment>
+                <span class="only-desktop">{CONTACT_EMAIL}</span>
+                <span class="only-phone">{t.links.emailPhone}</span>
+              </Fragment>
+            ) : (
+              CONTACT_EMAIL
+            )
+          } ↗
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    border-top: 1px solid var(--border-line);
+    background: var(--bg-linen);
+    overflow: clip;
+  }
+  .contact__glow {
+    position: absolute;
+    left: 50%;
+    top: 179px;
+    width: calc(1100 * var(--u));
+    max-width: none;
+    height: 760px;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .contact__center {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 139px;
+    padding-bottom: 131px;
+  }
+  .contact__status {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 7px 14px;
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius);
+    background: var(--bg-linen);
+    color: var(--text-secondary);
+  }
+  .contact__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-crimson);
+  }
+  .contact__headline {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    font-size: calc(96 * var(--u));
+    line-height: calc(98 / 96);
+    letter-spacing: -0.02em;
+  }
+  .contact__headline > * {
+    display: block;
+  }
+  .contact__intro {
+    margin-top: 24px;
+    font-size: 17px;
+    line-height: 26px;
+    letter-spacing: -0.005em;
+    color: var(--text-secondary);
+  }
+
+  .booking {
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .booking__ui {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* The booking script shows and hides parts with the hidden attribute. Buttons and flex
+     boxes set their own display, so the attribute has to win here. */
+  .booking :global([hidden]) {
+    display: none;
+  }
+  .booking__slots {
+    display: grid;
+    grid-template-columns: repeat(3, 176px);
+    gap: 12px;
+  }
+  /* Slots are created by src/scripts/booking.ts, hence :global. Same look as Button "light". */
+  .booking__slots :global(.booking__slot) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius);
+    background: var(--bg-sand);
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    line-height: 20px;
+    font-weight: 500;
+    letter-spacing: -0.003em;
+    white-space: nowrap;
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .booking__slots :global(button.booking__slot:hover) {
+    border-color: var(--site-border-warm);
+    color: var(--text-primary);
+  }
+  .booking__slots :global(.booking__slot[aria-pressed='true']) {
+    border-color: var(--accent-crimson);
+    box-shadow: inset 0 0 0 1px var(--accent-crimson);
+    background: var(--bg-paper);
+    color: var(--text-primary);
+  }
+  .booking__slots :global(.booking__slot--skeleton) {
+    border-color: var(--site-border-faint);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .booking__slots :global(.booking__slot--skeleton) {
+      animation: booking-skeleton 1.2s ease-in-out infinite alternate;
+    }
+  }
+  @keyframes booking-skeleton {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.45;
+    }
+  }
+  .booking :global(.booking__book),
+  .booking :global(.booking__email) {
+    margin-top: 28px;
+  }
+  /* Until a slot is picked the button is aria-disabled, not dimmed: Figma draws it solid with
+     no slot selected. Pressing it then points at the slots (see booking.ts). */
+  .booking :global(.booking__book[aria-disabled='true']) {
+    cursor: default;
+  }
+  .booking__form {
+    margin-top: 28px;
+    width: min(100%, 552px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+  }
+  .booking__form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12.5px;
+    line-height: 16px;
+    color: var(--site-muted);
+  }
+  .booking__form input,
+  .booking__form textarea {
+    padding: 13px 16px;
+    border: 1px solid var(--border-line);
+    border-radius: var(--radius);
+    background: var(--bg-paper);
+    font: inherit;
+    font-size: 16px;
+    line-height: 22px;
+    color: var(--text-primary);
+    resize: vertical;
+  }
+  .booking__hp {
+    position: absolute !important;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .booking__form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .booking__cancel {
+    font-size: 14px;
+    color: var(--site-muted);
+  }
+  .booking__message:empty {
+    display: none;
+  }
+  .booking__message {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 21px;
+    color: var(--text-secondary);
+  }
+  .contact__fallback {
+    margin-top: 14px;
+    color: var(--site-muted);
+  }
+  .contact__fallback a:hover,
+  .contact__links a:hover {
+    color: var(--text-primary);
+  }
+  .contact__links {
+    margin-top: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--site-muted);
+    white-space: nowrap;
+  }
+
+  /* Bulgarian (Figma 61:430): Cormorant is set 10% larger on the same 98px line. */
+  @media (min-width: 768px) {
+    :global(:lang(bg)) .contact__headline {
+      font-size: calc(105.6 * var(--u));
+      line-height: calc(98 / 105.6);
+    }
+  }
+
+  /* ---- Phone (Figma 58:205) ---- */
+  @media (max-width: 767.98px) {
+    .contact__glow {
+      display: none; /* no glow on the phone frame */
+    }
+    .contact__center {
+      padding-top: 80px;
+      padding-bottom: 72px;
+    }
+    .contact__status {
+      padding: 6px 12px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .contact__headline {
+      margin-top: 22px;
+      font-size: calc(54 * var(--u));
+      line-height: 0.96;
+    }
+    /* Bulgarian is not drawn on phone: sized so "Разкажете ми какво" stays on one line. */
+    :global(:lang(bg)) .contact__headline {
+      font-size: calc(44 * var(--u));
+    }
+    .contact__intro {
+      margin-top: 16px;
+      font-size: 15.5px;
+      line-height: 1.55;
+    }
+    .booking {
+      margin-top: 24px;
+      width: 100%;
+    }
+    .booking__ui {
+      width: 100%;
+    }
+    /* Two columns of full-width 52px slots. */
+    .booking__slots {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+    .booking__slots :global(.booking__slot) {
+      /* The phone frame sets the slot labels in the Label style, in ink. */
+      font-size: 14.5px;
+      color: var(--text-primary);
+    }
+    .booking :global(.booking__book) {
+      margin-top: 18px;
+      width: 100%;
+      padding-block: 15px; /* 50px high */
+    }
+    .booking__form {
+      width: 100%;
+    }
+    .contact__fallback {
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .contact__links {
+      margin-top: 32px;
+      gap: 20px;
+      line-height: 1.55;
+    }
+    .contact__links a {
+      /* 20px line, 44px tap target */
+      display: inline-block;
+      padding-block: 12px;
+      margin-block: -12px;
+    }
+  }
+</style>

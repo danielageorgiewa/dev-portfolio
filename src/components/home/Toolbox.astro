@@ -1,0 +1,259 @@
+---
+// Toolbox (Figma 34:56 EN, 61:294 BG, 58:78 phone). The marquee is desktop only.
+import Chip from '../Chip.astro';
+import type { HomeContent } from '../../content/home';
+
+interface Props {
+  t: HomeContent['toolbox'];
+}
+const { t } = Astro.props;
+---
+
+<section class="toolbox" id="toolbox">
+  <header class="wrap toolbox__header">
+    <div class="toolbox__title-block">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 class="toolbox__title display">{t.title}</h2>
+    </div>
+    <p class="toolbox__aside">{t.aside}</p>
+  </header>
+
+  <div class="marquee" aria-hidden="true" data-marquee>
+    {
+      t.marquee.map((row, i) => (
+        <div class:list={['marquee__row', `marquee__row--${i + 1}`]} data-marquee-row={i === 0 ? 'left' : 'right'}>
+          <div class="marquee__track display">
+            {[0, 1, 2].map(() =>
+              row.map((word) => (
+                <Fragment>
+                  <span class="marquee__word">{word}</span>
+                  <span class="marquee__dot" />
+                </Fragment>
+              )),
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="wrap toolbox__index" data-toolbox-index>
+    {
+      t.rows.map((row) => (
+        <div class="toolbox__row">
+          <div class="toolbox__label">
+            <h3 class="display-italic">{row.label}</h3>
+            {row.note && <p class="toolbox__note">{row.note}</p>}
+          </div>
+          <ul class="toolbox__chips">
+            {row.chips.map((c) => (
+              <Chip tone={row.dark ? 'dark' : 'default'}>
+                {row.chipsPhone?.[c] ? (
+                  <Fragment>
+                    <span class="only-desktop">{c}</span>
+                    <span class="only-phone">{row.chipsPhone[c]}</span>
+                  </Fragment>
+                ) : (
+                  c
+                )}
+              </Chip>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .toolbox {
+    padding-top: 128px;
+    padding-bottom: 140px;
+  }
+  .toolbox__header {
+    display: flex;
+    gap: 24px;
+    align-items: flex-end;
+    padding-bottom: 56px;
+  }
+  .toolbox__title-block {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .toolbox__title {
+    font-size: calc(96 * var(--u));
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  .toolbox__aside {
+    color: var(--site-muted);
+    white-space: nowrap;
+  }
+
+  .marquee__row {
+    height: 104px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid var(--border-line);
+    overflow: clip;
+  }
+  .marquee__track {
+    display: flex;
+    flex: none;
+    gap: 40px;
+    align-items: center;
+    padding-right: 40px;
+    margin-left: -60px;
+    font-size: 88px;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    will-change: transform;
+  }
+  .marquee__row--2 .marquee__track {
+    margin-left: -420px;
+    font-style: italic;
+    color: var(--text-faint);
+  }
+  .marquee__dot {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-crimson);
+  }
+
+  .toolbox__index {
+    padding-top: 56px;
+  }
+  .toolbox__row {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    padding-block: 26px;
+    border-top: 1px solid var(--border-line);
+  }
+  .toolbox__row:last-child {
+    border-bottom: 1px solid var(--border-line);
+  }
+  .toolbox__label {
+    flex: none;
+    width: calc(380 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .toolbox__label h3 {
+    font-size: 34px;
+    line-height: normal;
+    letter-spacing: -0.015em;
+    color: var(--text-primary);
+  }
+  .toolbox__note {
+    font-size: 13px;
+    line-height: normal;
+    color: var(--site-muted);
+  }
+  .toolbox__chips {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 767.98px) {
+    .marquee {
+      display: none;
+    }
+  }
+
+  /* Bulgarian (Figma 61:294): Cormorant is set 10% larger throughout. */
+  @media (min-width: 768px) {
+    :global(:lang(bg)) .toolbox__title {
+      font-size: calc(105.6 * var(--u));
+    }
+    /* The taller Cormorant line sits 10px below the row's top edge, as drawn. */
+    :global(:lang(bg)) .marquee__track {
+      position: relative;
+      top: 4px;
+    }
+    :global(:lang(bg)) .marquee__track {
+      font-size: 96.8px;
+    }
+    :global(:lang(bg)) .toolbox__label h3 {
+      font-size: 37.4px;
+      line-height: 45px;
+    }
+  }
+
+  /* ---- Phone (Figma 58:78) ----
+     No marquee and no aside. Each group stacks: title, (note), then the small chips. */
+  @media (max-width: 767.98px) {
+    .toolbox {
+      padding-top: 64px;
+      padding-bottom: 72px;
+      border-top: 1px solid var(--border-line);
+    }
+    .toolbox__header {
+      display: block;
+      padding-bottom: 0;
+    }
+    .toolbox__title-block {
+      gap: 12px;
+    }
+    .toolbox__title-block .eyebrow {
+      font-size: 11px;
+      line-height: 1.55;
+      letter-spacing: 0.24em;
+    }
+    .toolbox__title {
+      font-size: calc(48 * var(--u));
+    }
+    .toolbox__aside {
+      display: none;
+    }
+    .toolbox__index {
+      padding-top: 0;
+    }
+    .toolbox__row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      padding-block: 20px;
+    }
+    .toolbox__row:last-child {
+      border-bottom: 0;
+    }
+    .toolbox__label {
+      width: auto;
+      gap: 12px;
+    }
+    .toolbox__label h3 {
+      font-size: 26px;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .toolbox__note {
+      font-size: 12.5px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .toolbox__chips {
+      flex: none;
+      width: 100%;
+      gap: 6px;
+    }
+    .toolbox__chips :global(.chip) {
+      padding: 7px 14px;
+      font-size: 12.5px;
+      letter-spacing: 0; /* Tag style; keeps the rows breaking where they do in Figma */
+    }
+    .toolbox__chips :global(.chip--dark) {
+      border: 0; /* 30px high on phone, as drawn */
+    }
+  }
+</style>

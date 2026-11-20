@@ -1,0 +1,82 @@
+/* Design tokens from the Figma variables (file P1HPOowvRxCJYEJW3datPY). */
+:root {
+  --bg-linen: #f2f0ed;
+  --bg-paper: #f6f3ee;
+  --bg-sand: #e9e6e2;
+  --bg-blush: #ebd2cd;
+  --bg-espresso: #2e2523;
+
+  --text-primary: #2e2523;
+  --text-secondary: #5f5450;
+  --text-on-dark: #f2f0ed;
+  --text-on-dark-muted: #cfc6bf;
+  --text-ink: #2a1215;
+
+  --accent-crimson: #b3202a;
+  --accent-crimson-deep: #a50d25;
+  --accent-caramel: #e0675c;
+  --accent-gold: #bfa77a;
+
+  --border-line: #ded8d3;
+  --status-open: #2f8f5b;
+
+  --project-sis: #8e1b24;
+  --project-ea: #5c1a22;
+  --project-sky: #f3deda;
+
+  --site-ink-soft: #423a36;
+  --site-body-soft: #7b7069;
+  --site-muted: #716660;
+  --site-faint: #a29790;
+  /* Text that Figma sets in site/faint. That grey is below the 4.5:1 contrast minimum on
+     linen, so text uses site/muted instead (Daniela, Nov 2026). Lines and dots keep site/faint. */
+  --text-faint: var(--site-muted);
+  --site-border-chip: #dbd5cf;
+  --site-border-warm: #d7d1cb;
+  --site-border-faint: #e3ddd8;
+  --site-glass: rgb(246 243 238 / 0.86);
+
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-96: 96px;
+  --space-128: 128px;
+
+  /* 2px everywhere. Project cards and screenshot frames keep the radii drawn in Figma. */
+  --radius: 2px;
+  --radius-card: 10px;
+  --radius-shot: 6px;
+
+  --font-display: 'Instrument Serif', 'Cormorant', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* One design pixel. The desktop frames are 1440 wide; display type and wide
+     layout measures scale with the viewport below that and stop at 1440. */
+  --u: calc(min(100vw, 1440px) / 1440);
+  --page-max: 1440px;
+  --gutter: 48px;
+  --header-h: 79px; /* SiteHeader: 20 + 38 + 20 + 1px line (Figma 54:38) */
+
+  --ease-lift: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Bulgarian headings are set in Cormorant Medium / Medium Italic. */
+:root:lang(bg) {
+  --font-display: 'Cormorant', 'Instrument Serif', Georgia, serif;
+  --display-weight: 500;
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    /* Phone frames are 390 wide. */
+    --u: calc(100vw / 390);
+    --gutter: 20px;
+    --header-h: 66px; /* SiteHeader on phone: 14 + 38 + 14 (Figma 56:72) */
+  }
+}

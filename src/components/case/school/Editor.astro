@@ -1,0 +1,118 @@
+---
+// "The editor" on the language school case study, between "What changed" and "Results"
+// (Figma 129:35 EN, 129:95 BG, 129:155 phone): a heading, a paragraph and the CMS frame.
+//
+// The frame shows a still for now: the whole "CMS recording" frame exported from Figma
+// (129:68 at 2x, 129:188 at 4x for phone), with the Redacted badge and the rewritten city
+// ("в Шумен") baked in. The hidden "Recording (animated GIF)" layer inside that frame still
+// shows the real city: never export, download or publish it.
+//
+// When the clean recording exists (city already swapped in the page, logo cover baked into the
+// video), put the files in public/video/ and set `recording` below. Nothing else changes: the
+// still becomes the poster and `data-autoplay-inview` plays it muted on loop while in view.
+import { getImage } from 'astro:assets';
+import ScreenShot from '../ScreenShot.astro';
+import type { CaseContent } from '../../../content/case';
+import type { Lang } from '../../../i18n';
+import cms from '../../../assets/case/school/cms.png';
+import cmsPhone from '../../../assets/case/school/cms-phone.png';
+
+interface Props {
+  lang: Lang;
+  t: CaseContent;
+}
+const t = Astro.props.t.editor!;
+
+/** e.g. { webm: '/video/cms-live-preview.webm', mp4: '/video/cms-live-preview.mp4' } */
+const recording = undefined as { webm?: string; mp4?: string } | undefined;
+
+const poster = recording ? await getImage({ src: cms, format: 'webp', width: 1344 }) : undefined;
+---
+
+<section class="editor">
+  <div class="wrap editor__inner">
+    <p class="eyebrow">{t.kicker}</p>
+    <h2 class="editor__heading display" set:html={t.heading} />
+    <p class="editor__text body-large">{t.text}</p>
+    <div class="editor__media" data-reveal>
+      {
+        recording ? (
+          <video
+            data-autoplay-inview
+            muted
+            loop
+            playsinline
+            preload="none"
+            poster={poster!.src}
+            width="1344"
+            height="756"
+            aria-label={t.alt}
+          >
+            {recording.webm && <source src={recording.webm} type="video/webm" />}
+            {recording.mp4 && <source src={recording.mp4} type="video/mp4" />}
+          </video>
+        ) : (
+          <ScreenShot
+            shot={{ src: cms, width: 1344, height: 756 }}
+            phone={{ src: cmsPhone, width: 350, height: 197 }}
+            alt={t.alt}
+            openLabel={t.openLabel}
+          />
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .editor__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    align-items: flex-start;
+    padding-top: 130px;
+    padding-bottom: 130px;
+  }
+  .editor__heading {
+    font-size: calc(72 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .editor__text {
+    width: min(640px, 100%);
+    color: var(--text-secondary);
+  }
+  .editor__media {
+    width: 100%;
+    /* The 1px border is part of the exported frame. */
+    border-radius: calc(16 * var(--u));
+    box-shadow: 0 24px 48px -12px rgb(46 38 36 / 0.12);
+    overflow: clip;
+  }
+  .editor__media :global(.shot) {
+    background: var(--bg-paper);
+  }
+  .editor__media video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 767.98px) {
+    .editor__inner {
+      gap: 24px;
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+    .editor__heading {
+      font-size: calc(40 * var(--u) * var(--case-display-phone, 1));
+    }
+    .editor__text {
+      font-size: 17px;
+      line-height: 28px;
+    }
+    .editor__media {
+      border-radius: calc(10 * var(--u));
+    }
+  }
+</style>

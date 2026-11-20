@@ -1,0 +1,142 @@
+---
+// "How it is built": a heading and the stack as a flow of steps joined by arrows.
+// Figma: multi-shop 54:144 EN, 91:175 BG, 81:193 phone. The arrows point right on desktop
+// and down once the steps stack (below 1024px).
+import type { CaseContent } from '../../content/case';
+
+interface Props {
+  t: CaseContent['built'];
+}
+const { t } = Astro.props;
+---
+
+<section class="built">
+  <div class="wrap built__inner">
+    <p class="eyebrow">{t.kicker}</p>
+    <h2 class="built__heading display" set:html={t.heading} />
+    <ol class="built__flow" data-reveal-group>
+      {
+        t.steps.map((step, i) => (
+          <li class="step" data-reveal>
+            {i > 0 && (
+              <span class="step__arrow label" aria-hidden="true">
+                <span class="step__arrow-right">→</span>
+                <span class="step__arrow-down">↓</span>
+              </span>
+            )}
+            <div class="step__card">
+              <p class="step__number tag">{step.number}</p>
+              <h3 class:list={['step__title display-italic', { 'step__title--wrap': step.wrap }]}>{step.title}</h3>
+              <p class="step__text small">{step.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .built__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: 130px;
+    padding-bottom: 130px;
+  }
+  .built__heading {
+    font-size: calc(72 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .built__flow {
+    display: flex;
+    align-items: stretch;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    flex: 1 0 0;
+    min-width: 0;
+  }
+  .step:not(:first-child) {
+    /* The arrow is 34px wide; the cards share what is left equally. */
+    flex-basis: 34px;
+  }
+  .step__arrow {
+    flex: none;
+    padding: 0 10px;
+    color: var(--text-faint);
+  }
+  .step__arrow-down {
+    display: none;
+  }
+  .step__card {
+    flex: 1 0 0;
+    min-width: 0;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px 22px 24px;
+    border-radius: var(--radius-shot);
+    background: var(--bg-sand);
+  }
+  .step__number {
+    color: var(--text-faint);
+  }
+  .step__title {
+    font-size: calc(30 * var(--case-display, 1) * 1px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  /* A title Figma sets on two lines (step.wrap in the content file). */
+  .step__title--wrap {
+    white-space: normal;
+  }
+  .step__text {
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 1023.98px) {
+    .built__flow {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .step {
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+    .step__arrow {
+      align-self: flex-start;
+    }
+    .step__arrow-right {
+      display: none;
+    }
+    .step__arrow-down {
+      display: inline;
+    }
+    .step__card {
+      flex: none;
+    }
+  }
+  @media (max-width: 767.98px) {
+    .built__inner {
+      gap: 24px;
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+    .built__heading {
+      font-size: calc(40 * var(--u) * var(--case-display-phone, 1));
+    }
+    .step__card {
+      padding: 22px 20px 24px;
+    }
+    .step__title {
+      font-size: calc(26 * var(--case-display-phone, 1) * 1px);
+    }
+  }
+</style>

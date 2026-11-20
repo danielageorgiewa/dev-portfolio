@@ -1,0 +1,74 @@
+---
+// CV mode (Figma 51:10 EN, 95:26 BG, 83:56 phone). The same page, printed, is the A4 PDF:
+// scripts/build-cv-pdfs.mjs renders it with the print styles into public/cv/.
+import Base from '../../layouts/Base.astro';
+import DownloadBar from '../../components/cv/DownloadBar.astro';
+import Sheet from '../../components/cv/Sheet.astro';
+import { cvLead, getCv } from '../../content/cv';
+import { getStaticLangPaths, type Lang } from '../../i18n';
+
+export const getStaticPaths = getStaticLangPaths;
+const lang = Astro.params.lang as Lang;
+const t = getCv(lang);
+// Title and description come from the CV itself: name, title line, first profile sentence.
+const title = `${t.name} · CV · ${t.title}`;
+---
+
+<Base lang={lang} title={title} description={cvLead(t)} page="cv" header="fixed" footer={false} bodyClass="cv-page">
+  <div class="cv-body">
+    <DownloadBar lang={lang} t={t.download} />
+    <Sheet t={t} />
+  </div>
+</Base>
+
+<style>
+  .cv-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: min(900px, 100% - 2 * var(--gutter));
+    margin-inline: auto;
+    padding-top: calc(var(--header-h) + 72px);
+    padding-bottom: 120px;
+  }
+  @media (max-width: 767.98px) {
+    .cv-body {
+      width: 100%;
+      padding-top: calc(var(--header-h) + 40px);
+      padding-bottom: 66px;
+    }
+  }
+  @media print {
+    .cv-body {
+      display: block;
+      width: auto;
+      margin: 0;
+      padding: 0;
+    }
+  }
+</style>
+
+<style is:global>
+  /* A4 PDF: one page, no browser margins; the sheet carries its own padding. */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  @media print {
+    html,
+    body.cv-page {
+      background: #fff;
+    }
+    .cv-page .site-header,
+    .cv-page .footer,
+    .cv-page .skip-link {
+      display: none !important;
+    }
+    /* Whatever the load animation was doing, the PDF shows the final state. */
+    .cv-page [data-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+      visibility: visible !important;
+    }
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+// "Where it started": the problem on the left, what was found on the right.
+// Figma: multi-shop 54:83 EN, 91:117 BG, 81:135 phone.
+import type { CaseContent } from '../../content/case';
+
+interface Props {
+  t: CaseContent['started'];
+}
+const { t } = Astro.props;
+---
+
+<section class="started">
+  <div class="wrap started__inner">
+    <div class="started__left" data-reveal>
+      <p class="eyebrow">{t.kicker}</p>
+      <h2 class="started__heading display" set:html={t.heading} />
+      <p class="started__text body-large">{t.text}</p>
+    </div>
+    <div class="started__found" data-reveal>
+      <h3 class="started__found-kicker eyebrow">{t.foundKicker}</h3>
+      <dl class="started__rows">
+        {
+          t.rows.map((row) => (
+            <div class="row">
+              <dt class="row__value">{row.value}</dt>
+              <dd class="row__label">{row.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .started {
+    background: var(--bg-sand);
+  }
+  .started__inner {
+    display: flex;
+    gap: calc(96 * var(--u));
+    align-items: flex-start;
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+  .started__left {
+    flex: none;
+    width: calc(520 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .started__heading {
+    font-size: calc(64 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .started__text {
+    color: var(--text-secondary);
+  }
+  .started__found {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+  .started__found-kicker {
+    font-weight: 500;
+    padding-bottom: 16px;
+  }
+  .row {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-line);
+  }
+  .row__value {
+    flex: none;
+    width: calc(200 * var(--u));
+    font-size: calc(40 * var(--u));
+    line-height: 48px;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+  .row__label {
+    flex: 1 0 0;
+    min-width: 0;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 767.98px) {
+    .started__inner {
+      flex-direction: column;
+      gap: 28px;
+      padding-top: 66px;
+      padding-bottom: 66px;
+    }
+    .started__left {
+      width: 100%;
+    }
+    .started__heading {
+      font-size: calc(36 * var(--u) * var(--case-display-phone, 1));
+    }
+    .started__text {
+      font-size: 17px;
+      line-height: 28px;
+    }
+    .started__found {
+      flex: none;
+      width: 100%;
+    }
+    .row {
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      /* The label box in Figma is 11px taller than its text. */
+      padding-bottom: 29px;
+    }
+    .row__value {
+      width: 100%;
+      font-size: 29px;
+      line-height: 35px;
+    }
+  }
+</style>

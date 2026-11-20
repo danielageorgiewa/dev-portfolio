@@ -1,0 +1,68 @@
+---
+// Footer (Figma 44:90). The hidden second flag sits in a data attribute here: nothing on the
+// page shows it, it is only findable in devtools.
+import { getHome } from '../content/home';
+import { href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = getHome(lang).footer;
+---
+
+<footer class="footer" data-flag="dg{l3ts_t4lk}">
+  <div class="wrap footer__row">
+    <p class="footer__left">
+      {
+        t.leftPhone ? (
+          <Fragment>
+            <span class="only-desktop">{t.left}</span>
+            <span class="only-phone">{t.leftPhone}</span>
+          </Fragment>
+        ) : (
+          t.left
+        )
+      }
+    </p>
+    <p class="footer__right">{t.right}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border-line);
+    color: var(--text-faint);
+    font-size: 13px;
+    line-height: 18px;
+  }
+  .footer__row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding-top: 24px;
+    padding-bottom: 32px;
+  }
+  .footer__left {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+  /* ---- Phone (Figma 58:241) ---- */
+  @media (max-width: 767.98px) {
+    .footer {
+      font-size: 12px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .footer__row {
+      position: relative;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 18px;
+      padding-bottom: 28px;
+    }
+    .footer__left {
+      flex: none;
+    }
+  }
+</style>

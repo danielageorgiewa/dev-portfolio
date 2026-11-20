@@ -1,0 +1,77 @@
+---
+// Download bar above the CV sheet (Figma 51:24 EN, 95:32 BG, 83:62 phone).
+// Screen only: hidden in print, so it never reaches the PDF.
+import Button from '../Button.astro';
+import type { CvContent } from '../../content/cv';
+import { cvPdfHref, other, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+  t: CvContent['download'];
+}
+const { lang, t } = Astro.props;
+const otherLang = other(lang);
+---
+
+<div class="cv-bar">
+  <p class="cv-bar__note">{t.note}</p>
+  <div class="cv-bar__buttons">
+    <Button href={cvPdfHref(lang)} arrow="↓" download>{t.current}</Button>
+    <Button
+      variant="secondary"
+      href={cvPdfHref(otherLang)}
+      arrow="↓"
+      download
+      lang={otherLang}
+      hreflang={otherLang}>{t.other}</Button
+    >
+  </div>
+</div>
+
+<style>
+  .cv-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cv-bar__note {
+    flex: 1 0 0;
+    min-width: 0;
+    font-size: 14px;
+    line-height: normal;
+    letter-spacing: 0;
+    color: var(--site-muted);
+  }
+  .cv-bar__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Between the phone layout and the full 900px sheet the note needs its own line. */
+  @media (max-width: 919.98px) {
+    .cv-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .cv-bar__note {
+      flex: none;
+    }
+  }
+  @media (max-width: 767.98px) {
+    .cv-bar {
+      padding-inline: var(--gutter);
+    }
+    .cv-bar__buttons {
+      gap: 10px;
+    }
+  }
+
+  @media print {
+    .cv-bar {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,362 @@
+---
+// The four mini interfaces on the warehouse "What changed" cards, built in HTML and CSS.
+// Figma: 154:226 channels, 154:248 stock-log, 154:269 daily-check, 154:289 switch-over
+// (BG 154:309 / 331 / 352 / 372, phone 154:392 / 414 / 435 / 455).
+// Every number below is a vignette pixel: the drawings are 440 × 200 and Changes.astro sets
+// `--v` (0.98px on desktop, about 0.63px at 390), so `--x:280` is 280 of those.
+// No client marks: the words are generic ("Site 1", "Trade portal", demo product codes) and
+// come from the content file. Static: no animation is written here.
+import type { CaseVignette } from '../../../content/case';
+
+interface Props {
+  vignette: CaseVignette;
+}
+const { vignette } = Astro.props;
+const l = vignette.labels;
+
+/** Position and size of a box, in vignette pixels. */
+const at = (x: number, y: number, w?: number, h?: number) =>
+  `--x:${x};--y:${y}` + (w === undefined ? '' : `;--w:${w}`) + (h === undefined ? '' : `;--h:${h}`);
+/** Position and font size of a line of text. */
+const text = (x: number, y: number, size: number) => `--x:${x};--y:${y};--s:${size}`;
+
+/** channels: the four pills, and how far their centre is above (+) or below (−) the count's. */
+const JOIN_Y = 100;
+const channels = [l.channel1, l.channel2, l.channel3, l.channel4].map((label, i) => {
+  const y = 8 + 48 * i;
+  return { label, y, rise: JOIN_Y - (y + 10.5) };
+});
+
+/** stock-log: three movements. A minus is a rose pill, a plus an outlined one. */
+const logRows = [1, 2, 3].map((n, i) => ({
+  y: 48 + 48 * i,
+  change: l[`change${n}`],
+  code: l[`code${n}`],
+  reason: l[`reason${n}`],
+  who: l[`who${n}`],
+  minus: l[`change${n}`]?.startsWith('−'),
+}));
+
+/** daily-check: three sites that match and one that does not. */
+const checkRows = [1, 2, 3, 4].map((n, i) => ({
+  y: 47 + 37 * i,
+  name: l[`name${n}`],
+  count: l[`count${n}`],
+  missing: n === 4,
+}));
+
+/** switch-over: per channel, how much still ran on the spreadsheet (grey) and on the new system (red). */
+const bars = [
+  { old: 70, from: 194 },
+  { old: 128, from: 252 },
+  { old: 186, from: 310 },
+  { old: 243, from: 367 },
+].map((bar, i) => ({ ...bar, y: 40 + 40 * i, label: l[`channel${i + 1}`] }));
+---
+
+{
+  vignette.kind === 'channels' && (
+    <div class="vig">
+      {channels.map((channel) => (
+        <div class="chan" style={at(0, channel.y, 280, 21)}>
+          <span class="pill pill--line" style="--h:21;--s:11">
+            <span class="pill__dot pill__dot--crimson" />
+            {channel.label}
+          </span>
+          <span class="chan__line">
+            <svg
+              class:list={['chan__curve', channel.rise > 0 ? 'chan__curve--down' : 'chan__curve--up']}
+              style={`--h:${Math.abs(channel.rise)}`}
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              fill="none"
+            >
+              <path d={channel.rise > 0 ? 'M0 0C50 0 50 100 100 100' : 'M0 100C50 100 50 0 100 0'} />
+            </svg>
+          </span>
+        </div>
+      ))}
+      <div class="box box--card box--r14" style={at(280, 36, 160, 128)}>
+        <span class="t t--muted t--500" style={text(14, 14, 10)}>
+          {l.stock}
+        </span>
+        <span class="t t--ink t--600" style={text(14, 32, 44)}>
+          {l.count}
+        </span>
+        <span class="t t--crimson t--500 t--wrap" style={`${text(14, 94, 10)};--w:138`}>
+          {l.caption}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'stock-log' && (
+    <div class="vig">
+      <div class="box box--card box--r14" style={at(0, 0, 440, 200)}>
+        <span class="t t--muted t--500 t--spaced" style={text(18, 14, 11)}>
+          {l.title}
+        </span>
+        {logRows.map((row, i) => (
+          <>
+            {i > 0 && <span class="abs rule" style={at(18, row.y - 12, 404, 1)} />}
+            <span
+              class:list={['pill pill--num', row.minus ? 'pill--sky' : 'pill--line']}
+              style={`--x:18;--y:${row.y};--h:21;--s:11`}
+            >
+              {row.change}
+            </span>
+            <span class="t t--ink t--600" style={text(84, row.y + 4, 12)}>
+              {row.code}
+            </span>
+            <span class="t t--muted" style={text(160, row.y + 4, 12)}>
+              {row.reason}
+            </span>
+            <span class="t t--ink t--500 t--right" style={`--r:18;--y:${row.y + 4};--s:12`}>
+              {row.who}
+            </span>
+          </>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'daily-check' && (
+    <div class="vig">
+      <div class="box box--card box--r14" style={at(0, 0, 440, 200)}>
+        <span class="t t--muted t--500 t--spaced" style={text(18, 14, 11)}>
+          {l.title}
+        </span>
+        {checkRows.map((row) => (
+          <>
+            <span class:list={['t t--ink', { 't--600': row.missing }]} style={text(18, row.y, 12)}>
+              {row.name}
+            </span>
+            <span
+              class:list={['t t--500 t--right', row.missing ? 't--crimson' : 't--muted']}
+              style={`--r:109;--y:${row.y};--s:12`}
+            >
+              {row.count}
+            </span>
+            {row.missing ? (
+              <span class="pill pill--solid pill--right" style={`--r:18;--y:${row.y - 4};--h:20;--s:10`}>
+                {l.pill}
+              </span>
+            ) : (
+              <svg class="abs" style={at(398, row.y - 3, 20, 20)} viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="10" fill="var(--accent-crimson)" />
+                <path
+                  d="M5.4 10.4 8.8 13.8 14.8 6.6"
+                  stroke="#fff"
+                  stroke-width="2.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            )}
+          </>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+{
+  vignette.kind === 'switch-over' && (
+    <div class="vig">
+      <span class="pill pill--line" style="--x:0;--y:0;--h:20;--s:10">
+        <span class="pill__dot pill__dot--faint" />
+        {l.old}
+      </span>
+      <span class="pill pill--line" style="--x:120;--y:0;--h:20;--s:10">
+        <span class="pill__dot pill__dot--crimson" />
+        {l.new}
+      </span>
+      {bars.map((bar) => (
+        <>
+          <span class="t t--ink t--500" style={text(0, bar.y + 5, 11)}>
+            {bar.label}
+          </span>
+          <span class="abs bar bar--old" style={at(120, bar.y, bar.old, 24)} />
+          <span class="abs bar bar--new" style={at(bar.from, bar.y, 440 - bar.from, 24)} />
+        </>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  .vig {
+    position: absolute;
+    inset: 0;
+    font-family: var(--font-body);
+    letter-spacing: 0;
+  }
+  .abs,
+  .box,
+  .chan,
+  .t,
+  .pill {
+    position: absolute;
+    left: calc(var(--x) * var(--v));
+    top: calc(var(--y) * var(--v));
+  }
+  .abs,
+  .box,
+  .chan {
+    width: calc(var(--w) * var(--v));
+    height: calc(var(--h) * var(--v));
+  }
+  svg.abs {
+    max-width: none;
+    overflow: visible;
+  }
+
+  /* Boxes. Borders are inset shadows, so text positions match Figma's (measured from the outer edge). */
+  .box {
+    background: #fff;
+  }
+  .box--card {
+    box-shadow:
+      inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint),
+      0 calc(6 * var(--v)) calc(8 * var(--v)) rgb(64 20 26 / 0.09);
+  }
+  .box--r14 {
+    border-radius: calc(14 * var(--v));
+  }
+
+  /* Text. */
+  .t {
+    font-size: calc(var(--s) * var(--v));
+    line-height: 1.21;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .t--500 {
+    font-weight: 500;
+  }
+  .t--600 {
+    font-weight: 600;
+  }
+  .t--ink {
+    color: var(--text-ink);
+  }
+  .t--muted {
+    color: var(--site-muted);
+  }
+  .t--crimson {
+    color: var(--accent-crimson);
+  }
+  .t--spaced {
+    letter-spacing: 0.06em;
+  }
+  /* Right-aligned to a fixed edge, so the Bulgarian words end where the English ones do. */
+  .t--right {
+    left: auto;
+    right: calc(var(--r) * var(--v));
+  }
+  /* The count's caption: one line in English, two in Bulgarian. */
+  .t--wrap {
+    width: calc(var(--w) * var(--v));
+    white-space: normal;
+  }
+
+  /* Pills hug their label, so the Bulgarian ones size themselves. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(6 * var(--v));
+    height: calc(var(--h) * var(--v));
+    padding: 0 calc(10 * var(--v));
+    border-radius: var(--radius);
+    font-size: calc(var(--s) * var(--v));
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pill--line {
+    background: #fff;
+    box-shadow: inset 0 0 0 calc(1 * var(--v)) var(--site-border-faint);
+    color: var(--text-ink);
+  }
+  .pill--sky {
+    background: var(--project-sky);
+    color: var(--accent-crimson);
+  }
+  .pill--solid {
+    background: var(--accent-crimson);
+    color: #fff;
+    font-weight: 600;
+  }
+  .pill--num {
+    font-weight: 600;
+  }
+  .pill--right {
+    left: auto;
+    right: calc(var(--r) * var(--v));
+  }
+  .pill__dot {
+    flex: none;
+    width: calc(6 * var(--v));
+    height: calc(6 * var(--v));
+    border-radius: 50%;
+  }
+  .pill__dot--crimson {
+    background: var(--accent-crimson);
+  }
+  .pill__dot--faint {
+    background: var(--site-border-faint);
+  }
+
+  /* channels: each pill and the line from its right edge to the count, whatever the pill's width. */
+  .chan {
+    display: flex;
+    align-items: center;
+  }
+  .chan .pill {
+    position: static;
+    flex: none;
+  }
+  .chan__line {
+    position: relative;
+    flex: 1 0 0;
+    height: 0;
+  }
+  .chan__curve {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    height: calc(var(--h) * var(--v));
+    overflow: visible;
+  }
+  .chan__curve--down {
+    top: 0;
+  }
+  .chan__curve--up {
+    bottom: 0;
+  }
+  .chan__curve path {
+    stroke: var(--accent-crimson);
+    stroke-opacity: 0.45;
+    stroke-width: calc(1.2 * var(--v));
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Lines and bars. */
+  .rule {
+    background: var(--site-border-faint);
+  }
+  .bar {
+    border-radius: calc(6 * var(--v));
+  }
+  .bar--old {
+    background: var(--site-border-faint);
+  }
+  .bar--new {
+    background: var(--accent-crimson);
+  }
+</style>

@@ -1,0 +1,40 @@
+---
+// Chip (Figma component 21:28).
+// size 'md' is the toolbox chip (14.5px, 9/16 padding); 'sm' is the project card tag (12.5px, 7/14).
+// tone 'inherit' takes its colours from --chip-border / --chip-text set by the parent card.
+interface Props {
+  size?: 'sm' | 'md';
+  tone?: 'default' | 'dark' | 'inherit';
+}
+const { size = 'md', tone = 'default' } = Astro.props;
+---
+
+<li class:list={['chip', `chip--${size}`, `chip--${tone}`]}><slot /></li>
+
+<style>
+  .chip {
+    display: inline-flex;
+    border: 1px solid var(--site-border-chip);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    line-height: 16px;
+    white-space: nowrap;
+  }
+  .chip--md {
+    padding: 9px 16px;
+    font-size: 14.5px;
+  }
+  .chip--sm {
+    padding: 7px 14px;
+    font-size: 12.5px;
+  }
+  .chip--dark {
+    background: var(--bg-espresso);
+    border-color: var(--bg-espresso);
+    color: var(--text-on-dark);
+  }
+  .chip--inherit {
+    border-color: var(--chip-border);
+    color: var(--chip-text);
+  }
+</style>

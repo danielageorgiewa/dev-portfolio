@@ -1,0 +1,123 @@
+---
+// Case study intro: back link (phone only), kicker, title, lead and the facts row.
+// Figma: multi-shop 54:43 EN, 91:82 BG, 81:100 phone.
+// On desktop Figma puts the "All work" link in the page header (54:40), which SiteHeader owns;
+// on phone it sits here, above the kicker.
+import Chip from '../Chip.astro';
+import type { CaseContent } from '../../content/case';
+import { href, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+  t: CaseContent['intro'];
+}
+const { lang, t } = Astro.props;
+---
+
+<section class="intro">
+  <div class="wrap intro__inner">
+    <a class="intro__back" href={`${href(lang)}#work`}>
+      <span aria-hidden="true">←</span>
+      {t.back}
+    </a>
+    <p class="intro__kicker eyebrow">{t.kicker}</p>
+    <h1 class="intro__title display" set:html={t.title} />
+    <p class="intro__lead" style={t.leadWidth ? `--lead-w:${t.leadWidth}px` : undefined}>{t.lead}</p>
+    <dl class="intro__facts" data-reveal-group>
+      {
+        t.facts.map((fact) => (
+          <div class="fact" data-reveal>
+            <dt class="eyebrow">{fact.key}</dt>
+            {fact.value && <dd class="fact__value">{fact.value}</dd>}
+            {fact.chips && (
+              <dd>
+                <ul class="fact__chips">
+                  {fact.chips.map((chip) => (
+                    <Chip size="sm">{chip}</Chip>
+                  ))}
+                </ul>
+              </dd>
+            )}
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .intro__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-items: flex-start;
+    padding-top: 110px;
+    padding-bottom: 64px;
+  }
+  .intro__back {
+    display: none;
+    gap: 0.6em;
+    font-size: 13.5px;
+    line-height: 18px;
+    letter-spacing: -0.002em;
+    color: var(--site-ink-soft);
+  }
+  .intro__title {
+    width: 100%;
+    font-size: calc(150 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .intro__lead {
+    width: min(var(--lead-w, 760px), 100%);
+    font-size: 22px;
+    line-height: 34px;
+    letter-spacing: -0.005em;
+    color: var(--text-secondary);
+  }
+  .intro__facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    padding-top: 24px;
+  }
+  .fact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-line);
+  }
+  .fact__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  @media (max-width: 1023.98px) {
+    .intro__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 767.98px) {
+    .intro__inner {
+      padding-top: 28px;
+      padding-bottom: 35px;
+    }
+    .intro__back {
+      display: inline-flex;
+    }
+    .intro__title {
+      font-size: calc(63 * var(--u) * var(--case-display-phone, 1));
+    }
+    .intro__lead {
+      font-size: 21px;
+      line-height: 32px;
+    }
+    .intro__facts {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 22px;
+    }
+  }
+</style>

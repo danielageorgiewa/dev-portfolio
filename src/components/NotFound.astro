@@ -1,0 +1,40 @@
+---
+import Button from './Button.astro';
+import { notFound } from '../content/not-found';
+import { href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = notFound[lang];
+---
+
+<section class="nf" lang={lang}>
+  <p class="eyebrow">{t.eyebrow}</p>
+  <h1 class="nf__heading display" set:html={t.heading} />
+  <p class="nf__body body-large">{t.body}</p>
+  <Button variant="primary" href={href(lang)} arrow="→">{t.back}</Button>
+</section>
+
+<style>
+  .nf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 96px var(--gutter);
+    text-align: center;
+  }
+  .nf__heading {
+    font-size: clamp(40px, 6.7vw, 96px);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+    line-height: calc(98 / 96);
+    letter-spacing: -0.02em;
+  }
+  .nf__body {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+</style>

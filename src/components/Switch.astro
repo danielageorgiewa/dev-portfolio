@@ -1,0 +1,62 @@
+---
+// Glass two-way switch (Figma component 4:24). Used for EN / БГ and Portfolio / CV.
+// Both sides are real links, so it works without JavaScript.
+interface Option {
+  label: string;
+  href: string;
+  /** Language of the label and of the page it links to, when it differs from the current one. */
+  lang?: string;
+}
+interface Props {
+  options: [Option, Option];
+  selected: 0 | 1;
+  label: string;
+}
+const { options, selected, label } = Astro.props;
+---
+
+<nav class="switch" aria-label={label}>
+  {
+    options.map((o, i) => (
+      <a
+        class:list={['switch__opt', { 'is-selected': i === selected }]}
+        href={o.href}
+        aria-current={i === selected ? 'true' : undefined}
+        lang={o.lang}
+        hreflang={o.lang}
+      >
+        {o.label}
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .switch {
+    display: inline-flex;
+    gap: 2px;
+    padding: 4px;
+    border-radius: var(--radius);
+    background: var(--site-glass);
+    filter: drop-shadow(0 4px 8px rgb(46 37 35 / 0.07));
+  }
+  .switch__opt {
+    padding: 7px 14px;
+    border-radius: var(--radius);
+    font-size: 12.5px;
+    line-height: 16px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    color: var(--site-muted);
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+  }
+  .switch__opt:hover {
+    color: var(--text-primary);
+  }
+  .switch__opt.is-selected {
+    background: var(--bg-espresso);
+    color: var(--text-on-dark);
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+// One screenshot panel for <Screens>: the redacted composite exported whole from Figma.
+// `src` is the desktop composite (2x). `phone` is the phone composite where Figma draws a
+// different one (smaller Redacted badge); below 768px it is shown as a thumbnail.
+// The picture is a plain link to the full-size image, so a tap opens it full screen with or
+// without JavaScript.
+// Never pass a bare "Base" image or anything from captures/: only whole composite exports.
+import { Picture, getImage } from 'astro:assets';
+
+interface Shot {
+  src: ImageMetadata;
+  /** CSS size of the frame in Figma. */
+  width: number;
+  height: number;
+}
+interface Props {
+  shot: Shot;
+  phone?: Shot;
+  alt: string;
+  /** Accessible name of the link to the full-size image. */
+  openLabel: string;
+  loading?: 'lazy' | 'eager';
+}
+const { shot, phone, alt, openLabel, loading = 'lazy' } = Astro.props;
+const full = await getImage({ src: shot.src, format: 'webp', width: shot.src.width });
+---
+
+<a class:list={['shot', { 'shot--has-phone': phone }]} href={full.src} title={openLabel}>
+  <span class="shot__desktop">
+    <Picture
+      src={shot.src}
+      alt={alt}
+      formats={['avif', 'webp']}
+      widths={[720, 1344, 2016, shot.src.width]}
+      sizes="(max-width: 767px) calc(100vw - 40px), min(100vw - 96px, 1344px)"
+      width={shot.width}
+      height={shot.height}
+      loading={loading}
+    />
+  </span>
+  {
+    phone && (
+      <span class="shot__phone">
+        <Picture
+          src={phone.src}
+          alt={alt}
+          formats={['avif', 'webp']}
+          widths={[700, 1050, phone.src.width]}
+          sizes="calc(100vw - 40px)"
+          width={phone.width}
+          height={phone.height}
+          loading={loading}
+        />
+      </span>
+    )
+  }
+  <span class="visually-hidden">{openLabel}</span>
+</a>
+
+<style>
+  .shot {
+    display: block;
+    /* Shows while the image loads (the fill of the frame in Figma). */
+    background: #e6c9c4;
+  }
+  .shot :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .shot__desktop,
+  .shot__phone {
+    display: block;
+  }
+  .shot__phone {
+    display: none;
+  }
+  @media (max-width: 767.98px) {
+    .shot--has-phone .shot__desktop {
+      display: none;
+    }
+    .shot--has-phone .shot__phone {
+      display: block;
+    }
+  }
+</style>

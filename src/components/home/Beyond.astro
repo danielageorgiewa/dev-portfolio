@@ -1,0 +1,191 @@
+---
+// Beyond code (Figma 35:20 EN, 61:409 BG, 58:186 phone).
+// The Women4Cyber card (Figma 35:29) is hidden in the design until Daniela sends the school
+// visit photo, so it is not rendered. When it arrives: add it next to the CTF card and set
+// the CTF card back to half width.
+import type { HomeContent } from '../../content/home';
+
+interface Props {
+  t: HomeContent['beyond'];
+}
+const { t } = Astro.props;
+const FLAG = 'pr0j3ct_c0mpl3t3d';
+---
+
+<section class="beyond" id="beyond">
+  <div class="wrap beyond__inner">
+    <h2 class="beyond__title display">{t.titleBefore} <em>{t.titleItalic}</em></h2>
+    <div class="beyond__blocks">
+      <article class="ctf" data-ctf>
+        <p class="ctf__eyebrow eyebrow">{t.ctf.eyebrow}</p>
+        <div class="ctf__flag mono" lang="en">
+          <p class="ctf__prompt" data-ctf-prompt>{t.ctf.prompt}</p>
+          <p class="ctf__typed">
+            <span class="ctf__text" data-ctf-flag>
+              <span class="ctf__brace">dg&#123;</span><span>{FLAG}</span><span class="ctf__brace">&#125;</span>
+            </span>
+            <span class="ctf__cursor" aria-hidden="true" data-ctf-cursor></span>
+          </p>
+          <p class="ctf__hint" lang={Astro.params.lang} data-ctf-hint>{t.ctf.hint}</p>
+        </div>
+        <h3 class="ctf__title display">{t.ctf.title}</h3>
+        <p class="ctf__body body-large">{t.ctf.body}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .beyond__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: 150px;
+    padding-bottom: 150px;
+  }
+  .beyond__title {
+    font-size: calc(160 * var(--u));
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+  }
+  .beyond__blocks {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .ctf {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 44px 48px 48px;
+    border-radius: var(--radius-card);
+    background: var(--bg-espresso);
+    color: var(--text-on-dark);
+    overflow: clip;
+  }
+  .ctf__eyebrow {
+    color: rgb(242 240 237 / 0.6);
+  }
+  .ctf__flag {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 96px;
+    padding-bottom: 16px;
+  }
+  .ctf__prompt {
+    font-size: 24px;
+    line-height: normal;
+    color: rgb(242 240 237 / 0.5);
+  }
+  .ctf__typed {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: calc(86 * var(--u));
+    line-height: normal;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+  .ctf__brace {
+    color: var(--accent-caramel);
+  }
+  .ctf__cursor {
+    flex: none;
+    width: calc(45 * var(--u));
+    height: calc(86 * var(--u));
+    background: var(--accent-caramel);
+  }
+  .ctf__hint {
+    font-size: 21px;
+    line-height: normal;
+    color: rgb(242 240 237 / 0.45);
+  }
+  .ctf__title {
+    font-size: 56px;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+  }
+  .ctf__body {
+    max-width: 640px;
+    color: rgb(242 240 237 / 0.72);
+  }
+
+  /* Bulgarian (Figma 61:409): larger headings; the Cyrillic hint is JetBrains Mono. */
+  :global(html:lang(bg)) .ctf__hint {
+    font-family: 'JetBrains Mono', var(--font-mono);
+  }
+  @media (min-width: 768px) {
+    :global(html:lang(bg)) .ctf__hint {
+      line-height: 28px;
+    }
+    :global(:lang(bg)) .beyond__title {
+      font-size: calc(176 * var(--u));
+    }
+    :global(:lang(bg)) .ctf__title {
+      font-size: 61.6px;
+    }
+  }
+
+  /* ---- Phone (Figma 58:186) ---- */
+  @media (max-width: 767.98px) {
+    .beyond__inner {
+      gap: 14px;
+      padding: 72px 14px;
+    }
+    .beyond__title {
+      padding-left: 6px;
+      font-size: calc(56 * var(--u));
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .ctf {
+      gap: 14px;
+      padding: 28px 24px;
+    }
+    .ctf__eyebrow {
+      font-size: 11px;
+      line-height: 1.55;
+      letter-spacing: 0.24em;
+    }
+    .ctf__flag {
+      gap: 14px;
+      margin-bottom: 54px;
+      padding-bottom: 0;
+    }
+    .ctf__prompt {
+      font-size: 12px;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .ctf__typed {
+      gap: 3px;
+      font-size: calc(23 * var(--u));
+      line-height: 1.1;
+    }
+    .ctf__cursor {
+      width: calc(16 * var(--u));
+      height: calc(30 * var(--u));
+    }
+    .ctf__hint {
+      font-size: 11px;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .ctf__title {
+      font-size: 36px;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .ctf__body {
+      font-size: 15px;
+      line-height: 1.55;
+    }
+  }
+</style>

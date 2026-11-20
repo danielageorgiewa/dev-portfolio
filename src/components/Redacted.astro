@@ -1,0 +1,66 @@
+---
+// Redacted badge (Figma component set 143:27), for covering client logos as live HTML.
+// Screenshots are exported from Figma with the cover AND the badge baked in, so this is only
+// needed on top of live content (video, iframe, HTML mock-ups). See REDACTION.md.
+// Position it with `left` / `top` as percentages of the positioned parent (the badge is centred on that point).
+interface Props {
+  size?: 'lg' | 'md' | 'sm';
+  left: string;
+  top: string;
+  /** Font size in px at the rendered scale. */
+  scale?: number;
+  lang?: 'en' | 'bg';
+}
+const { size = 'md', left, top, scale = 11 } = Astro.props;
+const label = size === 'lg' ? 'Redacted for client privacy' : size === 'md' ? 'Redacted' : '';
+---
+
+<span
+  class:list={['redacted', `redacted--${size}`]}
+  style={`left:${left};top:${top};font-size:${scale}px`}
+  role="img"
+  aria-label="Redacted for client privacy"
+>
+  <svg class="redacted__lock" viewBox="0 0 9.72708 9.72708" aria-hidden="true">
+    <path
+      d="M2.83707 4.45825V3.24236C2.83707 2.10753 3.72872 1.21589 4.86354 1.21589C5.99837 1.21589 6.89002 2.10753 6.89002 3.24236V4.45825"
+      stroke-width="1.05377"
+      stroke-linecap="round"
+      stroke="#F2F0ED"
+      fill="none"></path>
+    <rect x="1.21589" y="4.21507" width="7.29531" height="4.86354" rx="2.43177" fill="#F2F0ED"></rect>
+    <circle cx="4.86354" cy="6.64684" r="0.648472" fill="#B3202A"></circle>
+  </svg>
+  {label}
+</span>
+
+<style>
+  .redacted {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.3em 0.9em;
+    border-radius: var(--radius);
+    background: var(--accent-crimson);
+    color: var(--text-on-dark);
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.22),
+      0 3px 10px rgb(140 20 26 / 0.28);
+  }
+  .redacted__lock {
+    width: 0.9em;
+    height: 0.9em;
+    flex: none;
+  }
+  .redacted--sm {
+    padding: 0.3em 0.5em;
+  }
+</style>

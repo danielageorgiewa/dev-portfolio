@@ -1,0 +1,162 @@
+---
+// Screens section: a row of tabs over one framed panel per tab, and a caption.
+// Figma: multi-shop 54:66 EN, 91:104 BG, 81:122 phone.
+//
+// The panels come from the parent as named slots, one per tab id:
+//   <Screens t={t.screens}>
+//     <ScreenShot slot="homepage" ... />
+//     <MyDemo slot="custom-size" ... />
+//   </Screens>
+//
+// Without JavaScript every panel is shown, stacked, and the tabs are in-page links to them.
+// The inline script below turns the links into an ARIA tab list (arrow keys, Home, End) and
+// shows one panel at a time. It runs before first paint, so nothing jumps. Each change fires
+// a bubbling `case:tab` event on the section ({ detail: { id, index } }), and
+// `section.dataset.activeTab` holds the current id; a study can call
+// `section.dispatchEvent(new CustomEvent('case:select', { detail: { index } }))` to switch tabs
+// (e.g. the warehouse study cycling its tabs).
+import type { CaseContent } from '../../content/case';
+
+interface Props {
+  t: CaseContent['screens'];
+}
+const { t } = Astro.props;
+const panelId = (id: string) => `screen-${id}`;
+---
+
+<section class="screens" data-screens data-active-tab={t.tabs[0]?.id}>
+  <div class="wrap screens__inner">
+    {
+      t.tabs.length > 1 && (
+        <ul class="screens__tabs" data-tablist data-label={t.tablistLabel}>
+          {t.tabs.map((tab, i) => (
+            <li>
+              <a class:list={['screens__tab', { 'is-active': i === 0 }]} href={`#${panelId(tab.id)}`} data-tab={tab.id}>
+                {tab.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <div class="screens__panels">
+      {
+        t.tabs.map((tab, i) => (
+          <div class:list={['screens__panel', { 'is-active': i === 0 }]} id={panelId(tab.id)} data-tab-panel={tab.id}>
+            <slot name={tab.id} />
+          </div>
+        ))
+      }
+    </div>
+    <p class="screens__caption small">{t.caption}</p>
+  </div>
+  <script is:inline>
+    (() => {
+      const root = document.currentScript.closest('[data-screens]');
+      const list = root.querySelector('[data-tablist]');
+      if (!list) return;
+      const tabs = [...list.querySelectorAll('[data-tab]')];
+      const panels = tabs.map((tab) => root.querySelector(`[data-tab-panel="${tab.dataset.tab}"]`));
+      list.setAttribute('role', 'tablist');
+      list.setAttribute('aria-label', list.dataset.label);
+      tabs.forEach((tab, i) => {
+        tab.parentElement.setAttribute('role', 'presentation');
+        tab.setAttribute('role', 'tab');
+        tab.id = `${panels[i].id}-tab`;
+        tab.setAttribute('aria-controls', panels[i].id);
+        panels[i].setAttribute('role', 'tabpanel');
+        panels[i].setAttribute('aria-labelledby', tab.id);
+      });
+      const select = (index, focus) => {
+        const n = (index + tabs.length) % tabs.length;
+        tabs.forEach((tab, i) => {
+          tab.classList.toggle('is-active', i === n);
+          tab.setAttribute('aria-selected', String(i === n));
+          tab.tabIndex = i === n ? 0 : -1;
+          panels[i].classList.toggle('is-active', i === n);
+          panels[i].hidden = i !== n;
+        });
+        root.dataset.activeTab = tabs[n].dataset.tab;
+        if (focus) tabs[n].focus();
+        root.dispatchEvent(new CustomEvent('case:tab', { bubbles: true, detail: { id: tabs[n].dataset.tab, index: n } }));
+      };
+      tabs.forEach((tab, i) => {
+        tab.addEventListener('click', (event) => {
+          event.preventDefault();
+          select(i, false);
+        });
+        tab.addEventListener('keydown', (event) => {
+          const to = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[event.key];
+          if (to === undefined) return;
+          event.preventDefault();
+          select(to, true);
+        });
+      });
+      root.addEventListener('case:select', (event) => select(event.detail.index, false));
+      // Open the tab named in the URL (#screen-<id>), otherwise the first.
+      const fromHash = panels.findIndex((panel) => `#${panel.id}` === location.hash);
+      select(fromHash > -1 ? fromHash : 0, false);
+    })();
+  </script>
+</section>
+
+<style>
+  .screens__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+    padding-bottom: 140px;
+  }
+  .screens__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+  }
+  .screens__tab {
+    display: block;
+    font-size: 12.5px;
+    line-height: 16px;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    color: var(--text-faint);
+    transition: color 0.25s ease;
+  }
+  .screens__tab:hover {
+    color: var(--text-primary);
+  }
+  .screens__tab.is-active {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+  .screens__panels {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+  }
+  .screens__panel {
+    /* The frame every panel sits in (Figma "Screens frame"). */
+    border-radius: var(--radius-card);
+    box-shadow: 0 16px 38px rgb(46 37 35 / 0.12);
+    overflow: clip;
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  .screens__panel[hidden] {
+    display: none;
+  }
+  .screens__caption {
+    color: var(--site-muted);
+  }
+
+  @media (max-width: 767.98px) {
+    .screens__inner {
+      padding-bottom: 77px;
+    }
+    .screens__panel {
+      border-radius: 3px;
+      box-shadow: 0 4px 10px rgb(46 37 35 / 0.12);
+    }
+  }
+</style>

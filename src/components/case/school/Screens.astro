@@ -1,0 +1,325 @@
+---
+// "Before and after" on the language school case study (Figma 48:51 EN, 91:257 BG, 72:77 phone):
+// the old site and the new one in one frame, wiped by a draggable handle.
+//
+// The images are whole composites exported from Figma, with the Redacted badges, the covers and
+// the rewritten hero text baked in (never a bare "Base", never rawImages, never captures/):
+//   before.png        48:56 "Before" at 2x (1344 × 707)
+//   after.png         39:21 "Screenshot" on the home project card at 4x (696 × 366). It is the same
+//                     composite as the slider's "After" (48:61), which Figma will only export
+//                     clipped to its visible half. 8px trimmed off each edge to lose the rounded
+//                     corners of that frame.
+//   before-phone.png  72:82 "Before" at 4x, as clipped by the phone crop (350 × 420). Figma draws
+//                     a larger Redacted badge there.
+//
+// Without JavaScript the two screenshots are stacked, each with its label. The inline script
+// marks the slider `data-enhanced` before first paint, which switches the CSS to the overlaid
+// layout; src/scripts/case-school.ts adds dragging, the keyboard and the first-view sweep.
+// Both pages sit in ONE scrolling box (`data-compare-scroll`), so one scroll position moves
+// both: when a screenshot taller than the frame is dropped in, they scroll together.
+// A PHONE tab is one more <Compare>-shaped block in a `slot="phone"`; see the content file.
+import { Picture } from 'astro:assets';
+import Screens from '../Screens.astro';
+import type { CaseContent } from '../../../content/case';
+import type { Lang } from '../../../i18n';
+import before from '../../../assets/case/school/before.png';
+import after from '../../../assets/case/school/after.png';
+import beforePhone from '../../../assets/case/school/before-phone.png';
+
+interface Props {
+  lang: Lang;
+  t: CaseContent['screens'];
+}
+const { t } = Astro.props;
+const c = t.compare!;
+const desktopSizes = '(max-width: 767px) calc(100vw - 40px), min(100vw - 96px, 1344px)';
+---
+
+<Screens t={t}>
+  <div class="compare" slot="desktop" data-compare>
+    <div class="compare__scroll" data-compare-scroll>
+      <div class="compare__pages">
+        <figure class="compare__page compare__page--before">
+          <div class="compare__img compare__img--desktop">
+            <Picture
+              src={before}
+              alt={t.alt.before}
+              formats={['avif', 'webp']}
+              widths={[720, 1344, 2016, before.width]}
+              sizes={desktopSizes}
+              width={1344}
+              height={707}
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
+          <div class="compare__img compare__img--phone">
+            <Picture
+              src={beforePhone}
+              alt={t.alt.before}
+              formats={['avif', 'webp']}
+              widths={[700, 1050, beforePhone.width]}
+              sizes="calc(100vw - 40px)"
+              width={350}
+              height={420}
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
+          <figcaption class="compare__label compare__label--before">{c.before}</figcaption>
+        </figure>
+        <figure class="compare__page compare__page--after">
+          <div class="compare__img compare__img--after">
+            <Picture
+              src={after}
+              alt={t.alt.after}
+              formats={['avif', 'webp']}
+              widths={[720, 1344, 2016, after.width]}
+              sizes="(max-width: 767px) 205vw, min(100vw - 96px, 1344px)"
+              width={1344}
+              height={703}
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
+          <figcaption class="compare__label compare__label--after">{c.after}</figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="compare__ui" data-compare-ui hidden>
+      <span class="compare__line"></span>
+      <input
+        class="compare__range"
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        value="50"
+        aria-label={c.handle}
+        aria-valuetext={c.valueText.replace('{n}', '50').replace('{m}', '50')}
+        data-value-text={c.valueText}
+        data-compare-range
+      />
+      <span class="compare__handle" data-compare-handle aria-hidden="true">‹ ›</span>
+    </div>
+    <script is:inline>
+      (() => {
+        /* Before first paint: overlay the two pages. When motion is allowed the handle starts at
+           the right edge, ready to sweep in; if the page script never arrives it settles in the
+           middle after 3s. */
+        const root = document.currentScript.closest('[data-compare]');
+        root.dataset.enhanced = '';
+        root.querySelector('[data-compare-ui]').hidden = false;
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          root.style.setProperty('--pos', '100%');
+          setTimeout(() => {
+            if (!('ready' in root.dataset)) root.style.removeProperty('--pos');
+          }, 3000);
+        }
+      })();
+    </script>
+  </div>
+</Screens>
+
+<script>
+  import '../../../scripts/case-school.ts';
+</script>
+
+<style>
+  /* Without JavaScript: one screenshot after the other, each with its label. */
+  .compare {
+    position: relative;
+    background: var(--bg-sand);
+  }
+  .compare__pages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .compare__page {
+    position: relative;
+  }
+  .compare__img :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .compare__img--phone {
+    display: none;
+  }
+  .compare__label {
+    position: absolute;
+    bottom: 20px;
+    z-index: 2;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    font-size: 12.5px;
+    line-height: 16px;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .compare__label--before {
+    left: 20px;
+    background: rgb(46 37 35 / 0.82);
+    color: var(--text-on-dark);
+  }
+  .compare__label--after {
+    right: 20px;
+    background: var(--bg-linen);
+    color: var(--text-primary);
+  }
+  .compare__ui[hidden] {
+    display: none;
+  }
+
+  /* With JavaScript: both pages in the same frame, the new one clipped at the handle. */
+  .compare[data-enhanced] {
+    container-type: size;
+    aspect-ratio: 1344 / 707;
+    cursor: ew-resize;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .compare[data-enhanced] .compare__scroll {
+    /* Not positioned, on purpose: the labels inside must anchor to the frame, not scroll. */
+    height: 100cqh;
+    overflow: hidden auto;
+    scrollbar-width: none;
+  }
+  .compare[data-enhanced] .compare__scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .compare[data-enhanced] .compare__pages {
+    display: grid;
+    gap: 0;
+  }
+  .compare[data-enhanced] .compare__page {
+    /* Static, so the labels are placed against the frame and stay put while the pages scroll. */
+    position: static;
+    grid-area: 1 / 1;
+    min-width: 0;
+  }
+  .compare[data-enhanced] .compare__img :global(img) {
+    /* At least as tall as the frame; a taller page keeps its height and scrolls. */
+    min-height: 100cqh;
+    object-fit: cover;
+    object-position: 50% 0;
+  }
+  .compare[data-enhanced] .compare__img--after {
+    clip-path: inset(0 0 0 var(--pos, 50%));
+  }
+  .compare__ui {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .compare__line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos, 50%);
+    width: 2px;
+    margin-left: -1px;
+    background: #fff;
+  }
+  .compare__handle,
+  .compare__range {
+    position: absolute;
+    top: 50%;
+    left: var(--pos, 50%);
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+  }
+  .compare__handle {
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--bg-espresso);
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.25);
+    color: var(--text-on-dark);
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: 500;
+    letter-spacing: -0.003em;
+    white-space: nowrap;
+    cursor: ew-resize;
+    pointer-events: auto;
+    touch-action: none;
+    user-select: none;
+  }
+  /* The real control: a range input under the handle. Invisible, but it takes focus and the
+     arrow keys, and screen readers announce it as a slider. */
+  .compare__range {
+    appearance: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .compare__range:focus-visible + .compare__handle {
+    outline: 2px solid var(--text-on-dark);
+    outline-offset: 3px;
+    box-shadow:
+      0 0 0 3px var(--bg-espresso),
+      0 6px 16px rgb(0 0 0 / 0.25);
+  }
+
+  @media (max-width: 767.98px) {
+    /* Phone (Figma 79:55): a 350 × 420 crop of the same pair, centred on the handle. */
+    :global(.screens__panel):has(> .compare[data-enhanced]) {
+      border-radius: calc(6 * var(--u));
+      box-shadow: 0 calc(9.5 * var(--u)) calc(11.3 * var(--u)) rgb(46 37 35 / 0.12);
+    }
+    .compare[data-enhanced] {
+      aspect-ratio: 350 / 420;
+    }
+    .compare[data-enhanced] .compare__img--desktop {
+      display: none;
+    }
+    .compare[data-enhanced] .compare__img--phone {
+      display: block;
+    }
+    .compare[data-enhanced] .compare__img--phone :global(img) {
+      height: 100cqh;
+    }
+    .compare[data-enhanced] .compare__img--after :global(img) {
+      /* The whole page is 798.4 wide in the 350 crop; show its middle. */
+      width: 228.12cqw;
+      max-width: none;
+      margin-left: -64.06cqw;
+    }
+    .compare[data-enhanced] .compare__label {
+      bottom: calc(11.4 * var(--u));
+      padding: calc(3.56 * var(--u)) calc(7.13 * var(--u));
+      font-size: calc(7.43 * var(--u));
+      line-height: calc(9.5 * var(--u));
+    }
+    .compare[data-enhanced] .compare__label--before {
+      left: calc(12 * var(--u));
+    }
+    .compare[data-enhanced] .compare__label--after {
+      right: calc(12 * var(--u));
+    }
+    .compare__line {
+      width: calc(1.19 * var(--u));
+      margin-left: calc(-0.6 * var(--u));
+    }
+    .compare__handle {
+      width: calc(33.27 * var(--u));
+      height: calc(33.27 * var(--u));
+      margin: calc(-16.63 * var(--u)) 0 0 calc(-16.63 * var(--u));
+      box-shadow: 0 calc(3.56 * var(--u)) calc(9.5 * var(--u)) rgb(0 0 0 / 0.25);
+      font-size: calc(10.69 * var(--u));
+      line-height: calc(11.88 * var(--u));
+    }
+    /* A finger needs more than 33px: the touch target reaches past the drawn handle. */
+    .compare__handle::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+    }
+  }
+</style>

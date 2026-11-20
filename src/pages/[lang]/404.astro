@@ -1,0 +1,24 @@
+---
+// Language-specific 404 (/en/404/, /bg/404/). Netlify serves it for unknown paths under each language.
+import Base from '../../layouts/Base.astro';
+import NotFound from '../../components/NotFound.astro';
+import { notFound } from '../../content/not-found';
+import { getStaticLangPaths, type Lang } from '../../i18n';
+
+export const getStaticPaths = getStaticLangPaths;
+const lang = Astro.params.lang as Lang;
+const t = notFound[lang];
+---
+
+<Base lang={lang} title={t.title} description={t.body} page="" header="fixed" noindex>
+  <div class="nf-page"><NotFound lang={lang} /></div>
+</Base>
+
+<style>
+  .nf-page {
+    min-height: calc(100svh - 76px);
+    display: grid;
+    place-items: center;
+    padding-top: var(--header-h);
+  }
+</style>

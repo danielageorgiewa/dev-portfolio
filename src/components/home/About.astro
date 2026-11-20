@@ -1,0 +1,168 @@
+---
+// About (Figma 43:92 EN, 61:155 BG, 56:103 phone).
+import type { HomeContent } from '../../content/home';
+
+interface Props {
+  t: HomeContent['about'];
+}
+const { t } = Astro.props;
+---
+
+<section class="about" id="about">
+  <div class="wrap about__inner">
+    <h2 class="eyebrow">{t.eyebrow}</h2>
+    <p class="about__statement display" data-word-fill>
+      <span class="about__lead">{t.lead}</span>{' '}
+      <span class="about__rest">{t.rest}</span>
+    </p>
+    <div class="about__details">
+      <div class:list={['about__bio body-large', { 'only-desktop': t.bioPhone }]}>
+        {t.bio.map((p) => <p>{p}</p>)}
+      </div>
+      {
+        t.bioPhone && (
+          <div class="about__bio body-large only-phone">
+            {t.bioPhone.map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+        )
+      }
+      <dl class="about__info">
+        {
+          t.info.map((row) => (
+            <div class="about__row">
+              <dt class="eyebrow">{row.label}</dt>
+              <dd>{row.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    border-top: 1px solid var(--border-line);
+  }
+  .about__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-top: 140px;
+    padding-bottom: 140px;
+  }
+  .about__statement {
+    font-size: calc(80 * var(--u));
+    line-height: 1;
+    letter-spacing: -0.022em;
+    color: var(--text-primary);
+  }
+  .about__rest {
+    color: var(--text-faint);
+  }
+  .about__details {
+    display: flex;
+    gap: calc(96 * var(--u));
+    align-items: flex-start;
+  }
+  .about__bio {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: var(--text-secondary);
+  }
+  .about__info {
+    flex: none;
+    width: calc(620 * var(--u));
+  }
+  .about__row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--border-line);
+  }
+  .about__row dt {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+  .about__row dd {
+    font-size: 16.5px;
+    line-height: 26px;
+    letter-spacing: -0.005em;
+    text-align: right;
+    color: var(--text-primary);
+  }
+
+  /* Bulgarian (Figma 61:155): larger statement; the first info row has a fixed 150px key
+     and a wrapping value, the other values stay on one line. */
+  @media (min-width: 768px) {
+    :global(:lang(bg)) .about__statement {
+      font-size: calc(88 * var(--u));
+    }
+    /* Hair-width tracking nudge so the bio breaks where the frame does (the self-hosted
+       Inter sets Cyrillic a fraction of a pixel differently from Figma). */
+    :global(:lang(bg)) .about__bio {
+      letter-spacing: -0.004em;
+    }
+    :global(:lang(bg)) .about__row:first-child dt {
+      flex: none;
+      width: 150px;
+    }
+    :global(:lang(bg)) .about__row:first-child dd {
+      flex: 1 0 0;
+      min-width: 0;
+    }
+    :global(:lang(bg)) .about__row:not(:first-child) dd {
+      white-space: nowrap;
+    }
+  }
+
+  /* ---- Phone (Figma 56:103) ---- */
+  @media (max-width: 767.98px) {
+    .about__inner {
+      gap: 22px;
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+    .about__inner > .eyebrow {
+      font-size: 11px;
+      line-height: 1.55;
+      letter-spacing: 0.24em;
+    }
+    .about__statement {
+      font-size: calc(38 * var(--u));
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+    }
+    .about__details {
+      flex-direction: column;
+      gap: 22px;
+    }
+    .about__bio {
+      flex: none;
+      gap: 22px;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    .about__info {
+      width: 100%;
+    }
+    .about__row {
+      flex-direction: column;
+      gap: 6px;
+      padding-block: 14px;
+    }
+    .about__row dt {
+      flex: none;
+    }
+    .about__row dd {
+      font-size: 15px;
+      text-align: left;
+    }
+  }
+</style>

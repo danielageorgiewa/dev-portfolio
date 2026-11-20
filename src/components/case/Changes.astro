@@ -1,0 +1,131 @@
+---
+// "What changed": a heading and a two-column grid of cards. Each card leads with a
+// mini-interface vignette, then its number, title and one-line caption.
+// Figma: multi-shop 54:106 EN, 91:137 BG, 81:155 phone.
+//
+// `Vignette` is the study's own component (see registry.ts). It gets `vignette`
+// ({ kind, labels }) from the card and draws inside a 440 × 200 box using the `--v` unit
+// (one vignette pixel: 0.98px on desktop, about 0.63px at 390). Cards are static.
+import type { CaseContent, CaseVignette } from '../../content/case';
+
+interface Props {
+  t: CaseContent['changes'];
+  Vignette?: (props: { vignette: CaseVignette }) => unknown;
+}
+const { t, Vignette } = Astro.props;
+---
+
+<section class="changes">
+  <div class="wrap changes__inner">
+    <header class="changes__header">
+      <p class="eyebrow">{t.kicker}</p>
+      <h2 class="changes__heading display" set:html={t.heading} />
+    </header>
+    <ol class="changes__grid" data-reveal-group>
+      {
+        t.cards.map((card) => (
+          <li class="card" data-reveal>
+            {Vignette && (
+              <div class="card__visual" aria-hidden="true">
+                <div class="card__vignette">
+                  <Vignette vignette={card.vignette} />
+                </div>
+              </div>
+            )}
+            <p class="card__number label">{card.number}</p>
+            <h3 class="card__title display-italic">{card.title}</h3>
+            <p class="card__text body-large">{card.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .changes__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: 140px;
+    padding-bottom: 120px;
+  }
+  .changes__header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .changes__heading {
+    font-size: calc(72 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .changes__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 32px 36px 36px;
+    border-radius: var(--radius-shot);
+    background: var(--bg-sand);
+  }
+  .card__visual {
+    container-type: inline-size;
+    border: 1px solid var(--site-border-faint);
+    border-radius: 12px;
+    background: var(--bg-paper);
+    overflow: clip;
+  }
+  .card__vignette {
+    /* One vignette pixel. The drawings are 440 × 200 of these, 15px clear of the frame at least. */
+    --v: min(0.98px, (100cqw - 30px) / 440);
+    position: relative;
+    width: calc(440 * var(--v));
+    height: calc(200 * var(--v));
+    margin: 11px auto;
+  }
+  .card__number {
+    color: var(--text-faint);
+  }
+  .card__title {
+    font-size: calc(40 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .card__text {
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 767.98px) {
+    .changes__inner {
+      gap: 24px;
+      padding-top: 77px;
+      padding-bottom: 66px;
+    }
+    .changes__heading {
+      font-size: calc(40 * var(--u) * var(--case-display-phone, 1));
+    }
+    .changes__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+    .card {
+      padding: 32px 20px 36px;
+    }
+    /* The cards sit in pairs in Figma: 14px inside a pair, 18px between pairs. */
+    .card:nth-child(odd):not(:first-child) {
+      margin-top: 4px;
+    }
+    .card__title {
+      font-size: calc(29 * var(--u) * var(--case-display-phone, 1));
+    }
+    .card__text {
+      font-size: 17px;
+      line-height: 28px;
+    }
+  }
+</style>

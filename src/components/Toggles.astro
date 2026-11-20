@@ -1,0 +1,54 @@
+---
+// The EN / БГ and Portfolio / CV switches. `page` is the current path without
+// the language prefix ('' | 'cv' | 'work/<slug>'), so EN / БГ keeps you on the same page.
+import Switch from './Switch.astro';
+import { href, cvHref, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  page?: string;
+  /** Render just one of the two switches (the phone header keeps Portfolio / CV in its menu). */
+  only?: 'language' | 'mode';
+}
+const { lang, page = '', only } = Astro.props;
+const isCv = page === 'cv';
+const labels = {
+  en: { language: 'Language', mode: 'Portfolio or CV', portfolio: 'Portfolio', cv: 'CV' },
+  bg: { language: 'Език', mode: 'Портфолио или CV', portfolio: 'Портфолио', cv: 'CV' },
+}[lang];
+---
+
+<div class="toggles">
+  {
+    only !== 'mode' && (
+      <Switch
+        label={labels.language}
+        selected={lang === 'en' ? 0 : 1}
+        options={[
+          { label: 'EN', href: href('en', page), lang: 'en' },
+          { label: 'БГ', href: href('bg', page), lang: 'bg' },
+        ]}
+      />
+    )
+  }
+  {
+    only !== 'language' && (
+      <Switch
+        label={labels.mode}
+        selected={isCv ? 1 : 0}
+        options={[
+          { label: labels.portfolio, href: href(lang) },
+          { label: labels.cv, href: cvHref(lang) },
+        ]}
+      />
+    )
+  }
+</div>
+
+<style>
+  .toggles {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+</style>

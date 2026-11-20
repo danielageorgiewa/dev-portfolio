@@ -1,0 +1,104 @@
+---
+// "Next case study" band: the whole band is one link to the next study.
+// Figma: multi-shop 54:176 EN, 91:207 BG, 81:225 phone. The button is round (120px, 64px on
+// phone), as drawn. `data-case-next` is the hook for the slide-in of the title; the
+// expand-to-full-screen transition on click is not built.
+import type { CaseContent } from '../../content/case';
+
+interface Props {
+  t: CaseContent['next'];
+  href: string;
+}
+const { t, href } = Astro.props;
+---
+
+<a class="next" href={href} data-case-next>
+  <span class="wrap next__inner">
+    <span class="next__kicker eyebrow">{t.kicker}</span>
+    <span class="next__row">
+      <span class="next__title display" data-case-next-title set:html={t.title} />
+      <span class="next__go" aria-hidden="true">→</span>
+    </span>
+  </span>
+</a>
+
+<style>
+  .next {
+    display: block;
+    background: var(--bg-espresso);
+    color: var(--text-on-dark);
+    overflow: clip;
+  }
+  .next:focus-visible {
+    outline-offset: -6px;
+    outline-color: var(--text-on-dark);
+  }
+  .next__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 110px;
+    padding-bottom: 110px;
+  }
+  .next__kicker {
+    color: rgb(242 240 237 / 0.55);
+  }
+  .next__row {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .next__title {
+    flex: 1 0 0;
+    min-width: 0;
+    font-size: calc(110 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  /* Cormorant sets a hair narrower in the browser than in Figma. Without this measure
+     "Сайт на езиково училище" just fits on one line, where Figma (91:210) breaks it in two. */
+  @media (min-width: 768px) {
+    .next__title:lang(bg) {
+      padding-right: calc(50 * var(--u));
+    }
+  }
+  .next__go {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--accent-crimson);
+    font-size: 30px;
+    line-height: 20px;
+    font-weight: 500;
+    transition:
+      background-color 0.25s ease,
+      transform 0.4s var(--ease-lift);
+  }
+  .next:hover .next__go {
+    background: var(--accent-crimson-deep);
+    transform: translateX(6px);
+  }
+
+  @media (max-width: 767.98px) {
+    .next__inner {
+      padding-top: 61px;
+      padding-bottom: 61px;
+    }
+    .next__row {
+      gap: 20px;
+    }
+    .next__title {
+      font-size: calc(46 * var(--u) * var(--case-display-phone, 1));
+      padding: 0;
+    }
+    .next__go {
+      width: 64px;
+      height: 64px;
+      font-size: 26px;
+      line-height: 17px;
+    }
+  }
+</style>

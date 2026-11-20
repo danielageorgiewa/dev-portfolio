@@ -1,0 +1,153 @@
+---
+// Results band: heading and a row of big numbers.
+// Figma: multi-shop 54:130 EN, 91:161 BG, 81:179 phone.
+// Each value carries `data-count`; the motion script counts it from the old value to the new.
+import type { CaseContent } from '../../content/case';
+
+interface Props {
+  t: CaseContent['results'];
+}
+const { t } = Astro.props;
+---
+
+<section class="results" style={t.tone ? `--results-bg:var(--${t.tone})` : undefined}>
+  <div class="wrap results__inner">
+    <p class="results__kicker eyebrow">{t.kicker}</p>
+    <h2 class="results__heading display" set:html={t.heading} />
+    <dl class="results__numbers" style={`--cols:${t.numbers.length}`} data-reveal-group>
+      {
+        t.numbers.map((n) => (
+          <div class="number" data-reveal>
+            <dt class="number__label">{n.label}</dt>
+            <dd class="number__value" data-count>
+              {n.value}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+    {
+      t.metrics && (
+        <dl class="results__metrics">
+          {t.metrics.map((m) => (
+            <div class="metric">
+              <dt class="metric__label">{m.label}</dt>
+              <dd class="metric__value">{m.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+    {t.method && <p class="results__method small">{t.method}</p>}
+  </div>
+</section>
+
+<style>
+  .results {
+    background: var(--results-bg, var(--text-ink));
+    color: var(--text-on-dark);
+  }
+  .results__method {
+    color: rgb(242 240 237 / 0.55);
+  }
+  .results__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+    padding-top: 130px;
+    padding-bottom: 130px;
+  }
+  .results__kicker {
+    color: rgb(242 240 237 / 0.6);
+  }
+  .results__heading {
+    font-size: calc(72 * var(--u) * var(--case-display, 1));
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .results__numbers {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    gap: 24px;
+  }
+  .number {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid rgb(242 240 237 / 0.25);
+  }
+  .number__value {
+    font-size: calc(84 * var(--u));
+    line-height: 1.2143;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .number__label {
+    color: rgb(242 240 237 / 0.75);
+  }
+  /* Optional list of measured values (language school, Figma 129:10): two columns of rows. */
+  .results__metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 40px;
+  }
+  .metric {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--text-on-dark);
+  }
+  .metric__label {
+    flex: 1 0 0;
+    min-width: 0;
+    font-size: 16px;
+    line-height: 22px;
+    color: var(--text-on-dark-muted);
+  }
+  .metric__value {
+    flex: none;
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 767.98px) {
+    .results__inner {
+      gap: 28px;
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+    .results__heading {
+      font-size: calc(40 * var(--u) * var(--case-display-phone, 1));
+    }
+    .results__numbers {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+    .number__value {
+      font-size: 47px;
+    }
+    .results__metrics {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .metric {
+      padding: 12px 0;
+    }
+    .metric__label {
+      font-size: 14px;
+      line-height: 18px;
+    }
+    .metric__value {
+      font-size: 15px;
+      line-height: 18px;
+    }
+  }
+</style>

@@ -1,0 +1,96 @@
+---
+// A job, a degree or a course: serif title, muted line under it, dates on the right
+// (Figma "Job head" 51:42, education 51:84). On the phone the dates drop under the text.
+import type { CvEntry } from '../../content/cv';
+
+interface Props {
+  entry: CvEntry;
+  /** 'job' is the larger title (20px), 'study' the smaller one (18px). */
+  size?: 'job' | 'study';
+}
+const { entry, size = 'study' } = Astro.props;
+---
+
+<div class:list={['cv-entry', `cv-entry--${size}`]}>
+  <div class="cv-entry__text">
+    <h3 class="cv-entry__title display">{entry.title}</h3>
+    <p class="cv-entry__meta">{entry.place}</p>
+  </div>
+  {entry.dates && <p class="cv-entry__meta cv-entry__dates">{entry.dates}</p>}
+</div>
+
+<style>
+  .cv-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cv-entry__text {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cv-entry__title {
+    font-size: calc(18px * var(--cv-serif));
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--text-primary);
+  }
+  .cv-entry--job .cv-entry__title {
+    font-size: calc(20px * var(--cv-serif));
+  }
+  .cv-entry__meta {
+    font-size: 12.5px;
+    line-height: 19px;
+    letter-spacing: -0.005em;
+    color: var(--site-muted);
+  }
+  .cv-entry__dates {
+    flex: none;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 767.98px) {
+    .cv-entry {
+      flex-direction: column;
+      gap: 4px;
+    }
+    .cv-entry__text {
+      flex: none;
+      width: 100%;
+    }
+    .cv-entry__title {
+      font-size: calc(17px * var(--cv-serif));
+    }
+    .cv-entry--job .cv-entry__title {
+      font-size: calc(19px * var(--cv-serif));
+    }
+  }
+
+  /* A4 (Figma 51:118, 51:160). Declared after the phone rules on purpose: the print
+     viewport is narrower than 768px, so both blocks apply and this one has to win. */
+  @media print {
+    .cv-entry {
+      flex-direction: row;
+      gap: 7.44pt;
+    }
+    .cv-entry__text {
+      flex: 1 0 0;
+      width: auto;
+      gap: 1.24pt;
+    }
+    .cv-entry__title {
+      font-size: calc(11.16pt * var(--cv-serif));
+    }
+    .cv-entry--job .cv-entry__title {
+      font-size: calc(12.4pt * var(--cv-serif));
+    }
+    .cv-entry__meta {
+      font-size: 7.75pt;
+      line-height: 11pt;
+    }
+  }
+</style>
