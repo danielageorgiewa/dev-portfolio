@@ -41,7 +41,9 @@ const full = frame ? null : await getImage({ src: shot.src, format: 'webp', widt
 const drawn = (s: Shot) => Math.round((s.width * s.src.height) / s.src.width);
 /** Very tall captures go out as WebP only: AVIF has tighter size limits. */
 const formats = (s: Shot): ('avif' | 'webp')[] => (s.src.height > 4096 ? ['webp'] : ['avif', 'webp']);
-/** The listed widths that are clearly smaller than the file, plus the file's own width. */
+/** The listed widths that are clearly smaller than the file, plus the file's own width.
+ * `sizes` on the framed desktop picture is 1008px, not the full 1344: the frame opens at two thirds
+ * of the column, so a 2x screen takes the 2016 file (1.5x when expanded) and not the 2688 one. */
 const widths = (s: Shot, list: number[]) => [...list.filter((w) => w <= s.src.width * 0.85), s.src.width];
 const ratio = (s: Shot) => s.src.height / s.src.width;
 /** Taller than its frame (or the frame is capped): the box scrolls, so it is a tab stop even without JavaScript. */
@@ -64,9 +66,9 @@ const scrolls = [shot, phone ?? shot].some((s) => ratio(s) > (s.height / s.width
             src={shot.src}
             alt={alt}
             formats={formats(shot)}
-            quality={86}
+            quality={74}
             widths={widths(shot, [720, 1344, 2016])}
-            sizes="(max-width: 767px) calc(100vw - 40px), min(100vw - 96px, 1344px)"
+            sizes="(max-width: 767px) calc(100vw - 40px), min(67vw, 1008px)"
             width={shot.width}
             height={drawn(shot)}
             loading={loading}
@@ -79,7 +81,7 @@ const scrolls = [shot, phone ?? shot].some((s) => ratio(s) > (s.height / s.width
               src={phone.src}
               alt={alt}
               formats={formats(phone)}
-              quality={86}
+              quality={74}
               widths={widths(phone, [390, 700, 1050])}
               sizes="calc(100vw - 40px)"
               width={phone.width}

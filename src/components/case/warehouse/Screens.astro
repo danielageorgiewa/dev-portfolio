@@ -1,35 +1,53 @@
 ---
 // Screens section of the warehouse case study (Figma 53:51 EN, 91:436 BG, 81:285 phone).
-// Figma names four tabs (Today, Orders, Stock, Health) and draws one screen: Today. Only that
-// one is shipped; see the content file for how to add the others when they are drawn.
-// The screenshots are the whole "Today screen" composites exported from Figma (53:207 at 2x,
-// 81:292 at 4x for the phone thumbnail), with the Redacted badge over the logo and the retyped
-// alert ("Lightwell site didn’t arrive. Its stock didn’t move.") baked in. The BG frame
-// (91:443) is the same composite, so both languages share the files. Demo data only.
-// The script cycles the tabs every 4s while in view, once there is more than one.
+// Figma names four tabs (Today, Orders, Stock, Health) and draws one. All four are full-page
+// renders of the running app, redacted IN THE PAGE before the screenshot, per REDACTION.md:
+// logo → Redacted badge; client, site and partner names → placeholders; customer names made up;
+// order numbers shifted; order and production counts scaled down. The capture script and the
+// unredacted snapshots are private and are not in this repo. Never replace these with a bare
+// capture. Both languages share the files (the app was captured in English).
+//   screen-<name>.png        1344 CSS px wide at 2x (2688), shown from 768px up
+//   screen-<name>-phone.png  390 CSS px wide at 2x (780), the app's own phone layout, below 768px
+// The script cycles the tabs every 4s while in view.
 import Screens from '../Screens.astro';
 import ScreenShot from '../ScreenShot.astro';
 import type { CaseContent } from '../../../content/case';
 import type { Lang } from '../../../i18n';
 import today from '../../../assets/case/warehouse/screen-today.png';
 import todayPhone from '../../../assets/case/warehouse/screen-today-phone.png';
+import orders from '../../../assets/case/warehouse/screen-orders.png';
+import ordersPhone from '../../../assets/case/warehouse/screen-orders-phone.png';
+import stock from '../../../assets/case/warehouse/screen-stock.png';
+import stockPhone from '../../../assets/case/warehouse/screen-stock-phone.png';
+import health from '../../../assets/case/warehouse/screen-health.png';
+import healthPhone from '../../../assets/case/warehouse/screen-health-phone.png';
 
 interface Props {
   lang: Lang;
   t: CaseContent['screens'];
 }
 const { t } = Astro.props;
+const screens = [
+  { id: 'today', src: today, phone: todayPhone },
+  { id: 'orders', src: orders, phone: ordersPhone },
+  { id: 'stock', src: stock, phone: stockPhone },
+  { id: 'health', src: health, phone: healthPhone },
+];
 ---
 
 <Screens t={t}>
-  <ScreenShot
-    slot="today"
-    shot={{ src: today, width: 1344, height: 921 }}
-    phone={{ src: todayPhone, width: 350, height: 240 }}
-    alt={t.alt.today}
-    frame={t.frame}
-    maxHeight="85vh"
-  />
+  {
+    screens.map((s) => (
+      <ScreenShot
+        slot={s.id}
+        shot={{ src: s.src, width: 1344, height: 921 }}
+        phone={{ src: s.phone, width: 350, height: 420 }}
+        alt={t.alt[s.id]}
+        frame={t.frame}
+        maxHeight="85vh"
+      />
+    ))
+  }
 </Screens>
 
 <script>

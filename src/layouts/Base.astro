@@ -73,7 +73,7 @@ const og = new URL(ogImage, SITE_URL).href;
         c.add('js');
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
           c.add('js-intro');
-          setTimeout(function () { c.remove('js-intro'); }, 3000);
+          setTimeout(function () { c.remove('js-intro'); }, 1200);
         }
       })(document.documentElement.classList);
     </script>

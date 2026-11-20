@@ -20,18 +20,22 @@ export const warehouse: CaseContent = {
     ],
   },
   screens: {
-    // Figma names four tabs (TODAY, ORDERS, STOCK, HEALTH) but draws only the Today screen
-    // (53:207), so there are no redacted Orders, Stock or Health composites to export yet.
-    // When they exist, add { id: 'orders', label: 'ORDERS' }, { id: 'stock', label: 'STOCK' }
-    // and { id: 'health', label: 'HEALTH' } here, their alt texts below and their images in
-    // src/components/case/warehouse/Screens.astro. The 4s cycle starts by itself once there is
-    // more than one tab (src/scripts/case-warehouse.ts).
-    tabs: [{ id: 'today', label: 'TODAY' }],
+    // Figma names the four tabs and draws only Today. All four are captures of the running app,
+    // redacted in the page (src/components/case/warehouse/Screens.astro).
+    tabs: [
+      { id: 'today', label: 'TODAY' },
+      { id: 'orders', label: 'ORDERS' },
+      { id: 'stock', label: 'STOCK' },
+      { id: 'health', label: 'HEALTH' },
+    ],
     caption: 'Screens shown with demo data.',
     // Not in Figma.
     tablistLabel: 'Screens',
     alt: {
       today: 'Today screen of the warehouse management system with demo data, the client logo redacted',
+      orders: 'Orders screen of the warehouse management system with demo data, the client logo redacted',
+      stock: 'Stock screen of the warehouse management system with demo data, the client logo redacted',
+      health: 'Health screen of the warehouse management system with demo data, the client logo redacted',
     },
     openLabel: 'Open the screenshot at full size',
     frame: {

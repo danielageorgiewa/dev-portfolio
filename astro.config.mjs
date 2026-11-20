@@ -6,6 +6,8 @@ export default defineConfig({
   site: 'https://danielageorgieva.work',
   output: 'static',
   trailingSlash: 'ignore',
+  // The CSS goes into the page: no render-blocking stylesheet requests after the HTML arrives.
+  build: { inlineStylesheets: 'always' },
   integrations: [
     sitemap({
       // Only the real pages: no 404s and no root redirect page.

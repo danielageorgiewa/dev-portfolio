@@ -19,8 +19,10 @@ import type { CaseContent } from '../../content/case';
 
 interface Props {
   t: CaseContent['screens'];
+  /** Id of the tab that comes first below 768px (the language school shows its PHONE tab first on a phone). */
+  phoneFirst?: string;
 }
-const { t } = Astro.props;
+const { t, phoneFirst } = Astro.props;
 const panelId = (id: string) => `screen-${id}`;
 ---
 
@@ -30,7 +32,7 @@ const panelId = (id: string) => `screen-${id}`;
       t.tabs.length > 1 && (
         <ul class="screens__tabs" data-tablist data-label={t.tablistLabel}>
           {t.tabs.map((tab, i) => (
-            <li>
+            <li data-phone-first={tab.id === phoneFirst ? '' : undefined}>
               <a class:list={['screens__tab', { 'is-active': i === 0 }]} href={`#${panelId(tab.id)}`} data-tab={tab.id}>
                 {tab.label}
               </a>
@@ -42,7 +44,7 @@ const panelId = (id: string) => `screen-${id}`;
     <div class="screens__panels">
       {
         t.tabs.map((tab, i) => (
-          <div class:list={['screens__panel', { 'is-active': i === 0 }]} id={panelId(tab.id)} data-tab-panel={tab.id}>
+          <div class:list={['screens__panel', { 'is-active': i === 0 }]} id={panelId(tab.id)} data-tab-panel={tab.id} data-phone-first={tab.id === phoneFirst ? '' : undefined}>
             <slot name={tab.id} />
           </div>
         ))
@@ -55,6 +57,11 @@ const panelId = (id: string) => `screen-${id}`;
       const root = document.currentScript.closest('[data-screens]');
       const list = root.querySelector('[data-tablist]');
       if (!list) return;
+      // On a phone the tab marked `data-phone-first` leads: moved in the DOM, so the tab order,
+      // the arrow keys and the first panel all agree. (Without JavaScript, CSS `order` does it.)
+      if (matchMedia('(max-width: 767.98px)').matches) {
+        for (const el of root.querySelectorAll('[data-phone-first]')) el.parentElement.prepend(el);
+      }
       const tabs = [...list.querySelectorAll('[data-tab]')];
       const panels = tabs.map((tab) => root.querySelector(`[data-tab-panel="${tab.dataset.tab}"]`));
       list.setAttribute('role', 'tablist');
@@ -153,6 +160,10 @@ const panelId = (id: string) => `screen-${id}`;
   @media (max-width: 767.98px) {
     .screens__inner {
       padding-bottom: 77px;
+    }
+    .screens__tabs > [data-phone-first],
+    .screens__panel[data-phone-first] {
+      order: -1;
     }
     .screens__panel {
       border-radius: 3px;

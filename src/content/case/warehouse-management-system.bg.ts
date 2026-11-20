@@ -20,17 +20,21 @@ export const warehouse: CaseContent = {
     ],
   },
   screens: {
-    // Figma names four tabs (ДНЕС, ПОРЪЧКИ, НАЛИЧНОСТ, СЪСТОЯНИЕ) but draws only the Today
-    // screen (91:443), so there are no redacted Orders, Stock or Health composites to export
-    // yet. When they exist, add { id: 'orders', label: 'ПОРЪЧКИ' },
-    // { id: 'stock', label: 'НАЛИЧНОСТ' } and { id: 'health', label: 'СЪСТОЯНИЕ' } here and
-    // their alt texts below.
-    tabs: [{ id: 'today', label: 'ДНЕС' }],
+    // Figma names the four tabs and draws only Today. The captures are shared with English.
+    tabs: [
+      { id: 'today', label: 'ДНЕС' },
+      { id: 'orders', label: 'ПОРЪЧКИ' },
+      { id: 'stock', label: 'НАЛИЧНОСТ' },
+      { id: 'health', label: 'СЪСТОЯНИЕ' },
+    ],
     caption: 'Екраните са с примерни данни.',
     // Not in Figma.
     tablistLabel: 'Екрани',
     alt: {
       today: 'Екран „Днес“ на системата за управление на склад с примерни данни, логото на клиента е скрито',
+      orders: 'Екран „Поръчки“ на системата за управление на склад с примерни данни, логото на клиента е скрито',
+      stock: 'Екран „Наличност“ на системата за управление на склад с примерни данни, логото на клиента е скрито',
+      health: 'Екран „Състояние“ на системата за управление на склад с примерни данни, логото на клиента е скрито',
     },
     openLabel: 'Отвори екрана в пълен размер',
     frame: {
