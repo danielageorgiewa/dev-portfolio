@@ -3,11 +3,10 @@ import { test } from 'node:test';
 import {
   cleanLine,
   cleanText,
-  escapeHtml,
   hasLink,
   isEmail,
   parseStart,
-  stripAngles,
+  parseTimeZone,
   validateBooking,
 } from '../functions/_lib/validate.ts';
 
@@ -29,6 +28,7 @@ test('a well-formed booking passes and comes back cleaned', () => {
     email: 'visitor@example.com',
     message: good.message,
     lang: 'en',
+    timeZone: 'Europe/Sofia',
   });
 });
 
@@ -240,10 +240,41 @@ test('control characters are removed from names and messages', () => {
   assert.equal(result.booking.message, 'one two\nthree');
 });
 
-test('markup is escaped or stripped, never passed through', () => {
-  assert.equal(
-    escapeHtml(`<img src=x onerror="alert('x')"> & more`),
-    '&lt;img src=x onerror=&quot;alert(&#39;x&#39;)&quot;&gt; &amp; more',
-  );
-  assert.equal(stripAngles('<b>Ann</b> <script>'), 'bAnn/b script');
+test('the time zone defaults to Europe/Sofia and is kept when it is a real zone', () => {
+  const none = validateBooking(good);
+  assert.ok(none.ok && !none.honeypot);
+  assert.equal(none.booking.timeZone, 'Europe/Sofia');
+  for (const empty of [undefined, null, '']) assert.equal(parseTimeZone(empty), 'Europe/Sofia');
+
+  // Names browsers really report, including older ones that Intl.supportedValuesOf leaves out.
+  for (const zone of ['Europe/London', 'America/Argentina/Salta', 'Asia/Calcutta', 'UTC', 'Etc/GMT+3', 'Europe/Kyiv']) {
+    const result = validateBooking({ ...good, timeZone: zone });
+    assert.ok(result.ok && !result.honeypot, zone);
+    assert.equal(result.booking.timeZone, zone);
+  }
+  // Shaped like a zone but unknown to this runtime: the default, not a refusal.
+  assert.equal(parseTimeZone('Mars/Olympus_Mons'), 'Europe/Sofia');
+});
+
+test('a time zone that is not shaped like a zone name is rejected', () => {
+  for (const bad of [
+    7,
+    true,
+    {},
+    ['Europe/Sofia'],
+    'Europe/Sofia ',
+    ' Europe/Sofia',
+    'Europe/Sofia\n',
+    'Europe/Sofia?x=1',
+    'Europe/Sofia&username=other',
+    '../etc/passwd',
+    'Europe//Sofia',
+    'a/b/c/d',
+    '<script>',
+    'Европа/София',
+    'x'.repeat(65),
+  ]) {
+    assert.equal(parseTimeZone(bad), null, JSON.stringify(bad));
+    assert.deepEqual(validateBooking({ ...good, timeZone: bad }), { ok: false }, JSON.stringify(bad));
+  }
 });

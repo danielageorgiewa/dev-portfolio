@@ -1,17 +1,9 @@
-// POST /api/book: puts a tentative call request on the calendar for a slot the visitor picked.
-// The visitor is never a guest on the event, so Google never emails them from here.
+// POST /api/book: books the slot the visitor picked on Cal.com. Cal.com then emails the
+// confirmation and the calendar invite to the visitor and to the owner.
 
 import { createHash } from 'node:crypto';
-import {
-  DEFAULT_TIMEOUTS,
-  GoogleError,
-  type SiteEvent,
-  freeBusy,
-  getAccessToken,
-  insertEvent,
-  listSiteEvents,
-  readConfig,
-} from './google.ts';
+import { CalError, createBooking, fetchSlots } from './cal.ts';
+import { DEFAULT_TIMEOUTS, readCalConfig } from './config.ts';
 import {
   type Deps,
   type FnContext,
@@ -20,62 +12,33 @@ import {
   isAllowedOrigin,
   json,
 } from './http.ts';
-import { TIME_ZONE, candidateSlots, overlaps, queryWindow, slotEnd, slotEventId } from './slots.ts';
-import { type Booking, MAX_BODY_BYTES, escapeHtml, stripAngles, validateBooking } from './validate.ts';
-
-/** Most bookings made through the site that may be waiting in the calendar at one time. */
-export const MAX_UPCOMING_BOOKINGS = 8;
-/** Most bookings the site may create in any 24 hours, whoever asks. */
-export const MAX_BOOKINGS_PER_DAY = 4;
-/** Most upcoming bookings one email address may hold. */
-export const MAX_UPCOMING_PER_EMAIL = 1;
-
-const DAY_MS = 24 * 60 * 60_000;
+import { dayOf, inWindow } from './slots.ts';
+import { MAX_BODY_BYTES, validateBooking } from './validate.ts';
 
 export type Reason = 'taken' | 'invalid' | 'rate_limited' | 'unavailable';
 
 const fail = (reason: Reason, status: number, headers?: Record<string, string>) =>
   json({ ok: false, reason }, status, headers);
 
-// Second line of defence behind `config.rateLimit` in book.ts. See MemoryRateLimiter for
-// what it can and cannot do.
+// Second line of defence behind `config.rateLimit` in book.ts: five attempts per IP in ten
+// minutes. See MemoryRateLimiter for what it can and cannot do.
 export const limiter = new MemoryRateLimiter(5, 10 * 60_000);
 
-/**
- * The words on the calendar event. Only the owner sees it at first: the visitor is not a
- * guest, so their name, email and message go in the notes as labelled lines. If she later
- * adds the visitor as a guest, they see the same text.
- * TODO(copy): English only for now. Bulgarian wording is Daniela's to supply.
- */
-export function eventText(booking: Booking): { summary: string; description: string } {
-  return {
-    // The title is plain text everywhere Google shows it, so angle brackets are dropped.
-    summary: `Call request: ${stripAngles(booking.name)}`,
-    // Descriptions render HTML, so everything the visitor typed is escaped.
-    description:
-      `Name: ${escapeHtml(booking.name)}\n` +
-      `Email: ${escapeHtml(booking.email)}\n` +
-      `Message:\n${escapeHtml(booking.message)}\n\n` +
-      '30-minute intro call, requested on danielageorgieva.work.',
-  };
-}
+/** Most bookings one email address may make in an hour. */
+export const MAX_BOOKINGS_PER_EMAIL = 2;
 
-/** What goes on the event in place of the address: enough to count bookings per person. */
-export function emailHash(email: string): string {
+// Cal.com emails a confirmation to whatever address the visitor typed, so the form could be
+// used to send unwanted mail to a stranger. This caps how often one address can be the
+// target: two bookings an hour.
+// Honest limits: the count lives in the memory of one function instance. Netlify can run
+// several instances at once and discards idle ones, so the real ceiling is higher than two
+// and resets on a cold start. It slows down repeated mail to one address and nothing more.
+// The limits that hold everywhere are the per-IP rule in book.ts and Cal.com's own.
+export const emailLimiter = new MemoryRateLimiter(MAX_BOOKINGS_PER_EMAIL, 60 * 60_000);
+
+/** The key the throttle counts under, so the address itself is not kept in memory. */
+export function emailKey(email: string): string {
   return createHash('sha256').update(email.trim().toLowerCase(), 'utf8').digest('hex').slice(0, 16);
-}
-
-/**
- * True when one more booking would go over a limit. Counts the site's own events that are
- * not deleted and have not started yet. An event whose start cannot be read counts as
- * upcoming, so a surprise in Google's answer blocks bookings instead of waving them through.
- */
-export function overLimit(events: readonly SiteEvent[], who: string, now: number): boolean {
-  const upcoming = events.filter((e) => !e.cancelled && (e.start === null || e.start > now));
-  if (upcoming.length >= MAX_UPCOMING_BOOKINGS) return true;
-  const today = upcoming.filter((e) => e.created === null || e.created > now - DAY_MS);
-  if (today.length >= MAX_BOOKINGS_PER_DAY) return true;
-  return upcoming.filter((e) => e.who === who).length >= MAX_UPCOMING_PER_EMAIL;
 }
 
 export async function handleBook(
@@ -118,56 +81,36 @@ export async function handleBook(
   if (result.honeypot) return json({ ok: true });
   const { booking } = result;
 
-  const cfg = readConfig(deps.env);
-  if (!cfg) return fail('unavailable', 503);
+  // Only a time the availability function could list: in the future and inside the
+  // seven-day window. Anything else is refused without asking Cal.com.
+  if (!inWindow(booking.start, now)) return fail('taken', 409);
 
-  // Only a slot the availability function could offer right now: on the working-hours grid,
-  // far enough ahead, inside the seven-day window.
-  if (!candidateSlots(now).includes(booking.start)) return fail('taken', 409);
-
-  const end = slotEnd(booking.start);
-  const id = slotEventId(booking.start);
-  const who = emailHash(booking.email);
+  const cfg = readCalConfig(deps.env);
   const timeouts = deps.timeouts ?? DEFAULT_TIMEOUTS;
   try {
-    const token = await getAccessToken(cfg, deps.fetch, now, timeouts.read);
-    // Two independent reads, side by side, immediately before writing: is this exact half
-    // hour still free, and which events has the site already created in the booking window
-    // (deleted ones included). If either fails or times out, nothing is written.
-    const [busy, siteEvents] = await Promise.all([
-      freeBusy(cfg, token, { start: booking.start, end }, deps.fetch, timeouts.read),
-      listSiteEvents(cfg, token, queryWindow(now), deps.fetch, { detail: true, timeoutMs: timeouts.read }),
-    ]);
-    // Google never gives an event id out twice, not even after the event is deleted, so a
-    // slot that was booked and then cancelled cannot be booked again through the site.
-    if (siteEvents.some((e) => e.id === id)) return fail('taken', 409);
-    if (overlaps(booking.start, busy)) return fail('taken', 409);
-    // The page shows its "use the email link" message for this answer.
-    if (overLimit(siteEvents, who, now)) return fail('unavailable', 503);
+    // Ask Cal.com for that day's free slots immediately before booking. The time must be
+    // one of them: still free, and a real slot of the event type. If this read fails or
+    // times out, nothing is booked.
+    const free = await fetchSlots(cfg, dayOf(booking.start), deps.fetch, timeouts.slots);
+    if (!free.includes(booking.start)) return fail('taken', 409);
 
-    // The id is fixed per slot. When two visitors submit the same slot in the same instant,
-    // both pass the checks above, Google accepts one insert and answers 409 to the other.
-    const outcome = await insertEvent(
-      cfg,
-      token,
-      {
-        id,
-        who,
-        ...eventText(booking),
-        start: booking.start,
-        end,
-        timeZone: TIME_ZONE,
-        notifyEmail: cfg.notifyEmail,
-        requestId: deps.uuid(),
-      },
-      deps.fetch,
-      timeouts.insert,
-    );
-    if (outcome === 'conflict') return fail('taken', 409);
-    return json({ ok: true });
+    // Counted here, just before the one call that makes Cal.com send email.
+    if (!emailLimiter.allow(emailKey(booking.email), now)) {
+      return fail('rate_limited', 429, { 'retry-after': '3600' });
+    }
+
+    // When two visitors submit the same slot in the same instant, both pass the check
+    // above. Cal.com accepts one booking and refuses the other.
+    const outcome = await createBooking(cfg, booking, deps.fetch, timeouts.booking);
+    if (outcome === 'ok') return json({ ok: true });
+    if (outcome === 'taken') return fail('taken', 409);
+    if (outcome === 'rate_limited') return fail('rate_limited', 429, { 'retry-after': '60' });
+    // Cal.com refused a field this function had accepted. Status only in the log.
+    console.error('book: cal booking refused');
+    return fail('invalid', 400);
   } catch (err) {
-    // Step and status only. Never the request body, the visitor's details or a token.
-    if (err instanceof GoogleError) console.error('book: google', err.step, err.status);
+    // Step and status only. Never the request body, the visitor's details or Cal.com's answer.
+    if (err instanceof CalError) console.error('book: cal', err.step, err.status);
     else console.error('book: request failed');
     return fail('unavailable', 503);
   }

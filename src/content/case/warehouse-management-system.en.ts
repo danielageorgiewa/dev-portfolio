@@ -34,6 +34,11 @@ export const warehouse: CaseContent = {
       today: 'Today screen of the warehouse management system with demo data, the client logo redacted',
     },
     openLabel: 'Open the screenshot at full size',
+    frame: {
+      expand: 'Expand',
+      shrink: 'Shrink',
+      scroll: 'Screenshot. Scroll to see the rest of it.',
+    },
   },
   started: {
     kicker: 'Where it started',

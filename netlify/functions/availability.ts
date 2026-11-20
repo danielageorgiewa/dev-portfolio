@@ -1,8 +1,8 @@
 // GET /api/availability
 // 200 { "slots": ["2026-11-25T09:00:00.000Z", ...] }   up to six free slot starts, ISO 8601 UTC
 // 400 { "ok": false }                                  the URL has a query string
-// 503 { "configured": false }                          the Google env vars are not set
-// 502 { "ok": false }                                  Google could not be reached (held 15s on the CDN)
+// 502 { "ok": false }                                  Cal.com could not be reached (held 15s on the CDN)
+// The slots come from Cal.com, which owns the working hours and the busy times. No secrets.
 import { handleAvailability } from './_lib/availability-handler.ts';
 import type { FnContext } from './_lib/http.ts';
 

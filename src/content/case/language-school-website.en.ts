@@ -44,6 +44,10 @@ export const school: CaseContent = {
       afterPhone: 'The whole homepage of the new school website on a phone. The client logo is redacted and the photos are stand-ins.',
     },
     openLabel: 'Open the screenshot at full size',
+    frame: {
+      expand: 'Expand',
+      shrink: 'Shrink',
+    },
   },
   started: {
     kicker: 'Where it started',

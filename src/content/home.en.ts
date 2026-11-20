@@ -365,7 +365,7 @@ export const home: HomeContent = {
       submit: 'Book this time',
       cancel: 'Back',
       sending: 'Booking',
-      success: 'Request sent. I’ll confirm the time by email.',
+      success: 'Booked. The invite is in your inbox.',
       error: 'That didn’t go through. Email me and we’ll find a time.',
       taken: 'That time was just taken. Pick another one.',
     },

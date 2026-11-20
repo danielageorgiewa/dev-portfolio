@@ -1,0 +1,241 @@
+---
+// The frame every embedded site screen sits in (school slider, shop and warehouse captures).
+// It opens compact ("collapsed") and has one button that expands it to the full frame and
+// shrinks it back. The content scrolls inside the frame in both states.
+//
+//   collapsed   desktop: two thirds of the column, centred, height in proportion to `frame`
+//               phone:   full column width, at most 300px tall
+//   expanded    desktop: full column width at `frame` (optionally capped by `maxHeight`)
+//               phone:   full column width at `phoneFrame`
+//
+// Everything is sized in CSS from the custom properties set inline below, so no size is
+// written by JavaScript. Without JavaScript the frame renders expanded, with native scrolling
+// and no button: the inline script at the end is what marks it collapsed, before first paint.
+// Behaviour (toggle, wheel rule, scroll cue, keyboard) is in src/scripts/case-embed.ts.
+//
+// The slot must hold ONE element marked `data-embed-scroll`: the box that scrolls. It should
+// fill the frame (height: 100%) and carry `role="group"` and an `aria-label`.
+// Inside the slot, `--embed-scale` is the size of the frame relative to expanded (1, or 2/3
+// when collapsed on desktop), for drawn parts that should shrink with the frame.
+interface Size {
+  width: number;
+  height: number;
+}
+interface Props {
+  /** Expanded frame from 768px up, in CSS px of the 1344 column (e.g. 1344 × 707). */
+  frame: Size;
+  /** Expanded frame below 768px, in CSS px of the 350 column (e.g. 350 × 420). */
+  phoneFrame: Size;
+  /** Height / width of the content when it can be shorter than the frame: the frame never grows past it. */
+  content?: number;
+  phoneContent?: number;
+  /** Optional cap on the frame height, any CSS length (e.g. '85vh'). */
+  maxHeight?: string;
+  /** Button labels, from the content model (`screens.frame`). */
+  labels: { expand: string; shrink: string };
+  /**
+   * What the frame does without JavaScript. 'frame' (default): it has its expanded height and
+   * the slot scrolls natively. 'content': it takes the height of its content (for a slot that
+   * brings its own no-JS layout, like the before and after slider).
+   */
+  noJs?: 'frame' | 'content';
+}
+const { frame, phoneFrame, content, phoneContent, maxHeight, labels, noJs = 'frame' } = Astro.props;
+const n = (value: number) => value.toFixed(5);
+const style = [
+  `--embed-r: ${n(frame.height / frame.width)}`,
+  `--embed-rp: ${n(phoneFrame.height / phoneFrame.width)}`,
+  content && `--embed-c: ${n(content)}`,
+  phoneContent && `--embed-cp: ${n(phoneContent)}`,
+  maxHeight && `--embed-cap: ${maxHeight}`,
+]
+  .filter(Boolean)
+  .join('; ');
+---
+
+<div class:list={['embed', { 'embed--nojs-content': noJs === 'content' }]} data-embed style={style}>
+  <button
+    class="embed__toggle"
+    type="button"
+    aria-expanded="false"
+    data-embed-toggle
+    data-expand={labels.expand}
+    data-shrink={labels.shrink}
+    hidden
+  >
+    <svg class="embed__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+      <path class="embed__icon-expand" d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"></path>
+      <path class="embed__icon-shrink" d="M13.5 6.5h-4v-4M9.5 6.5 14 2M2.5 9.5h4v4M6.5 9.5 2 14"></path>
+    </svg>
+    <span data-embed-label>{labels.expand}</span>
+  </button>
+  <div class="embed__frame" data-embed-frame>
+    <slot />
+  </div>
+  <span class="embed__bar" data-embed-bar aria-hidden="true" hidden><span></span></span>
+  <span class="embed__probe" data-embed-probe aria-hidden="true"></span>
+  <script is:inline>
+    /* Before first paint: start compact. The size itself is CSS. */
+    document.currentScript.closest('[data-embed]').dataset.embedState = 'collapsed';
+  </script>
+</div>
+
+<script>
+  import '../../scripts/case-embed.ts';
+</script>
+
+<style>
+  .embed {
+    --embed-cap: 100000px;
+    --embed-scale: 1;
+    /* Expanded height of the frame: its own ratio, never past the content or the cap. */
+    --embed-h: min(var(--embed-cap), 100cqw * var(--embed-r), 100cqw * var(--embed-c, 99));
+    position: relative;
+    container-type: inline-size;
+  }
+  .embed__frame {
+    position: relative;
+    overflow: hidden;
+  }
+  .embed:not(.embed--nojs-content) .embed__frame,
+  .embed[data-embed-state] .embed__frame {
+    height: var(--embed-h);
+  }
+
+  /* Collapsed, desktop: the panel around the frame narrows to two thirds of the column and the
+     frame height follows through the container width. */
+  :global(.screens__panel):has(> .embed) {
+    align-self: center;
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    :global(.screens__panel):has(> .embed[data-embed-state='collapsed']) {
+      width: 66.6667%;
+    }
+    .embed[data-embed-state='collapsed'] {
+      --embed-scale: 0.66667;
+    }
+  }
+  @media (max-width: 767.98px) {
+    .embed {
+      --embed-h: min(var(--embed-cap), 100cqw * var(--embed-rp), 100cqw * var(--embed-cp, 99));
+    }
+    .embed[data-embed-state='collapsed'] .embed__frame {
+      height: min(300px, var(--embed-h));
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.screens__panel):has(> .embed[data-embed-ready]) {
+      transition: width 0.26s var(--ease-lift);
+    }
+    .embed[data-embed-ready] .embed__frame {
+      transition: height 0.26s var(--ease-lift);
+    }
+  }
+
+  /* Collapsed and not yet touched: the inner page does not take the wheel or a swipe, so the
+     reader scrolling past is never caught. A click, a tap or focus inside sets
+     `data-embed-active` (case-embed.ts). */
+  .embed[data-embed-ready][data-embed-state='collapsed']:not([data-embed-active]) :global([data-embed-scroll]) {
+    overflow-y: hidden;
+  }
+
+  .embed__toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 12px 0 10px;
+    border-radius: var(--radius);
+    background: var(--bg-linen);
+    box-shadow: 0 2px 8px rgb(46 37 35 / 0.18);
+    color: var(--text-primary);
+    font-size: 12.5px;
+    line-height: 16px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: background-color 0.22s ease;
+  }
+  .embed__toggle[hidden] {
+    display: none;
+  }
+  /* 44px touch target around the drawn chip. */
+  .embed__toggle::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+  }
+  .embed__toggle:hover {
+    background: var(--bg-paper);
+  }
+  .embed__toggle:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+  .embed__icon {
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .embed__icon-shrink,
+  .embed__toggle[aria-expanded='true'] .embed__icon-expand {
+    display: none;
+  }
+  .embed__toggle[aria-expanded='true'] .embed__icon-shrink {
+    display: inline;
+  }
+
+  /* The cue that the frame scrolls: a thin progress bar on its right edge. */
+  .embed__bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    width: 3px;
+    background: rgb(46 37 35 / 0.1);
+    pointer-events: none;
+  }
+  .embed__bar[hidden] {
+    display: none;
+  }
+  .embed__bar span {
+    display: block;
+    width: 100%;
+    min-height: 16px;
+    border-radius: var(--radius);
+    background: var(--bg-espresso);
+    opacity: 0.62;
+    will-change: transform;
+  }
+  /* Never painted: its height is the expanded frame height, for the script to compare with. */
+  .embed__probe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: var(--embed-h);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  @media (max-width: 767.98px) {
+    .embed__toggle {
+      top: 8px;
+      right: 8px;
+      min-height: 32px;
+      padding: 0 10px 0 8px;
+      gap: 6px;
+    }
+    .embed__toggle::after {
+      inset: -6px;
+    }
+  }
+</style>

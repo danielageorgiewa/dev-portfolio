@@ -3,7 +3,7 @@
 Daniela Georgieva's portfolio: a home page, three case studies and a CV, each in English and
 Bulgarian. It is a static [Astro](https://astro.build) site with plain CSS, hosted on Netlify.
 The only server code is two small Netlify functions behind the "Book this time" widget in
-the Contact section. They read free time from a Google Calendar and create the call.
+the Contact section. They read free times from Cal.com and book the call there.
 
 Netlify publishes the `main` branch to https://danielageorgieva.work. **Every push to `main`
 goes live.**
@@ -11,7 +11,7 @@ goes live.**
 - [Running locally](#running-locally)
 - [Environment variables](#environment-variables)
 - [How booking works](#how-booking-works)
-- [Google setup](#google-setup)
+- [Cal.com setup](#calcom-setup)
 - [Regenerating the CV PDFs](#regenerating-the-cv-pdfs)
 - [Deploying](#deploying)
 - [Privacy rules for screenshots](#privacy-rules-for-screenshots)
@@ -45,9 +45,9 @@ functions together:
 npx netlify dev    # the site and /api/* on http://localhost:8888
 ```
 
-It works without logging in or linking the site. It reads `.env` if there is one. Without
-the Google variables the functions answer "not configured" and the page falls back to the
-email link, the same as in production.
+It works without logging in or linking the site, and it reads `.env` if there is one. The
+functions need no secrets, so the widget shows the real free times. A booking made there is
+a real booking on Cal.com, with real emails.
 
 Notes:
 
@@ -59,237 +59,153 @@ Notes:
 
 ## Environment variables
 
-Only booking needs them. The names are listed in `.env.example`.
+None are required, and there are no secrets. The booking functions use Cal.com's public API
+without a key. Two optional names are listed in `.env.example`:
 
 | Name | What it is |
 | --- | --- |
-| `GOOGLE_CLIENT_ID` | OAuth client ID from Google Cloud |
-| `GOOGLE_CLIENT_SECRET` | OAuth client secret from the same client |
-| `GOOGLE_REFRESH_TOKEN` | Long-lived token from `scripts/google-auth.mjs` |
-| `GOOGLE_CALENDAR_ID` | The calendar to read and book into. For the main calendar of a Google account this is the account's email address |
-| `GOOGLE_NOTIFY_EMAIL` | Optional. One fixed address that Google emails about each new call request. See "How booking works" |
+| `CAL_USERNAME` | Optional. The Cal.com username. Default: `daniela-georgieva-rajxiy` |
+| `CAL_EVENT_SLUG` | Optional. The event type's slug. Default: `30min` |
 
-In production they live in Netlify: **Site configuration > Environment variables**, set up
-as described in step 7 of "Google setup". For local work copy `.env.example` to `.env` and
-fill it in. `.env` is git-ignored. Never commit real values and never paste them into an
-issue, a chat or a screenshot.
-
-The first four must be set. If any is missing the site still works: the booking widget stays
-hidden and visitors get the email link. `GOOGLE_NOTIFY_EMAIL` can stay empty.
+Together they are the public booking address, `cal.com/<username>/<event slug>`. The
+defaults are constants in `netlify/functions/_lib/config.ts`. Set a variable only to point
+the site at another account or event type without a code change: in Netlify under **Site
+configuration > Environment variables**, then redeploy (**Deploys > Trigger deploy > Deploy
+site**), because variables only reach the functions on a new deploy. A value that does not
+look like a username or a slug is ignored and the default is used.
 
 ## How booking works
 
-- `GET /api/availability` (`netlify/functions/availability.ts`) asks Google Calendar which
-  times are busy and returns up to six free 30-minute slots as UTC start times, nothing
-  else. Slots are Monday to Friday, 11:00 to 16:00 Sofia time (the last one starts at
-  15:30), within the next seven days, and at least two hours from now. Clock changes are
-  handled. The answer is cached for one minute. A request with a query string gets a 400.
-- `POST /api/book` (`netlify/functions/book.ts`) takes the chosen slot, a name, an email and
-  a short message. It checks every field, checks that the slot is one the site could offer,
-  asks the calendar again whether that half hour is still free, and then puts a call
-  request on the calendar.
-- The page (`src/scripts/booking.ts`) shows the slots in the visitor's own time zone. If the
-  functions are not configured, fail or take more than five seconds, the widget stays out
-  of the way and the email link is shown.
-- Protection: requests must come from the site itself, the body is limited to 10 kB, a
-  hidden field catches simple bots, and Netlify rate limits both functions per visitor
-  (the `config.rateLimit` block in each function file). Names, emails and messages are never
-  written to the logs.
+- `GET /api/availability` (`netlify/functions/availability.ts`) asks Cal.com for the free
+  slots from today to seven days ahead (Sofia dates) and returns the first six that have
+  not started, as UTC start times and nothing else. The answer is cached for one minute. A
+  request with a query string gets a 400. If Cal.com cannot be reached the answer is a 502.
+- `POST /api/book` (`netlify/functions/book.ts`) takes the chosen slot, a name, an email, a
+  short message and the visitor's time zone. It checks every field, asks Cal.com for that
+  day's slots again and requires the chosen time to be one of them, and then creates the
+  booking on Cal.com. The message is sent as the answer to the booking question "What are
+  you building?".
+- The page (`src/scripts/booking.ts`) shows the slots in the visitor's own time zone. It
+  only talks to these two functions, never to Cal.com directly. If the availability call
+  fails or takes more than five seconds, the widget stays out of the way and the email link
+  is shown.
+- Names, emails, messages and Cal.com's answers are never written to the logs. A failure is
+  logged as a step name and a status code, for example `book: cal booking 500`.
 
-### What a request looks like, and who gets an email
+### What Cal.com does, and who gets an email
 
-The site never makes Google send an email to an address a visitor typed.
+Cal.com owns the calendar side: the working hours, the slot length, the minimum notice, the
+busy times from the connected calendar, the Google Meet link and all the emails.
 
-1. A visitor's request lands on the calendar as a **tentative** event called
-   "Call request: (their name)". Their name, email and message are in the event's notes. A
-   Google Meet link is already attached. The visitor is not a guest on the event.
-2. Nobody outside gets an email from the Google account at this point.
-3. When you want the call, open the event, add the visitor's email as a guest and save.
-   Google then sends them the invite with the Meet link. If you do not want it, delete the
-   event.
+When a visitor books, Cal.com creates the event and emails a confirmation with the invite
+to **the address the visitor typed** and to you. The emails to the visitor are in English or
+Bulgarian, matching the page they booked from, with times in their time zone.
 
-Google does not email you about events created on your own calendar, so there are two ways
-to hear about a new request:
+### What the visitor is told
 
-- Set `GOOGLE_NOTIFY_EMAIL` to an address you read. The function adds that one address as
-  the only guest and Google emails it for every request. This works only when the address
-  is different from the Google account that owns the calendar, because Google does not
-  notify an organiser about her own event. Running bookings from a dedicated Google account
-  (see "Google setup") makes it work: the dedicated account creates the event and your
-  everyday address gets the email.
-- Leave it empty. Then no email is sent to anyone, and you need to check the calendar for
-  new tentative events yourself.
+The function answers `{ "ok": true }` or `{ "ok": false, "reason": ... }`:
 
-### Limits
+| Reason | When |
+| --- | --- |
+| `taken` | The time is not in Cal.com's list any more, or Cal.com refused it as already booked, too soon or out of range. The page offers the times that are left |
+| `invalid` | A field failed the checks here, or Cal.com refused a field |
+| `rate_limited` | Too many attempts from one visitor, too many bookings for one email address, or Cal.com answered 429 |
+| `unavailable` | Cal.com did not answer in time or answered with any other error |
 
-- **One event per slot.** Each slot has a fixed event ID, and Google refuses a second event
-  with the same ID. If two people submit the same slot at the same moment, one gets it and
-  the other is told the time was just taken.
-- **A cancelled slot stays closed.** Google keeps the ID of a deleted event, so a slot whose
-  request you deleted cannot be requested again through the site, and the site stops
-  offering it. To use that time after all, create the event by hand.
-- **Caps.** At most 8 upcoming requests in total, at most 4 new requests in any 24 hours,
-  and at most 1 upcoming request per email address. Over a cap, the visitor is shown the
-  email link. The three numbers are constants at the top of
-  `netlify/functions/_lib/book-handler.ts`. Only events the site created are counted. The
-  email address is stored on the event as a short hash for this count.
+For everything except `taken` the page shows its short error line and the email link.
+
+The two Cal.com calls of a booking have time limits of 2.5 and 6.5 seconds, so the function
+always answers inside Netlify's 10 second limit. If Cal.com is so slow that the second call
+is cut off, the visitor sees the error line even though Cal.com may still finish the
+booking. In that rare case both of you still get Cal.com's emails.
+
+### Abuse protection
+
+Because Cal.com emails whatever address is typed into the form, the form could be used to
+send an unwanted invite to a stranger. This is what stands in the way:
+
+- **Origin check.** Requests must come from the site itself (or its Netlify previews).
+- **Netlify rate limits** per visitor IP, across all function instances: 5 booking attempts
+  and 10 availability requests a minute (the `config.rateLimit` block in each function
+  file).
+- **A second per-IP limit** in the function: 5 booking attempts in 10 minutes.
+- **A per-email limit** in the function: the same address can be booked at most 2 times an
+  hour. Both in-function limits live in the memory of one running copy of the function.
+  Netlify can run several copies and restarts them when idle, so treat these two as speed
+  bumps, not guarantees.
+- **A hidden field** that simple bots fill in. They get a normal-looking answer and nothing
+  is booked.
 - **Text rules.** The name may contain letters in any alphabet, spaces, dots, apostrophes
-  and hyphens. A name or message that contains a link (`http:`, `www.`, `://`, or a domain
-  followed by a slash) is refused, and so are invisible zero-width characters.
+  and hyphens. A name or message that contains a link (`http:`, `www.`, `://`) is refused,
+  and so are invisible zero-width characters. So the invite cannot carry a clickable link
+  chosen by the sender.
+- **Size limits.** The body is limited to 10 kB, the name to 80 characters, the email to
+  120 and the message to 1000.
+- **Only real slots.** A booking is only sent for a time Cal.com lists as free in the next
+  seven days, so each junk booking uses up one of a small number of slots.
 
-The working hours, slot length, look-ahead and lead time are constants at the top of
-`netlify/functions/_lib/slots.ts`.
+What is not covered: a patient person can still book a few slots with someone else's
+address, and that person gets Cal.com's confirmation email. If junk bookings ever appear,
+open the event type in Cal.com and turn on **Requires confirmation** (under the event
+type's **Advanced** tab). Then each booking waits for your approval. The site needs no
+change for that, though the "Booked. The invite is in your inbox." line would then be a
+little early, since the invite only goes out once you approve.
 
-## Google setup
+## Cal.com setup
 
-Do this once, after the site is live. It takes about fifteen minutes. Use the Google account
-whose calendar should receive the bookings.
+The Cal.com side is already set up: the account `daniela-georgieva-rajxiy`, the event type
+`30min` (30 minutes, Google Meet, Monday to Friday 11:00 to 16:00 Sofia time) and one
+required booking question with the identifier `building` ("What are you building?").
 
-**Which account and calendar.** Be clear about what the site's token can do. The
-`calendar.events` permission is not limited to seeing busy times: it can read, change and
-delete events on every calendar that account can edit. If the token leaked, that is what
-someone else could do. So keep what it can reach small:
+### What the functions call
 
-- Best: a dedicated Google account used only for bookings. It has nothing private in it,
-  and it also makes `GOOGLE_NOTIFY_EMAIL` work (see "How booking works").
-- At least: a dedicated calendar for bookings inside your account (Google Calendar, **Other
-  calendars > + > Create new calendar**), with its ID as `GOOGLE_CALENDAR_ID`. This keeps
-  requests apart from your own events, but the token can still reach your other calendars.
+Both calls go to Cal.com's public API v2 without an API key.
 
-The price of either choice: the site only looks at the one calendar in `GOOGLE_CALENDAR_ID`
-when it works out free time. Appointments on your everyday calendar do not block slots
-unless they are also on the booking calendar, so block busy times there, or decline the
-requests that clash.
+- `GET https://api.cal.com/v2/slots?username=...&eventTypeSlug=...&start=YYYY-MM-DD&end=YYYY-MM-DD&timeZone=Europe/Sofia`
+  with the header `cal-api-version: 2024-09-04`.
+- `POST https://api.cal.com/v2/bookings` with the header `cal-api-version: 2026-02-25` and
+  a JSON body: `start` (UTC), `attendee` (`name`, `email`, `timeZone`, `language`),
+  `username`, `eventTypeSlug` and `bookingFieldsResponses.building`.
 
-### 1. Create a Google Cloud project
+The address, the two version headers, the question identifier and the time limits are
+constants in `netlify/functions/_lib/config.ts`.
 
-1. Open https://console.cloud.google.com and sign in.
-2. Open the project menu at the top, choose **New project**, give it a name (for example
-   "Portfolio booking") and create it. Make sure it is the selected project for the steps
-   below.
+### Changing things in Cal.com
 
-### 2. Enable the Calendar API
+- **Working hours, days off, minimum notice, buffers, slot length.** Change them in Cal.com
+  (**Availability**, or the event type's own settings). The site follows within a minute.
+  No code change and no deploy.
+- **The question.** You can reword "What are you building?" freely. Keep its identifier
+  `building` and keep it the only required question. The site sends exactly one answer. If
+  you rename the identifier or add another required question, Cal.com refuses every booking
+  from the site until `CAL_QUESTION_FIELD` in `netlify/functions/_lib/config.ts` (or the
+  form) is changed to match.
+- **Another event type or account.** Set `CAL_EVENT_SLUG` or `CAL_USERNAME` in Netlify and
+  redeploy.
+- **Phone number or SMS reminders.** Do not make the attendee phone number required. The
+  form does not ask for one.
 
-1. Go to **APIs & Services > Library**.
-2. Search for "Google Calendar API", open it and press **Enable**.
-
-### 3. Set up the consent screen
-
-Go to **APIs & Services > OAuth consent screen**. Newer versions of the console call this
-area **Google Auth Platform** and split it into Branding, Audience and Data Access. The
-settings are the same.
-
-1. App name: anything you will recognise. Support email and developer contact: your own.
-2. Audience (user type):
-   - With a normal Gmail account, choose **External**.
-   - With a Google Workspace account you can choose **Internal**. Then skip step 4 below.
-3. Scopes (Data Access): add these two.
-   - `https://www.googleapis.com/auth/calendar.events`
-   - `https://www.googleapis.com/auth/calendar.freebusy`
-4. **Publish the app.** On the Audience page press **Publish app** so the publishing status
-   is **In production**. This matters: while the status is **Testing**, Google cancels
-   refresh tokens after 7 days and booking would stop working a week after setup. You do
-   not need to send the app for verification. Only you will ever sign in to it. The price
-   of skipping verification is a warning page during sign-in (step 6).
-
-### 4. Create the OAuth client
-
-1. Go to **APIs & Services > Credentials** (or **Google Auth Platform > Clients**).
-2. **Create credentials > OAuth client ID**.
-3. Application type: **Web application**.
-4. Under **Authorised redirect URIs** add exactly:
-
-   ```
-   http://127.0.0.1:53682/oauth2callback
-   ```
-
-5. Create it. Copy the **Client ID** and the **Client secret**.
-
-### 5. Put the two values in `.env`
-
-```
-cp .env.example .env
-```
-
-Open `.env` and fill in `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Set
-`GOOGLE_CALENDAR_ID` to the calendar's ID. For your main calendar that is your Google
-account's email address. For another calendar, open Google Calendar, then the calendar's
-**Settings and sharing**, and copy **Calendar ID** from the "Integrate calendar" section.
-
-### 6. Sign in once to get the refresh token
-
-```
-node scripts/google-auth.mjs
-```
-
-The script opens Google's sign-in page in your browser. Choose the account that owns the
-calendar. Because the app is not verified, Google shows "Google hasn't verified this app":
-press **Advanced**, then **Go to (your app name)**, then allow both calendar permissions.
-The browser tab says "Signed in" and the terminal prints the refresh token.
-
-- The token is only printed. To also save it to your local `.env`, run
-  `node scripts/google-auth.mjs --write-env`.
-- If port 53682 is taken, run `node scripts/google-auth.mjs --port 5000` and add
-  `http://127.0.0.1:5000/oauth2callback` to the client's redirect URIs first.
-- Treat the refresh token like a password. Whoever has it, together with the client secret,
-  can read, change and delete events on that account's calendars.
-- With `--write-env` the script also sets `.env` so that only your user can read it.
-
-### 7. Set the four variables in Netlify
-
-This repository is public. Anyone can fork it and open a pull request, and a build of that
-pull request must never receive these values. Set them up like this:
-
-1. In Netlify open the site, then **Site configuration > Environment variables**, and add
-   `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` and
-   `GOOGLE_CALENDAR_ID` (and `GOOGLE_NOTIFY_EMAIL` if you use it).
-2. For each one, under **Scopes** choose specific scopes and tick **Functions** only. Leave
-   Builds, Runtime and Post processing unticked. The build does not need them. (If your
-   Netlify plan does not offer scopes, steps 3 to 5 still apply and matter most.)
-3. For each one, under **Deploy contexts** choose a different value for each context and
-   fill in **Production** only. Leave Deploy Previews, Branch deploys and Local development
-   empty.
-4. Tick **Contains secret values** for `GOOGLE_CLIENT_SECRET` and `GOOGLE_REFRESH_TOKEN`.
-   Netlify then hides the values after saving and keeps them out of builds of untrusted
-   pull requests.
-5. Under **Site configuration > Build & deploy > Deploy Previews**, either turn Deploy
-   Previews off (this project does not use pull requests), or keep the setting that
-   requires your approval before a pull request from a fork is built. Never approve a
-   pull request you have not read.
-
-Menu names in Netlify change from time to time. What has to be true at the end: all the
-variables exist for Production and for Functions only, the two secrets are marked secret,
-and no deploy preview from a fork can run without you.
-
-### 8. Redeploy
-
-Environment variables only reach the functions on a new deploy. In Netlify go to
-**Deploys > Trigger deploy > Deploy site**, or push a commit.
-
-### 9. Test it
+### Test it
 
 1. Open https://danielageorgieva.work/api/availability. You should see
-   `{"slots":["2026-...Z", ...]}`. If you see `{"configured":false}`, a variable is missing
-   or the site was not redeployed. If you see `{"ok":false}`, Google refused the request:
-   open **Logs > Functions** in Netlify. The log line names the step that failed
-   (`token`, `freebusy`, `list` or `insert`) and Google's status code. `token 400` or `401` means
-   the refresh token or the client values are wrong. `freebusy 404` means the calendar ID
-   is wrong.
-2. Put a test event in your calendar inside the working hours, wait a minute (the answer
-   is cached for 60 seconds) and reload. That time should be gone from the list.
-3. Open the site, scroll to the Contact section, pick a time and book it with an email
-   address you can read. Check that a tentative "Call request" event is in the calendar
-   with a Meet link and the details in its notes, that the visitor address received
-   nothing, and that `GOOGLE_NOTIFY_EMAIL` (if set) received an email. Then add the visitor
-   address as a guest, save, and check that the invite arrives with the Meet link.
-   Deleting the test event closes that slot for good (see "Limits"), so test with a time
-   you do not need.
-4. Locally, the same check works with `npx netlify dev` once `.env` has all four values.
+   `{"slots":["2026-...Z", ...]}` with up to six times. They are in UTC, so 11:00 in Sofia
+   shows as `09:00` in winter and `08:00` in summer. `{"slots":[]}` means Cal.com has no
+   free time in the next seven days. `{"ok":false}` means Cal.com could not be reached or
+   did not know the event type: open **Logs > Functions** in Netlify. The line reads
+   `availability: cal slots` followed by Cal.com's status code. `404` means the username or
+   the event slug is wrong.
+2. Book one real slot by hand. Open the site, scroll to the Contact section, pick a time
+   you do not need and book it with an email address you can read. Check that the page says
+   "Booked. The invite is in your inbox.", that the confirmation arrives at that address
+   with the Meet link, that your answer shows under "What are you building?", and that the
+   booking is in Cal.com under **Bookings**.
+3. Cancel that booking in Cal.com (**Bookings > Upcoming > Cancel**). The slot is offered
+   again within a minute.
+4. Locally, the same checks work with `npx netlify dev`.
 
-If booking ever stops working, visitors see the email link, so nothing breaks in public.
-The usual cause is a cancelled refresh token (the app was put back into Testing, or access
-was removed in your Google account). Run step 6 again and update `GOOGLE_REFRESH_TOKEN` in
-Netlify.
+If booking ever stops working, visitors see the email link or the short error line, so
+nothing breaks in public. Look at the function log first: it names the step (`slots` or
+`booking`) and Cal.com's status code. A status of `0` means Cal.com did not answer in time.
 
 ## Regenerating the CV PDFs
 

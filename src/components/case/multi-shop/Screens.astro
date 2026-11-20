@@ -1,12 +1,16 @@
 ---
 // Screens section of the multi-shop case study (Figma 54:66 EN, 91:104 BG, 81:122 phone):
-// the Homepage screenshot and the Custom size demo.
-// The screenshots are the whole "Homepage screen" composites exported from Figma (54:201 at 2x,
-// 81:128 at 4x for the phone thumbnail), with the Redacted badge and the rewritten promo bar
-// baked in. The BG frame (91:110) is the same composite, so both languages share the files.
-// Figma names a PRODUCT tab but draws no Product screen: that one is a capture of the product
-// page, redacted in the page before the screenshot (same badge, same promo bar strings, prices
-// changed), cropped to the Homepage frame. Its phone file is the same view with the lock-only badge.
+// the Homepage and Product pages, each in an expandable frame that scrolls, and the Custom
+// size demo.
+// The images are full-page captures of the shop, redacted IN THE PAGE before the screenshot
+// (logo → Redacted badge, promo bar rewritten, prices changed), per REDACTION.md. Both languages
+// share the files. Never replace them with a bare capture.
+//   screen-*-full.png        1344 CSS px wide at 2x (2688), shown from 768px up
+//   screen-*-phone-full.png  390 CSS px wide at 2x (780), shown below 768px
+// Keep every side under 16383px (the WebP limit). To swap a screen, change its import below.
+// The single-screen composites from Figma (screen-home.png, screen-product.png and their
+// -phone thumbnails; Figma 54:201 and 81:128) are still in the assets folder: with those,
+// `phone` would be { width: 350, height: 189 }.
 import Screens from '../Screens.astro';
 import ScreenShot from '../ScreenShot.astro';
 import CustomSize from './CustomSize.astro';
@@ -14,10 +18,10 @@ import type { CaseContent } from '../../../content/case';
 import { customSize as customSizeEn } from '../../../content/case/multi-shop-platform.en';
 import { customSize as customSizeBg } from '../../../content/case/multi-shop-platform.bg';
 import type { Lang } from '../../../i18n';
-import home from '../../../assets/case/multi-shop/screen-home.png';
-import homePhone from '../../../assets/case/multi-shop/screen-home-phone.png';
-import product from '../../../assets/case/multi-shop/screen-product.png';
-import productPhone from '../../../assets/case/multi-shop/screen-product-phone.png';
+import home from '../../../assets/case/multi-shop/screen-home-full.png';
+import homePhone from '../../../assets/case/multi-shop/screen-home-phone-full.png';
+import product from '../../../assets/case/multi-shop/screen-product-full.png';
+import productPhone from '../../../assets/case/multi-shop/screen-product-phone-full.png';
 
 interface Props {
   lang: Lang;
@@ -31,16 +35,16 @@ const customSize = { en: customSizeEn, bg: customSizeBg }[lang];
   <ScreenShot
     slot="homepage"
     shot={{ src: home, width: 1344, height: 726 }}
-    phone={{ src: homePhone, width: 350, height: 189 }}
+    phone={{ src: homePhone, width: 350, height: 420 }}
     alt={t.alt.homepage}
-    openLabel={t.openLabel}
+    frame={t.frame}
   />
   <ScreenShot
     slot="product"
     shot={{ src: product, width: 1344, height: 726 }}
-    phone={{ src: productPhone, width: 350, height: 189 }}
+    phone={{ src: productPhone, width: 350, height: 420 }}
     alt={t.alt.product}
-    openLabel={t.openLabel}
+    frame={t.frame}
   />
   <CustomSize slot="custom-size" t={customSize} />
 </Screens>

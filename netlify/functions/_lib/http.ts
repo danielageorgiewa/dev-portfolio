@@ -1,6 +1,6 @@
 // Shared request plumbing for the two booking functions.
 
-import type { Env, Fetch, Timeouts } from './google.ts';
+import type { Env, Fetch, Timeouts } from './config.ts';
 
 /** The parts of Netlify's function Context these handlers read. */
 export interface FnContext {
@@ -14,8 +14,7 @@ export interface Deps {
   fetch: Fetch;
   now: () => number;
   env: Env;
-  uuid: () => string;
-  /** Per-call Google time limits. Left out in production, where google.ts supplies them. */
+  /** Per-call Cal.com time limits. Left out in production, where config.ts supplies them. */
   timeouts?: Timeouts;
 }
 
@@ -23,7 +22,6 @@ export const defaultDeps = (): Deps => ({
   fetch: globalThis.fetch,
   now: Date.now,
   env: process.env,
-  uuid: () => crypto.randomUUID(),
 });
 
 export function json(body: unknown, status = 200, headers: Record<string, string> = {}): Response {

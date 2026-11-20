@@ -10,8 +10,8 @@
 //     takes over at once, and nothing sweeps under prefers-reduced-motion.
 // Both pages are children of one scrolling box, so a single scroll position moves both (the
 // shorter page pins its footer to the bottom of the frame in CSS, see school/Compare.astro).
-// The box is a tab stop with a label, so the keyboard scrolls it; the wheel and a vertical swipe
-// scroll it natively.
+// The slider sits in an expandable frame (components/case/EmbedFrame.astro); that frame's script,
+// case-embed.ts, owns the scrolling box: when it takes the wheel, its tab stop, the scroll cue.
 // One position, 0 to 100, is written to `--pos` on the slider: the share of the frame, from the
 // left, that shows the old site.
 import { lift, onEnter, placement, prefersReduced } from './motion/env';
@@ -92,20 +92,15 @@ function initCompare(root: HTMLElement) {
   root.addEventListener('pointerup', end);
   root.addEventListener('pointercancel', end);
 
-  // When a page is taller than the frame, the box scrolls on its own: keep smooth scrolling
-  // off it and let the keyboard reach it.
-  const syncScrollable = () => {
-    const scrollable = scroller.scrollHeight > scroller.clientHeight + 1;
-    scroller.toggleAttribute('data-lenis-prevent', scrollable);
-    if (scrollable) scroller.tabIndex = 0;
-    else scroller.removeAttribute('tabindex');
-  };
   // The handle sits on top of the scrolling box, not in it: pass the wheel through, so the
   // pages also scroll with the pointer resting on the handle. At either end the page scrolls.
+  // While the frame is collapsed and untouched the box does not scroll (overflow hidden), and
+  // the wheel is left to the page here too.
   handle.addEventListener(
     'wheel',
     (event) => {
       if (event.ctrlKey || !event.deltaY) return;
+      if (getComputedStyle(scroller).overflowY === 'hidden') return;
       const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? scroller.clientHeight : 1;
       const before = scroller.scrollTop;
       scroller.scrollTop += event.deltaY * unit;
@@ -113,12 +108,6 @@ function initCompare(root: HTMLElement) {
     },
     { passive: false },
   );
-  // Watch the frame and the pages inside it: either changing size can start or end scrolling.
-  const sizes = new ResizeObserver(syncScrollable);
-  sizes.observe(scroller);
-  if (scroller.firstElementChild) sizes.observe(scroller.firstElementChild);
-  syncScrollable();
-
   // First view: sweep in from the right. The inline script has already put the handle there.
   if (!prefersReduced() && placement(root) !== 'above') {
     set(SWEEP_FROM);

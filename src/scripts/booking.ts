@@ -14,6 +14,15 @@ const STAGGER_MS = 40; // "pop in 0.04s apart"
 
 type BookReason = 'taken' | 'invalid' | 'rate_limited' | 'unavailable';
 
+/** The visitor's IANA time zone, for the times in the confirmation email. Empty if unknown. */
+function visitorTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone ?? '';
+  } catch {
+    return '';
+  }
+}
+
 async function fetchJson(url: string, init: RequestInit, timeout: number): Promise<{ status: number; body: unknown }> {
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), timeout);
@@ -280,6 +289,7 @@ export function initBooking(): void {
             message: field('message'),
             hp_ref: field('hp_ref'),
             lang,
+            timeZone: visitorTimeZone(),
           }),
         },
         BOOK_TIMEOUT,
@@ -321,7 +331,7 @@ export function initBooking(): void {
   });
 
   // Ask for slots only when the visitor gets near the section: most page views never reach
-  // it, and each request is a function call and a Google API call.
+  // it, and each request is a function call and a Cal.com API call.
   const start = () => void refresh(true);
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(

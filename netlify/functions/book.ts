@@ -1,8 +1,8 @@
-// POST /api/book   JSON { start, name, email, message, hp_ref, lang }
-// 200 { "ok": true }                the request is on the calendar as a tentative event
+// POST /api/book   JSON { start, name, email, message, hp_ref, lang, timeZone? }
+// 200 { "ok": true }                the call is booked on Cal.com, which emails the invite
 // 4xx/5xx { "ok": false, "reason": "taken" | "invalid" | "rate_limited" | "unavailable" }
-// hp_ref is the honeypot and must be empty. "unavailable" also covers the booking limits
-// at the top of _lib/book-handler.ts.
+// hp_ref is the honeypot and must be empty. timeZone is the visitor's IANA zone and
+// defaults to Europe/Sofia.
 import { handleBook } from './_lib/book-handler.ts';
 import type { FnContext } from './_lib/http.ts';
 

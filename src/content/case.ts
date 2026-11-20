@@ -70,8 +70,14 @@ export interface CaseContent {
     tablistLabel: string;
     /** Not in Figma: alt text per image tab, keyed by tab id. */
     alt: Record<string, string>;
-    /** Not in Figma: accessible name of the link that opens a screenshot at full size. */
+    /** Not in Figma: accessible name of the link that opens a screenshot at full size. Not used while every screen sits in an expandable frame. */
     openLabel: string;
+    /**
+     * Not in Figma: the expandable frame around every embedded screen (EmbedFrame.astro).
+     * `expand` / `shrink` are the button labels; `scroll` is the accessible name of the box a
+     * screenshot scrolls in (the before and after slider names its own box in `compare.scroll`).
+     */
+    frame: { expand: string; shrink: string; scroll?: string };
     /**
      * Before and after slider (language school). `before` / `after` are the labels drawn in
      * Figma. Not in Figma: `handle` is the slider's accessible name, `valueText` its spoken

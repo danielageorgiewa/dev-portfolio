@@ -35,6 +35,11 @@ export const multiShop: CaseContent = {
       product: 'Product page of the new online shop, with the client logo redacted',
     },
     openLabel: 'Open the screenshot at full size',
+    frame: {
+      expand: 'Expand',
+      shrink: 'Shrink',
+      scroll: 'Screenshot. Scroll to see the rest of it.',
+    },
   },
   started: {
     kicker: 'Where it started',

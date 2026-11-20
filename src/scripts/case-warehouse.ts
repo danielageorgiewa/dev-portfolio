@@ -7,8 +7,9 @@
 //
 // The cycle runs only when all of these hold:
 //   there is more than one tab, the section is on screen, the pointer is not over it, focus is
-//   not inside it, the page is visible, the visitor has not picked a tab, and
-//   prefers-reduced-motion is not set (then it never starts).
+//   not inside it, no frame in it is expanded or being used (EmbedFrame, `case:embed` event),
+//   the page is visible, the visitor has not picked a tab, and prefers-reduced-motion is not
+//   set (then it never starts).
 // A manual choice (click, tap or arrow keys on a tab) stops it for the rest of the visit.
 
 const CYCLE_MS = 4000;
@@ -25,7 +26,10 @@ function initCycle(root: HTMLElement): void {
   let chosen = false;
   let timer: number | undefined;
 
-  const canRun = () => inView && !hovered && !focused && !chosen && !document.hidden && !reduced.matches;
+  /** A visitor has expanded a frame or is scrolling inside one. */
+  const embedBusy = () => root.querySelector('[data-embed-state="expanded"], [data-embed-active]') !== null;
+  const canRun = () =>
+    inView && !hovered && !focused && !chosen && !embedBusy() && !document.hidden && !reduced.matches;
 
   const stop = () => {
     window.clearTimeout(timer);
@@ -72,6 +76,7 @@ function initCycle(root: HTMLElement): void {
     focused = root.contains(event.relatedTarget as Node | null);
     sync();
   });
+  root.addEventListener('case:embed', sync);
   document.addEventListener('visibilitychange', sync);
   reduced.addEventListener('change', sync);
 

@@ -1,15 +1,24 @@
 ---
-// One screenshot panel for <Screens>: the redacted composite exported whole from Figma.
-// `src` is the desktop composite (2x). `phone` is the phone composite where Figma draws a
-// different one (smaller Redacted badge); below 768px it is shown as a thumbnail.
-// The picture is a plain link to the full-size image, so a tap opens it full screen with or
-// without JavaScript.
-// Never pass a bare "Base" image or anything from captures/: only whole composite exports.
+// One screenshot for a case study: a redacted composite or a redacted page capture.
+// `shot.src` is the desktop image (2x). `phone` is the image shown below 768px, where there is
+// a different one (a thumbnail composite with a smaller Redacted badge, or a phone capture).
+//
+// With `frame` (the strings from `screens.frame`) the image sits in an <EmbedFrame>: compact
+// at first, expandable, and it scrolls inside the frame when it is taller than the frame.
+// `shot.width` × `shot.height` is the expanded frame, not the image: an image of exactly that
+// shape simply fits (no scroll cue), a full-page capture scrolls. Same for `phone`.
+//
+// Without `frame` it is the plain picture linked to the full-size image (the editor still on
+// the language school study).
+// Never pass a bare "Base" image or anything from captures/: only whole composite exports or
+// captures redacted in the page.
 import { Picture, getImage } from 'astro:assets';
+import EmbedFrame from './EmbedFrame.astro';
+import type { CaseContent } from '../../content/case';
 
 interface Shot {
   src: ImageMetadata;
-  /** CSS size of the frame in Figma. */
+  /** CSS size of the frame (in Figma: 1344 wide on desktop, 350 wide on phone). */
   width: number;
   height: number;
 }
@@ -17,47 +26,105 @@ interface Props {
   shot: Shot;
   phone?: Shot;
   alt: string;
-  /** Accessible name of the link to the full-size image. */
-  openLabel: string;
+  /** Strings of the expandable frame. Leave out for a plain linked picture. */
+  frame?: CaseContent['screens']['frame'];
+  /** Optional cap on the expanded frame height, any CSS length (e.g. '85vh'). */
+  maxHeight?: string;
+  /** Without `frame`: accessible name of the link to the full-size image. */
+  openLabel?: string;
   loading?: 'lazy' | 'eager';
 }
-const { shot, phone, alt, openLabel, loading = 'lazy' } = Astro.props;
-const full = await getImage({ src: shot.src, format: 'webp', width: shot.src.width });
+const { shot, phone, alt, frame, maxHeight, openLabel, loading = 'lazy' } = Astro.props;
+const full = frame ? null : await getImage({ src: shot.src, format: 'webp', width: shot.src.width });
+
+/** Height the image is drawn at when it is `width` CSS px wide. */
+const drawn = (s: Shot) => Math.round((s.width * s.src.height) / s.src.width);
+/** Very tall captures go out as WebP only: AVIF has tighter size limits. */
+const formats = (s: Shot): ('avif' | 'webp')[] => (s.src.height > 4096 ? ['webp'] : ['avif', 'webp']);
+/** The listed widths that are clearly smaller than the file, plus the file's own width. */
+const widths = (s: Shot, list: number[]) => [...list.filter((w) => w <= s.src.width * 0.85), s.src.width];
+const ratio = (s: Shot) => s.src.height / s.src.width;
+/** Taller than its frame (or the frame is capped): the box scrolls, so it is a tab stop even without JavaScript. */
+const scrolls = [shot, phone ?? shot].some((s) => ratio(s) > (s.height / s.width) * 1.01) || Boolean(maxHeight);
 ---
 
-<a class:list={['shot', { 'shot--has-phone': phone }]} href={full.src} title={openLabel}>
-  <span class="shot__desktop">
-    <Picture
-      src={shot.src}
-      alt={alt}
-      formats={['avif', 'webp']}
-      quality={86}
-      widths={[720, 1344, 2016, shot.src.width]}
-      sizes="(max-width: 767px) calc(100vw - 40px), min(100vw - 96px, 1344px)"
-      width={shot.width}
-      height={shot.height}
-      loading={loading}
-    />
-  </span>
-  {
-    phone && (
-      <span class="shot__phone">
+{
+  frame ? (
+    <EmbedFrame
+      frame={shot}
+      phoneFrame={phone ?? shot}
+      content={ratio(shot)}
+      phoneContent={ratio(phone ?? shot)}
+      maxHeight={maxHeight}
+      labels={frame}
+    >
+      <div class:list={['shot', 'shot--scroll', { 'shot--has-phone': phone }]} data-embed-scroll role="group" aria-label={frame.scroll} tabindex={scrolls ? 0 : undefined}>
+        <span class="shot__desktop">
+          <Picture
+            src={shot.src}
+            alt={alt}
+            formats={formats(shot)}
+            quality={86}
+            widths={widths(shot, [720, 1344, 2016])}
+            sizes="(max-width: 767px) calc(100vw - 40px), min(100vw - 96px, 1344px)"
+            width={shot.width}
+            height={drawn(shot)}
+            loading={loading}
+            decoding="async"
+          />
+        </span>
+        {phone && (
+          <span class="shot__phone">
+            <Picture
+              src={phone.src}
+              alt={alt}
+              formats={formats(phone)}
+              quality={86}
+              widths={widths(phone, [390, 700, 1050])}
+              sizes="calc(100vw - 40px)"
+              width={phone.width}
+              height={drawn(phone)}
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+        )}
+      </div>
+    </EmbedFrame>
+  ) : (
+    <a class:list={['shot', { 'shot--has-phone': phone }]} href={full!.src} title={openLabel}>
+      <span class="shot__desktop">
         <Picture
-          src={phone.src}
+          src={shot.src}
           alt={alt}
           formats={['avif', 'webp']}
           quality={86}
-          widths={[700, 1050, phone.src.width]}
-          sizes="calc(100vw - 40px)"
-          width={phone.width}
-          height={phone.height}
+          widths={[720, 1344, 2016, shot.src.width]}
+          sizes="(max-width: 767px) calc(100vw - 40px), min(100vw - 96px, 1344px)"
+          width={shot.width}
+          height={shot.height}
           loading={loading}
         />
       </span>
-    )
-  }
-  <span class="visually-hidden">{openLabel}</span>
-</a>
+      {phone && (
+        <span class="shot__phone">
+          <Picture
+            src={phone.src}
+            alt={alt}
+            formats={['avif', 'webp']}
+            quality={86}
+            widths={[700, 1050, phone.src.width]}
+            sizes="calc(100vw - 40px)"
+            width={phone.width}
+            height={phone.height}
+            loading={loading}
+          />
+        </span>
+      )}
+      <span class="visually-hidden">{openLabel}</span>
+    </a>
+  )
+}
 
 <style>
   .shot {
@@ -75,6 +142,25 @@ const full = await getImage({ src: shot.src, format: 'webp', width: shot.src.wid
   }
   .shot__phone {
     display: none;
+  }
+  /* In a frame: the picture scrolls inside it. Native scrollbar without JavaScript; with it
+     the frame draws its own progress bar. */
+  .shot--scroll {
+    height: 100%;
+    overflow: hidden auto;
+  }
+  .shot--scroll :global(img) {
+    display: block;
+  }
+  :global([data-embed-state]) .shot--scroll {
+    scrollbar-width: none;
+  }
+  :global([data-embed-state]) .shot--scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .shot--scroll:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: -2px;
   }
   @media (max-width: 767.98px) {
     .shot--has-phone .shot__desktop {

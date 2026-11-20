@@ -13,8 +13,13 @@
 // one; the shorter one is `position: sticky` with a negative `top`, so when its footer reaches
 // the bottom of the frame it stays there while the longer page finishes. No empty space, no
 // scroll listener.
+//
+// The slider sits in an <EmbedFrame> (compact at first, expandable). The frame gives the height;
+// the slider fills it. `--embed-scale` (1, or 2/3 when collapsed on desktop) sizes the handle,
+// the line and the phone column, so they shrink with the frame.
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import EmbedFrame from '../EmbedFrame.astro';
 import type { CaseContent } from '../../../content/case';
 
 interface Props {
@@ -24,8 +29,10 @@ interface Props {
   after: ImageMetadata;
   alt: { before: string; after: string };
   c: NonNullable<CaseContent['screens']['compare']>;
+  /** Strings of the expandable frame. */
+  frame: CaseContent['screens']['frame'];
 }
-const { variant, before, after, alt, c } = Astro.props;
+const { variant, before, after, alt, c, frame } = Astro.props;
 
 // CSS width the page is drawn at, the srcset and the `sizes` for each variant.
 // Desktop pages on a phone are shown as a crop 2.28 frames wide (about 800px); `sizes` asks for
@@ -53,9 +60,10 @@ const pages = [
 }));
 ---
 
+<EmbedFrame frame={{ width: 1344, height: 707 }} phoneFrame={{ width: 350, height: 420 }} labels={frame} noJs="content">
 <div class:list={['compare-stage', `compare-stage--${variant}`]}>
   <div class:list={['compare', `compare--${variant}`]} data-compare>
-    <div class="compare__scroll" data-compare-scroll role="group" aria-label={c.scroll}>
+    <div class="compare__scroll" data-compare-scroll data-embed-scroll role="group" aria-label={c.scroll}>
       <div class="compare__pages">
         {
           pages.map((p) => (
@@ -130,6 +138,7 @@ const pages = [
     </script>
   </div>
 </div>
+</EmbedFrame>
 
 <script>
   import '../../../scripts/case-school.ts';
@@ -199,11 +208,14 @@ const pages = [
   }
 
   /* With JavaScript: both pages in the same frame, the new one clipped at the handle. */
+  .compare-stage:has(> [data-enhanced]) {
+    height: 100%;
+  }
   .compare[data-enhanced] {
-    /* Width the pages are drawn at, in frame widths. */
+    /* Width the pages are drawn at, in frame widths. The height comes from the EmbedFrame. */
     --page-w: 100cqw;
     container-type: size;
-    aspect-ratio: 1344 / 707;
+    height: 100%;
     cursor: ew-resize;
     touch-action: pan-y;
     -webkit-tap-highlight-color: transparent;
@@ -307,13 +319,35 @@ const pages = [
     .compare-stage--phone:has(> [data-enhanced]) {
       display: grid;
       justify-content: center;
-      aspect-ratio: 1344 / 707;
     }
     .compare--phone[data-enhanced] {
-      width: min(390px, 100cqw, 100vw - 96px);
+      width: min(390px * var(--embed-scale, 1), 100cqw);
       max-width: none;
       margin: 0;
-      aspect-ratio: auto;
+    }
+    /* The handle and the line shrink with a collapsed frame. */
+    .compare__line {
+      width: calc(2px * var(--embed-scale, 1));
+      margin-left: calc(-1px * var(--embed-scale, 1));
+    }
+    .compare__handle,
+    .compare__range {
+      width: calc(56px * var(--embed-scale, 1));
+      height: calc(56px * var(--embed-scale, 1));
+      margin: calc(-28px * var(--embed-scale, 1)) 0 0 calc(-28px * var(--embed-scale, 1));
+    }
+    .compare__handle {
+      font-size: calc(18px * var(--embed-scale, 1));
+      line-height: calc(20px * var(--embed-scale, 1));
+    }
+  }
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    :global([data-embed-ready]) .compare__handle {
+      transition:
+        width 0.26s var(--ease-lift),
+        height 0.26s var(--ease-lift),
+        margin 0.26s var(--ease-lift),
+        font-size 0.26s var(--ease-lift);
     }
   }
 
@@ -323,19 +357,19 @@ const pages = [
       border-radius: calc(6 * var(--u));
       box-shadow: 0 calc(9.5 * var(--u)) calc(11.3 * var(--u)) rgb(46 37 35 / 0.12);
     }
-    .compare[data-enhanced] {
-      aspect-ratio: 350 / 420;
-    }
     .compare--phone[data-enhanced] {
       max-width: none;
     }
-    /* DESKTOP tab: a crop of the desktop pages, 798.4 wide in the 350 frame, showing the middle. */
-    .compare--desktop[data-enhanced] {
+    /* DESKTOP tab, expanded: a crop of the desktop pages, 798.4 wide in the 350 frame, showing
+       the middle. Collapsed, the whole page width fits the frame. */
+    :global([data-embed-state='expanded']) .compare--desktop[data-enhanced] {
       --page-w: 228.12cqw;
     }
     .compare--desktop[data-enhanced] .compare__img :global(img) {
-      width: 228.12cqw;
       max-width: none;
+    }
+    :global([data-embed-state='expanded']) .compare--desktop[data-enhanced] .compare__img :global(img) {
+      width: 228.12cqw;
       margin-left: -64.06cqw;
     }
     .compare[data-enhanced] .compare__label {
