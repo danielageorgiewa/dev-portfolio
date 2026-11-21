@@ -110,12 +110,16 @@ const { t } = Astro.props;
       letter-spacing: -0.004em;
     }
     :global(:lang(bg)) .about__row:first-child dt {
-      flex: none;
       width: 150px;
     }
-    :global(:lang(bg)) .about__row:first-child dd {
+    /* The first value is two sentences and wraps; its key keeps its own width. */
+    .about__row:first-child dt {
+      flex: none;
+    }
+    .about__row:first-child dd {
       flex: 1 0 0;
       min-width: 0;
+      text-wrap: balance;
     }
     :global(:lang(bg)) .about__row:not(:first-child) dd {
       white-space: nowrap;

@@ -157,7 +157,7 @@ export const home: HomeContent = {
       'People find out fast that I don’t wait to be asked. In four months at XTRMND I went from learning the codebase to owning projects and leading their presentations to shareholders, and the feedback in those rooms has been great. The stock system I took over was in production by my second month. I work as well in a team as I do alone, people tell me I’m patient and kind to work with, and I’m still smiling when things get rough. I plan to be the best in this field.',
     ],
     info: [
-      { label: 'What I do', value: 'Brand identity, design, development and running it in production' },
+      { label: 'What I do', value: 'I craft complete solutions for businesses. Brand identity, design, code and infrastructure.' },
       { label: 'Education', value: 'BSc Computer Science (Hons), University of Essex' },
       { label: 'Languages', value: 'Bulgarian, English (C2), French (A2)' },
     ],
