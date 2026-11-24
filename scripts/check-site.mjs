@@ -2,6 +2,7 @@
 // Loads every page at 1440 and 390 with the generated Content-Security-Policy applied, scrolls
 // through it, and reports console errors, failed requests, CSP violations and sideways scroll.
 // Usage: node scripts/check-site.mjs [--base http://localhost:4321]
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
@@ -14,8 +15,27 @@ paths.push('/404.html', '/');
 const headers = await readFile('dist/_headers', 'utf8');
 const csp = headers.match(/Content-Security-Policy:\s*(.+)/)[1].trim();
 
-const browser = await chromium.launch();
 let problems = 0;
+
+// The CV hashes: dist/cv/SHA256SUMS must match the PDFs in dist/cv/, and each CV page must
+// show exactly those hashes. A mismatch means cv:pdf or the build was skipped.
+const sums = (await readFile('dist/cv/SHA256SUMS', 'utf8')).trim().split('\n').map((l) => l.match(/^([0-9a-f]{64})  (\S+)$/));
+if (sums.length !== 2 || sums.some((m) => !m)) {
+  console.log('FAIL dist/cv/SHA256SUMS: expected two "<hash>  <file>" lines');
+  problems += 1;
+} else {
+  for (const [, hash, name] of sums) {
+    const actual = createHash('sha256').update(await readFile(`dist/cv/${name}`)).digest('hex');
+    const shown = (await Promise.all(['en', 'bg'].map((l) => readFile(`dist/${l}/cv/index.html`, 'utf8')))).every((html) => html.includes(hash));
+    const ok = actual === hash && shown;
+    console.log(`${ok ? 'ok  ' : 'FAIL'} sha256 ${name}`);
+    if (actual !== hash) console.log(`       SHA256SUMS says ${hash}, the PDF is ${actual}. Run npm run cv:pdf, then build.`);
+    else if (!shown) console.log('       a CV page does not show this hash. Run npm run build.');
+    problems += ok ? 0 : 1;
+  }
+}
+
+const browser = await chromium.launch();
 for (const width of [1440, 390]) {
   const ctx = await browser.newContext({ viewport: { width, height: 900 } });
   await ctx.route('**/*', async (route) => {

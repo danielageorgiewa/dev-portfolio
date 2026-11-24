@@ -70,6 +70,13 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# The CV hash files have no known extension, so their type is stated and they open in the
+# browser as text.
+[[headers]]
+  for = "/cv/SHA256SUMS*"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
 # Discord domain verification. The file has no extension, so its type is stated.
 [[headers]]
   for = "/.well-known/discord"

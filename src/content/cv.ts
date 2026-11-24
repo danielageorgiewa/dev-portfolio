@@ -21,6 +21,15 @@ export interface CvContent {
     current: string;
     /** PDF in the other language, labelled in that language. */
     other: string;
+    /** SHA-256 hashes under the buttons, so a copy of the PDF can be checked against the site. */
+    verify: {
+      copy: string;
+      /** Shown on the button for two seconds after copying. */
+      copied: string;
+      help: string;
+      /** Followed by the link to SHA256SUMS.history. */
+      older: string;
+    };
   };
   name: string;
   /** Title line under the name. Also the role of the current job. */

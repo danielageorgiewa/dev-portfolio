@@ -1,0 +1,112 @@
+---
+// SHA-256 hashes of the two CV PDFs, under the download buttons (Daniela, Nov 2026; not in
+// Figma). Screen only. The hashes come from public/cv/SHA256SUMS through src/cv-sums.ts.
+// The Copy buttons are wired by src/scripts/copy.ts and only show when JavaScript runs.
+import type { CvContent } from '../../content/cv';
+import { CV_SUMS_HISTORY_HREF, cvPdfName, cvPdfSha256 } from '../../cv-sums';
+import { cvPdfHref, other, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+  t: CvContent['download']['verify'];
+}
+const { lang, t } = Astro.props;
+const files = [lang, other(lang)].map((l) => ({ href: cvPdfHref(l), name: cvPdfName(l), hash: cvPdfSha256(l) }));
+---
+
+<div class="cv-sums">
+  <ul class="cv-sums__list">
+    {
+      files.map((f) => (
+        <li class="cv-sums__item">
+          <a class="cv-sums__file" href={f.href} download>
+            {f.name}
+          </a>
+          <p class="cv-sums__line">
+            <span class="cv-sums__algo">SHA-256</span>
+            <span class="cv-sums__hash" translate="no">
+              {f.hash}
+            </span>
+            <button class="cv-sums__copy" type="button" data-copy={f.hash} data-copy-done={t.copied}>
+              {t.copy}
+            </button>
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="cv-sums__help">
+    {t.help}{' '}{t.older}{' '}<a href={CV_SUMS_HISTORY_HREF}>SHA256SUMS.history</a>
+  </p>
+</div>
+
+<style>
+  .cv-sums {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--site-muted);
+  }
+  .cv-sums__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cv-sums__file,
+  .cv-sums__line {
+    font-family: var(--font-mono);
+  }
+  .cv-sums__file,
+  .cv-sums__help a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .cv-sums__line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 12px;
+    margin: 0;
+  }
+  .cv-sums__hash {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .cv-sums__copy {
+    padding: 2px 8px;
+    border: 1px solid var(--site-border-chip);
+    border-radius: var(--radius);
+    background: none;
+    color: var(--text-secondary);
+    font: inherit;
+    font-family: var(--font-body);
+    cursor: pointer;
+  }
+  .cv-sums__copy:hover {
+    border-color: var(--text-secondary);
+  }
+  /* The button needs JavaScript; without it the hash is still there to select. */
+  :global(html:not(.js)) .cv-sums__copy {
+    display: none;
+  }
+  .cv-sums__help {
+    margin: 0;
+    max-width: 640px;
+  }
+  @media (max-width: 767.98px) {
+    .cv-sums {
+      padding-inline: var(--gutter);
+    }
+  }
+  @media print {
+    .cv-sums {
+      display: none;
+    }
+  }
+</style>

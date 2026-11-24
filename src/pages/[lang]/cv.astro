@@ -2,6 +2,7 @@
 // CV mode (Figma 51:10 EN, 95:26 BG, 83:56 phone). The same page, printed, is the A4 PDF:
 // scripts/build-cv-pdfs.mjs renders it with the print styles into public/cv/.
 import Base from '../../layouts/Base.astro';
+import Checksums from '../../components/cv/Checksums.astro';
 import DownloadBar from '../../components/cv/DownloadBar.astro';
 import Sheet from '../../components/cv/Sheet.astro';
 import { cvLead, getCv } from '../../content/cv';
@@ -17,6 +18,7 @@ const title = `${t.name} · CV · ${t.title}`;
 <Base lang={lang} title={title} description={cvLead(t)} page="cv" header="fixed" footer={false} bodyClass="cv-page">
   <div class="cv-body">
     <DownloadBar lang={lang} t={t.download} />
+    <Checksums lang={lang} t={t.download.verify} />
     <Sheet t={t} />
   </div>
 </Base>

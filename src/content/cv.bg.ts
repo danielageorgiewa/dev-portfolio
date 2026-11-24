@@ -9,6 +9,12 @@ export const cv: CvContent = {
     note: 'Това е кратката версия на портфолиото. Същите факти, на една страница.',
     current: 'Изтегли PDF',
     other: 'PDF in English',
+    verify: {
+      copy: 'Копирай',
+      copied: 'Копирано',
+      help: 'За да проверите копието си, пуснете shasum -a 256 на macOS, sha256sum на Linux или Get-FileHash в PowerShell. Резултатът трябва да съвпада с хеша отгоре.',
+      older: 'По-стари версии:',
+    },
   },
   name: 'Даниела Георгиева',
   title: 'Full stack DevOps инженер',

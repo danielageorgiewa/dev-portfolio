@@ -2,9 +2,11 @@
 // it only adds motion and the booking widget to markup that is already on the page.
 // (`html.js` itself is set by the inline script in the <head> of layouts/Base.astro.)
 import { boot } from './motion';
+import { initCopy } from './copy';
 
 document.documentElement.classList.add('js');
 boot();
+initCopy();
 
 // The booking widget (scripts/booking.ts) is fetched only on pages that have one.
 // import.meta.glob keeps the build green while that file does not exist yet.

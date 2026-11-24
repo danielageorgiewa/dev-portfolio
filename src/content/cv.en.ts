@@ -8,6 +8,12 @@ export const cv: CvContent = {
     note: 'This is the short version of the portfolio. Same facts, one page.',
     current: 'Download PDF',
     other: 'PDF на български',
+    verify: {
+      copy: 'Copy',
+      copied: 'Copied',
+      help: 'To check your copy, run shasum -a 256 on macOS, sha256sum on Linux or Get-FileHash in PowerShell. The result should match the hash above.',
+      older: 'Older versions:',
+    },
   },
   name: 'Daniela Georgieva',
   title: 'Full stack DevOps engineer',
