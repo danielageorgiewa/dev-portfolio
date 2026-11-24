@@ -58,7 +58,7 @@ async function startPreview() {
   const port = await freePort();
   const child = spawn(
     process.execPath,
-    [join(ROOT, 'node_modules', 'astro', 'astro.js'), 'preview', '--port', String(port), '--host', '127.0.0.1'],
+    [join(ROOT, 'node_modules', 'astro', 'bin', 'astro.mjs'), 'preview', '--port', String(port), '--host', '127.0.0.1'],
     { cwd: ROOT, stdio: ['ignore', 'ignore', 'inherit'] },
   );
   const base = `http://127.0.0.1:${port}`;

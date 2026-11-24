@@ -16,7 +16,7 @@ export const cv: CvContent = {
   links: { github: 'GitHub', linkedin: 'LinkedIn' },
   profile: {
     label: 'Профил',
-    text: 'Full stack DevOps инженер, който води продуктите от първия дизайн до продукция и ги поддържа там. Офанзивната сигурност е най-голямата ми страст и посоката на кариерата ми: извън работа практикувам всеки ден с CTF състезания, публични CVE и изучаване на уязвимости. Проактивна съм и уча бързо: за четири месеца в XTRMND от навлизане в кода стигнах дотам сама да водя проекти и презентациите им пред собствениците на разбираем език, а поетата от мен система за наличности беше в продукция още на втория месец. Работя добре и в екип, и сама, търпелива и ясна съм и спазвам сроковете. Целта ми е да бъда най-добрата в областта и гледам всяка задача от всички страни.',
+    text: 'Full stack DevOps инженер, който води продуктите от първия дизайн до продукция и поддържа Linux сървърите им. Офанзивната сигурност е най-голямата ми страст и посоката на кариерата ми: извън работа практикувам всеки ден с CTF състезания, публични CVE и изучаване на уязвимости. Проактивна съм и уча бързо: за четири месеца в XTRMND от навлизане в кода стигнах дотам сама да водя проекти и презентациите им пред собствениците на разбираем език, а поетата от мен система за наличности беше в продукция още на втория месец. Работя добре и в екип, и сама, търпелива и ясна съм и спазвам сроковете. Целта ми е да бъда най-добрата в областта и гледам всяка задача от всички страни.',
   },
   experience: {
     label: 'Опит',
@@ -39,35 +39,54 @@ export const cv: CvContent = {
     label: 'Умения',
     groups: [
       {
-        name: 'Фронтенд',
-        items: 'TypeScript, JavaScript, React, Next.js (фреймуърк), Tailwind CSS, HTML и CSS, адаптивен уеб дизайн',
-      },
-      {
-        name: 'Бекенд и данни',
-        items: 'Node.js, Medusa (фреймуърк), Payload CMS, PostgreSQL, SQL, REST API, webhooks, API интеграции',
-      },
-      {
-        name: 'DevOps и Linux',
+        name: 'Администриране на Linux',
         items:
-          'Релийзи и rollback в продукция, Docker и Compose, CI/CD с GitHub Actions, Turborepo и pnpm workspaces, настройка на Linux VPS, Nginx, Caddy, Bash скриптове, Python',
-      },
-      {
-        name: 'Мрежи',
-        items:
-          'TCP/IP и OSI модел, подмрежи и CIDR, портове и защитни стени, NAT и пренасочване на портове, HTTP/HTTPS, CDN и кеширане, DNS и Cloudflare, SSH ключове и тунели, Cloudflare Tunnel, Let’s Encrypt и ACME, dig, nslookup, curl, openssl, ss, netstat и lsof',
+          'LVM, файлови системи и монтиране, потребители и права, виртуализация (UTM), настройка на VPS, управление на ИТ инфраструктура, Bash скриптове',
       },
       {
         name: 'Сигурност',
         items:
-          'OWASP Top 10, MITRE ATT&CK, защита на сървъри, защитни хедъри и CSP, TLS и сертификати, управление на секрети, сканиране на зависимости, SIEM, tcpdump, уеб уязвимости, ескалация на привилегии в Linux',
+          'OWASP Top 10, MITRE ATT&CK, Kali Linux, Nmap, gobuster, sqlmap, Metasploit, netcat, OSINT (Shodan, Google dorking, WHOIS, crt.sh, Wayback Machine), уеб уязвимости, reverse shell и pivoting, ескалация на привилегии в Linux и Windows, Active Directory, BloodHound, Kerberoasting, извличане на пароли и хешове, C2 фреймуърци (Cobalt Strike, Tuoni), Microsoft Sentinel и KQL, Wazuh, анализ на логове за сигурност, сигурност на Windows и IIS, tcpdump, защита на сървъри, защитни хедъри и CSP, TLS и сертификати, управление на секрети, сканиране на зависимости',
+        itemsPrint:
+          'OWASP Top 10, MITRE ATT&CK, Kali Linux, Nmap, gobuster, sqlmap, Metasploit, netcat, OSINT (Shodan, Google dorking, WHOIS, crt.sh, Wayback Machine), уеб уязвимости, reverse shell и pivoting, ескалация на привилегии в Linux и Windows, Active Directory, BloodHound, Kerberoasting, credential dumping, C2 (Cobalt Strike, Tuoni), Sentinel и KQL, Wazuh, анализ на логове, сигурност на Windows и IIS, tcpdump, защита на сървъри, защитни хедъри и CSP, TLS и сертификати, управление на секрети, сканиране на зависимости',
+      },
+      {
+        name: 'Мрежи',
+        items:
+          'Мрежова администрация и инфраструктура, TCP/IP и OSI, подмрежи и CIDR, портове и защитни стени, NAT и пренасочване на портове, HTTP/HTTPS, CDN и кеширане, DNS и Cloudflare, SSH ключове и тунели, Cloudflare Tunnel, Let’s Encrypt и ACME, dig, nslookup, curl, openssl, ss, netstat и lsof',
+        itemsPrint:
+          'Мрежова администрация и инфраструктура, TCP/IP и OSI, подмрежи и CIDR, защитни стени, NAT и пренасочване на портове, HTTP/HTTPS, CDN, DNS, Cloudflare и Cloudflare Tunnel, SSH ключове и тунели, Let’s Encrypt, dig, nslookup, curl, openssl, ss, netstat, lsof',
+      },
+      {
+        name: 'DevOps',
+        items:
+          'Docker и Compose, GitHub Actions CI/CD, Turborepo и pnpm workspaces, Nginx, Python',
+        itemsPrint:
+          'Docker и Compose, GitHub Actions CI/CD, Turborepo и pnpm, Nginx, Python',
+      },
+      {
+        name: 'Full stack',
+        printOnly: true,
+        items:
+          'TypeScript, JavaScript, React, Next.js, Tailwind CSS, HTML и CSS, Node.js, Medusa, Payload CMS, PostgreSQL, SQL, REST API, webhooks',
+      },
+      {
+        name: 'Фронтенд',
+        screenOnly: true,
+        items:
+          'TypeScript, JavaScript, React, Next.js (фреймуърк), Tailwind CSS, HTML и CSS, адаптивен уеб дизайн',
+      },
+      {
+        name: 'Бекенд и данни',
+        screenOnly: true,
+        items:
+          'Node.js, Medusa (фреймуърк), Payload CMS, PostgreSQL, SQL, REST API, webhooks, API интеграции',
       },
       {
         name: 'Дизайн',
-        items: 'Бранд идентичност, Figma, UI дизайн, UX, адаптивен дизайн, от дизайн към код',
-      },
-      {
-        name: 'Тестване',
-        items: 'Playwright, Vitest, Lighthouse CI, проверки за достъпност (axe)',
+        screenOnly: true,
+        items:
+          'Бранд идентичност, Figma, UI дизайн, UX, адаптивен дизайн, от дизайн към код',
       },
       {
         name: 'Начин на работа',

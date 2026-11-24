@@ -36,8 +36,12 @@ export interface CvContent {
   skills: {
     label: string;
     /** Web: name in its own column. A4: name inline in bold, followed by a colon. */
-    /** `screenOnly` groups are left out of the A4 PDF so it stays on one page. */
-    groups: { name: string; items: string; screenOnly?: boolean }[];
+    /**
+     * The A4 PDF is shorter than the screen CV so it stays on one page (Daniela, Nov 2026):
+     * `screenOnly` groups are left out of it, `printOnly` groups appear only in it, and
+     * `itemsPrint` replaces `items` in it.
+     */
+    groups: { name: string; items: string; itemsPrint?: string; screenOnly?: boolean; printOnly?: boolean }[];
   };
   education: { label: string; items: CvEntry[] };
   training: { label: string; items: CvEntry[] };

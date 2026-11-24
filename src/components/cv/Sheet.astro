@@ -64,9 +64,23 @@ const SEP = '   ·   ';
     <dl class="cv__content cv__skills">
       {
         t.skills.groups.map((g) => (
-          <div class:list={['cv__skill', { 'cv__skill--screen-only': g.screenOnly }]}>
+          <div
+            class:list={[
+              'cv__skill',
+              { 'cv__skill--screen-only': g.screenOnly, 'cv__skill--print-only': g.printOnly },
+            ]}
+          >
             <dt>{g.name}</dt>
-            <dd>{g.items}</dd>
+            <dd>
+              {g.itemsPrint ? (
+                <Fragment>
+                  <span class="cv__screen">{g.items}</span>
+                  <span class="cv__print">{g.itemsPrint}</span>
+                </Fragment>
+              ) : (
+                g.items
+              )}
+            </dd>
           </div>
         ))
       }
@@ -176,6 +190,9 @@ const SEP = '   ·   ';
     color: var(--text-faint);
   }
   .cv__print {
+    display: none;
+  }
+  .cv__skill--print-only {
     display: none;
   }
   .cv__content {
@@ -350,6 +367,9 @@ const SEP = '   ·   ';
     }
     .cv__skill--screen-only {
       display: none;
+    }
+    .cv__skill--print-only {
+      display: block;
     }
     .cv__skill dt,
     .cv__skill dd {

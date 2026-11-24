@@ -15,7 +15,7 @@ export const cv: CvContent = {
   links: { github: 'GitHub', linkedin: 'LinkedIn' },
   profile: {
     label: 'Profile',
-    text: 'Full stack DevOps engineer who takes products from first design to production and keeps them running. Offensive security is my biggest passion and where my career is heading: outside my full-time job I practise every day, playing CTFs, reproducing public CVEs and learning how vulnerabilities are found and exploited. I’m proactive and learn fast: in four months at XTRMND I went from learning the codebase to owning projects and leading their shareholder presentations in plain language, and the stock system I took over was live by my second month. I work as well in a team as alone, people find me patient and clear, and I hit my deadlines. I aim to be the best in this field and look at every problem from all sides.',
+    text: 'Full stack DevOps engineer who takes products from first design to production and runs the Linux servers behind them. Offensive security is my biggest passion and where my career is heading: outside my full-time job I practise every day, playing CTFs, reproducing public CVEs and learning how vulnerabilities are found and exploited. I’m proactive and learn fast: in four months at XTRMND I went from learning the codebase to owning projects and leading their shareholder presentations in plain language, and the stock system I took over was live by my second month. I work as well in a team as alone, people find me patient and clear, and I hit my deadlines. I aim to be the best in this field and look at every problem from all sides.',
   },
   experience: {
     label: 'Experience',
@@ -38,35 +38,51 @@ export const cv: CvContent = {
     label: 'Skills',
     groups: [
       {
-        name: 'Frontend',
-        items: 'TypeScript, JavaScript, React, Next.js (framework), Tailwind CSS, HTML and CSS, responsive web design',
-      },
-      {
-        name: 'Backend and data',
-        items: 'Node.js, Medusa (framework), Payload CMS, PostgreSQL, SQL, REST APIs, webhooks, API integrations',
-      },
-      {
-        name: 'DevOps and Linux',
+        name: 'Linux administration',
         items:
-          'Production releases and rollbacks, Docker and Compose, CI/CD with GitHub Actions, Turborepo and pnpm workspaces, Linux VPS setup, Nginx, Caddy, Bash and shell scripting, Python',
-      },
-      {
-        name: 'Networking',
-        items:
-          'TCP/IP and the OSI model, subnets and CIDR, ports and firewalls, NAT and port forwarding, HTTP/HTTPS, CDN and caching, DNS and Cloudflare, SSH keys and tunnels, Cloudflare Tunnel, Let’s Encrypt and ACME, dig, nslookup, curl, openssl, ss, netstat and lsof',
+          'LVM, filesystems and mounts, users and permissions, virtualisation (UTM), VPS setup, IT infrastructure management, Bash scripting',
       },
       {
         name: 'Security',
         items:
-          'OWASP Top 10, MITRE ATT&CK, server hardening, security headers and CSP, TLS and certificates, secrets management, dependency scanning, SIEM, tcpdump, web exploitation, Linux privilege escalation',
+          'OWASP Top 10, MITRE ATT&CK, Kali Linux, Nmap, gobuster, sqlmap, Metasploit, netcat, OSINT (Shodan, Google dorking, WHOIS, crt.sh, Wayback Machine), web exploitation, reverse shells and pivoting, Linux and Windows privilege escalation, Active Directory, BloodHound, Kerberoasting, credential dumping, C2 frameworks (Cobalt Strike, Tuoni), Microsoft Sentinel and KQL, Wazuh, security log analysis, Windows security and IIS, tcpdump, server hardening, security headers and CSP, TLS and certificates, secrets management, dependency scanning',
+      },
+      {
+        name: 'Networking',
+        items:
+          'Network administration and infrastructure, TCP/IP and OSI, subnets and CIDR, ports and firewalls, NAT and port forwarding, HTTP/HTTPS, CDN and caching, DNS and Cloudflare, SSH keys and tunnels, Cloudflare Tunnel, Let’s Encrypt and ACME, dig, nslookup, curl, openssl, ss, netstat and lsof',
+        itemsPrint:
+          'Network administration and infrastructure, TCP/IP and OSI, subnets and CIDR, firewalls, NAT and port forwarding, HTTP/HTTPS, CDN, DNS, Cloudflare and Cloudflare Tunnel, SSH keys and tunnels, Let’s Encrypt, dig, nslookup, curl, openssl, ss, netstat, lsof',
+      },
+      {
+        name: 'DevOps',
+        items:
+          'Docker and Compose, GitHub Actions CI/CD, Turborepo and pnpm workspaces, Nginx, Python',
+        itemsPrint:
+          'Docker and Compose, GitHub Actions CI/CD, Turborepo and pnpm, Nginx, Python',
+      },
+      {
+        name: 'Full stack',
+        printOnly: true,
+        items:
+          'TypeScript, JavaScript, React, Next.js, Tailwind CSS, HTML and CSS, Node.js, Medusa, Payload CMS, PostgreSQL, SQL, REST APIs, webhooks',
+      },
+      {
+        name: 'Frontend',
+        screenOnly: true,
+        items:
+          'TypeScript, JavaScript, React, Next.js (framework), Tailwind CSS, HTML and CSS, responsive web design',
+      },
+      {
+        name: 'Backend and data',
+        screenOnly: true,
+        items:
+          'Node.js, Medusa (framework), Payload CMS, PostgreSQL, SQL, REST APIs, webhooks, API integrations',
       },
       {
         name: 'Design',
-        items: 'Brand identity, Figma, UI design, UX, responsive design, design-to-code',
-      },
-      {
-        name: 'Testing',
-        items: 'Playwright, Vitest, Lighthouse CI, accessibility checks (axe)',
+        items:
+          'Brand identity, Figma, UI design, UX, responsive design, design-to-code',
       },
       {
         name: 'Ways of working',
