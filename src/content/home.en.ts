@@ -353,12 +353,8 @@ export const home: HomeContent = {
         ],
       },
       {
-        label: 'Design',
-        chips: ['Brand identity', 'Figma', 'UI design', 'UX', 'Responsive design', 'Design-to-code'],
-      },
-      {
         label: 'Ways of working',
-        chips: ['Leadership', 'Stakeholder relations', 'Agentic workflows', 'Git and code review'],
+        chips: ['Leadership', 'Stakeholder relations', 'Agentic workflows', 'Git and code review', 'Figma', 'Responsive design', 'Design-to-code'],
       },
       {
         label: 'Learning now',

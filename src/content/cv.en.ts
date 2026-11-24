@@ -80,15 +80,10 @@ export const cv: CvContent = {
           'Node.js, Medusa (framework), Payload CMS, PostgreSQL, SQL, REST APIs, webhooks, API integrations',
       },
       {
-        name: 'Design',
-        items:
-          'Brand identity, Figma, UI design, UX, responsive design, design-to-code',
-      },
-      {
         name: 'Ways of working',
         // Not in the A4 PDF (Daniela, Nov 2026): makes room for the longer Women4Cyber line.
         screenOnly: true,
-        items: 'Leadership, stakeholder relations, agentic workflows, Git and code review',
+        items: 'Leadership, stakeholder relations, agentic workflows, Git and code review, Figma, responsive design, design-to-code',
       },
     ],
   },

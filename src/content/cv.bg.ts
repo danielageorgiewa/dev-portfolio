@@ -47,8 +47,6 @@ export const cv: CvContent = {
         name: 'Сигурност',
         items:
           'OWASP Top 10, MITRE ATT&CK, Kali Linux, Nmap, gobuster, sqlmap, Metasploit, netcat, OSINT (Shodan, Google dorking, WHOIS, crt.sh, Wayback Machine), уеб уязвимости, reverse shell и pivoting, ескалация на привилегии в Linux и Windows, Active Directory, BloodHound, Kerberoasting, извличане на пароли и хешове, C2 фреймуърци (Cobalt Strike, Tuoni), Microsoft Sentinel и KQL, Wazuh, анализ на логове за сигурност, сигурност на Windows и IIS, tcpdump, защита на сървъри, защитни хедъри и CSP, TLS и сертификати, управление на секрети, сканиране на зависимости',
-        itemsPrint:
-          'OWASP Top 10, MITRE ATT&CK, Kali Linux, Nmap, gobuster, sqlmap, Metasploit, netcat, OSINT (Shodan, Google dorking, WHOIS, crt.sh, Wayback Machine), уеб уязвимости, reverse shell и pivoting, ескалация на привилегии в Linux и Windows, Active Directory, BloodHound, Kerberoasting, credential dumping, C2 (Cobalt Strike, Tuoni), Sentinel и KQL, Wazuh, анализ на логове, сигурност на Windows и IIS, tcpdump, защита на сървъри, защитни хедъри и CSP, TLS и сертификати, управление на секрети, сканиране на зависимости',
       },
       {
         name: 'Мрежи',
@@ -83,16 +81,10 @@ export const cv: CvContent = {
           'Node.js, Medusa (фреймуърк), Payload CMS, PostgreSQL, SQL, REST API, webhooks, API интеграции',
       },
       {
-        name: 'Дизайн',
-        screenOnly: true,
-        items:
-          'Бранд идентичност, Figma, UI дизайн, UX, адаптивен дизайн, от дизайн към код',
-      },
-      {
         name: 'Начин на работа',
         // Not in the A4 PDF (Daniela, Nov 2026): makes room for the longer Women4Cyber line.
         screenOnly: true,
-        items: 'Лидерство, работа със заинтересовани страни, агентни работни процеси, Git и преглед на код',
+        items: 'Лидерство, работа със заинтересовани страни, агентни работни процеси, Git и преглед на код, Figma, адаптивен дизайн, от дизайн към код',
       },
     ],
   },
