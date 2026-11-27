@@ -200,28 +200,21 @@ export const home: HomeContent = {
         ],
       },
       {
-        label: 'Фронтенд',
+        label: 'Full stack',
         chips: [
           'TypeScript',
           'JavaScript',
           'React',
-          'Next.js (фреймуърк)',
+          'Next.js',
           'Tailwind CSS',
           'HTML и CSS',
-          'Адаптивен уеб дизайн',
-        ],
-      },
-      {
-        label: 'Бекенд и данни',
-        chips: [
           'Node.js',
-          'Medusa (фреймуърк)',
+          'Medusa',
           'Payload CMS',
           'PostgreSQL',
           'SQL',
           'REST APIs',
           'Webhooks',
-          'API интеграции',
         ],
       },
       {

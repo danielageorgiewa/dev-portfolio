@@ -328,28 +328,21 @@ export const home: HomeContent = {
         },
       },
       {
-        label: 'Frontend',
+        label: 'Full stack',
         chips: [
           'TypeScript',
           'JavaScript',
           'React',
-          'Next.js (framework)',
+          'Next.js',
           'Tailwind CSS',
           'HTML and CSS',
-          'Responsive web design',
-        ],
-      },
-      {
-        label: 'Backend & data',
-        chips: [
           'Node.js',
-          'Medusa (framework)',
+          'Medusa',
           'Payload CMS',
           'PostgreSQL',
           'SQL',
           'REST APIs',
           'Webhooks',
-          'API integrations',
         ],
       },
       {
