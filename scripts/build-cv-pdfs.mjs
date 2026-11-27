@@ -29,7 +29,7 @@ const pdfName = (lang) => `daniela-georgieva-cv-${lang}.pdf`;
 
 // The date written into both PDFs (CreationDate and ModDate). Change it only when the CV
 // copy changes: a new date changes the bytes, and so the hash, of both PDFs.
-const CV_DATE = '2026-11-24';
+const CV_DATE = '2026-11-27';
 const PDF_INFO = {
   Creator: 'danielageorgieva.work',
   Producer: 'danielageorgieva.work',

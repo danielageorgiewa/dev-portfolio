@@ -16,12 +16,12 @@ export const cv: CvContent = {
     },
   },
   name: 'Daniela Georgieva',
-  title: 'Full stack DevOps engineer',
+  title: 'Full Stack | DevOps | Aspiring Penetration Tester',
   location: 'Plovdiv, Bulgaria',
   links: { github: 'GitHub', linkedin: 'LinkedIn' },
   profile: {
     label: 'Profile',
-    text: 'Full stack DevOps engineer who takes products from first design to production and runs the Linux servers behind them. Offensive security is my biggest passion and where my career is heading: outside my full-time job I practise every day, playing CTFs, reproducing public CVEs and learning how vulnerabilities are found and exploited. I’m proactive and learn fast: in four months at XTRMND I went from learning the codebase to owning projects and leading their shareholder presentations in plain language, and the stock system I took over was live by my second month. I work as well in a team as alone, people find me patient and clear, and I hit my deadlines. I aim to be the best in this field and look at every problem from all sides.',
+    text: 'I am an offensive security enthusiast who comes from a Full Stack Engineer and DevOps background: I understand how systems and their plumbing are designed and built, and where to probe. Outside work I love to play CTFs, build home labs on VMs and attend useful webinars and workshops. I am determined to grow and become one of the best in this industry and am incredibly proactive in order to do so. In four months at XTRMND I went from learning the codebase to owning projects in production.',
   },
   experience: {
     label: 'Experience',
@@ -31,11 +31,11 @@ export const cv: CvContent = {
         place: 'XTRMND · Plovdiv',
         dates: 'Jul 2026 – present',
         bullets: [
-          'I took over a rooflight manufacturer’s warehouse management system and moved the business off its shared spreadsheet. In production since August 2026: five sales channels share one stock count, and sales taking stock from the wrong product fell from 47 to 0.',
-          'I release and run it on a Linux server (Docker Compose, PostgreSQL with nightly backups, Caddy). GitHub Actions deploys to staging, then production, with health checks and a one-step rollback. Six releases between 6 and 19 November 2026.',
-          'B2B trade portal: customers order online and get their proforma, VAT invoice and monthly statement automatically, with live stock from the warehouse system. I built the stock link and the statements, and on 22 October 2026 switched its stock over in production (backup, guarded SQL transaction, rollback plan) with 0 mismatches.',
-          'I designed, built and host a language school’s website and brand identity, with a CMS the staff edit themselves. Google speed score: 31 to 100 on desktop, 54 to 95 on mobile.',
-          'I’m moving nine WordPress and Shopify shops onto one platform I designed and built: a fix or price change happens once, and every product size gets its own page on Google.',
+          'Was responsible for designing, building and maintaining an international skylight supplier’s warehouse management system, replacing a legacy spreadsheet/Apps Script setup. Multi-tenant architecture which takes its stock from multiple WooCommerce/Shopify and custom websites. Wrong stock movement fell to 0.',
+          'The WMS lives on a self-hosted Linux server with CI/CD on GitHub Actions that deploys releases to staging on merge and to production with a manual trigger. Health checks, backups and a one-step rollback by design.',
+          'Was responsible for creating a commerce solution for B2B clients, hooked to the warehouse management system’s API. The system issues VATs and proformas and has a configured SMTP server which sends them out.',
+          'Gave a language school’s website a completely new makeover, designing, building, maintaining and hosting it ourselves. I started this all by giving them a new brand identity in Figma, where I then turned this design into code. They have their own CMS (Payload), which lets them edit anything they wish, but also re-use Figma components to add new listings. Google speed score went from 31 to 100 (desktop) and 54 to 95 (mobile).',
+          'I’m currently in the process of moving nine legacy WordPress and Shopify websites onto one platform I designed and built. In scope are role-based access, IAM auth and expanding to micro-service architecture.',
         ],
       },
     ],
@@ -120,10 +120,9 @@ export const cv: CvContent = {
     text: 'Bulgarian (native) · English (C2, Cambridge CPE) · French (A2)',
   },
   volunteering: {
-    label: 'Security and volunteering',
+    label: 'Volunteering',
     items: [
-      'CTF player. One of the winners of TryHackMe’s Women in Cyber campaign.',
-      'I volunteer in Women4Cyber Bulgaria’s 40-minute cyber-safety sessions in schools across the country. I took on managing the project, led the Plovdiv region, and designed and built the grades 1 to 4 presentation as a web app presenters run in class.',
+      'As an active member of the Women4Cyber chapter in Bulgaria, I regularly contribute to their campaigns. I took on creating the materials (a web app in slide format hosted on Cloudflare Pages) for their cyber-safety in school sessions and led the Plovdiv region. You can find out more about me on my website, linked at the top.',
     ],
   },
 };
