@@ -69,21 +69,8 @@ export const cv: CvContent = {
       },
       {
         name: 'Full stack',
-        printOnly: true,
         items:
           'TypeScript, JavaScript, React, Next.js, Tailwind CSS, HTML and CSS, Node.js, Medusa, Payload CMS, PostgreSQL, SQL, REST APIs, webhooks',
-      },
-      {
-        name: 'Frontend',
-        screenOnly: true,
-        items:
-          'TypeScript, JavaScript, React, Next.js (framework), Tailwind CSS, HTML and CSS, responsive web design',
-      },
-      {
-        name: 'Backend and data',
-        screenOnly: true,
-        items:
-          'Node.js, Medusa (framework), Payload CMS, PostgreSQL, SQL, REST APIs, webhooks, API integrations',
       },
       {
         name: 'Ways of working',
